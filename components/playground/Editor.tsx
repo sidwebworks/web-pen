@@ -1,8 +1,5 @@
-import * as esbuild from "esbuild-wasm";
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-import { startService } from "../../utils/bundler/esbuild.utils";
-import { fetchPlugin } from "../../utils/bundler/fetch.plugin";
-import { unpkgPathPlugin } from "../../utils/bundler/unpkg-path.plugin";
+import React, { useEffect, useRef, useState } from "react";
+import { bundleService, startService } from "../../utils/bundler/esbuild.utils";
 
 export const Editor: React.FC = (props) => {
 	const [value, setValue] = useState("");
@@ -21,16 +18,12 @@ export const Editor: React.FC = (props) => {
 	const handleBuild = async () => {
 		if (!isInitialized.current) return;
 
-		const result = await esbuild.build({
-			entryPoints: ["index.js"],
-			bundle: true,
-			write: false,
-			plugins: [unpkgPathPlugin(), fetchPlugin(value)],
-			define: {
-				"process.env.NODE_ENV": `"production"`,
-				global: "window",
+		const result = await bundleService(
+			{
+				entryPoints: ["index.js"],
 			},
-		});
+			value
+		);
 
 		setOutput(result.outputFiles[0].text);
 	};
