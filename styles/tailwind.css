@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#__next {
+	min-height: 100vh;
+}
+
+.preview-wrapper {
+	position: relative;
+	height: 100%;
+	flex-grow: 1;
+}
+
+.preview-wrapper iframe {
+	height: 100%;
+	width: 100%;
+	background: white;
+}
+
+body .preview-wrapper:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0;
+}
+
+.editor-wrapper {
+	position: relative;
+	height: 100%;
+	width: calc(100% - 10px);
+}
+
+.react-resizable-handle {
+	display: block;
+	background-color: #37414b;
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+.resize-horizontal {
+	display: flex;
+	flex-direction: row;
+}
+
+.react-resizable-handle-s {
+	height: 10px;
+	width: 100%;
+	cursor: row-resize;
+	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=");
+}
+
+.react-resizable-handle-e {
+	width: 10px;
+	min-width: 10px;
+	height: 100%;
+	cursor: col-resize;
+	transition: width 200ms ease-in-out;
+	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+}
+
+.react-resizable-handle-e:hover,
+.react-resizable-handle-e:active {
+	width: 22px;
+}

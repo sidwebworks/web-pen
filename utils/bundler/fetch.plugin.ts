@@ -1,7 +1,7 @@
-import * as esbuild from "esbuild-wasm";
+import { OnLoadResult, PluginBuild } from "esbuild-wasm";
 import axios from "axios";
 import localforage from "localforage";
-import { normalizeCss } from "./esbuild.utils";
+import { normalizeCss } from ".";
 
 const fileCache = localforage.createInstance({
 	name: "filecache",
@@ -10,7 +10,7 @@ const fileCache = localforage.createInstance({
 export const fetchPlugin = (inputCode: string) => ({
 	name: "fetch-plugin",
 
-	setup(build: esbuild.PluginBuild) {
+	setup(build: PluginBuild) {
 		build.onLoad({ filter: /^index\.js$/ }, async () => {
 			return {
 				loader: "jsx",
@@ -26,7 +26,7 @@ export const fetchPlugin = (inputCode: string) => ({
 			 * if not, fetch it from unpkg and cache it
 			 * and return the result
 			 */
-			const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(args.path);
+			const cachedResult = await fileCache.getItem<OnLoadResult>(args.path);
 
 			if (cachedResult) {
 				return cachedResult;
@@ -40,7 +40,7 @@ export const fetchPlugin = (inputCode: string) => ({
 
 			const contents = normalizeCss(data);
 
-			const result: esbuild.OnLoadResult = {
+			const result: OnLoadResult = {
 				loader: "jsx",
 				contents,
 				resolveDir: new URL("./", request.responseURL).pathname,
@@ -54,7 +54,7 @@ export const fetchPlugin = (inputCode: string) => ({
 		build.onLoad({ filter: /.*/ }, async (args: any) => {
 			const { data, request } = await axios.get(args.path);
 
-			const result: esbuild.OnLoadResult = {
+			const result: OnLoadResult = {
 				loader: "jsx",
 				contents: data,
 				resolveDir: new URL("./", request.responseURL).pathname,

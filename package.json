@@ -1,25 +1,35 @@
 {
-  "name": "black-box",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "axios": "^0.24.0",
-    "esbuild-wasm": "^0.13.14",
-    "localforage": "^1.10.0",
-    "next": "12.0.4",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
-  },
-  "devDependencies": {
-    "@types/node": "16.11.7",
-    "@types/react": "17.0.35",
-    "eslint": "7.32.0",
-    "eslint-config-next": "12.0.4",
-    "typescript": "4.5.2"
-  }
+	"name": "black-box",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@monaco-editor/react": "^4.3.1",
+		"@types/react-resizable": "^1.7.4",
+		"autoprefixer": "^10.4.0",
+		"axios": "^0.24.0",
+		"daisyui": "^1.16.2",
+		"esbuild-wasm": "^0.13.14",
+		"localforage": "^1.10.0",
+		"monaco-editor": "^0.30.1",
+		"next": "12.0.4",
+		"postcss": "^8.3.11",
+		"prettier": "^2.4.1",
+		"react": "17.0.2",
+		"react-dom": "17.0.2",
+		"react-resizable": "^3.0.4",
+		"tailwindcss": "^2.2.19"
+	},
+	"devDependencies": {
+		"@types/node": "16.11.7",
+		"@types/prettier": "^2.4.2",
+		"@types/react": "17.0.35",
+		"eslint": "7.32.0",
+		"eslint-config-next": "12.0.4",
+		"typescript": "4.5.2"
+	}
 }

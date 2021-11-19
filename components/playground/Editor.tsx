@@ -1,38 +1,63 @@
-import React, { useEffect, useRef, useState } from "react";
-import { bundleService, startService } from "../../utils/bundler/esbuild.utils";
+import load from "next/dynamic";
+import React, { memo, useContext, useRef } from "react";
 
-export const Editor: React.FC = (props) => {
-	const [value, setValue] = useState("");
-	const [output, setOutput] = useState("");
-	const isInitialized = useRef<boolean>(false);
+import { CodeBoxContext } from "../../pages";
+import { CodeEditorProps } from "../../typings/interfaces";
+import { ICodeEditor } from "../../typings/types";
+import { MonacoConfig } from "../../utils/monaco";
+import { initMonaco } from "../../utils/monaco/initialize";
 
-	useEffect(() => {
-		if (isInitialized.current) return;
+const MonacoEditor = load(() => import("@monaco-editor/react"), {
+	loading: () => <p>Booting up...</p>,
+});
 
-		startService().then(() => {
-			isInitialized.current = true;
-			setOutput("");
+export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => {
+	const editorRef = useRef<ICodeEditor | null>(null);
+
+	const { setEditor } = useContext(CodeBoxContext);
+
+	const onEditorDidMount = (editor: ICodeEditor) => {
+		editorRef.current = editor;
+		setEditor(editor);
+
+		editor.onDidChangeModelContent(() => {
+			onChange(editor.getValue());
 		});
-	}, []);
-
-	const handleBuild = async () => {
-		if (!isInitialized.current) return;
-
-		const result = await bundleService(
-			{
-				entryPoints: ["index.js"],
-			},
-			value
-		);
-
-		setOutput(result.outputFiles[0].text);
 	};
 
 	return (
-		<section>
-			<textarea onChange={(e) => setValue(e.target.value)} value={value}></textarea>
-			<button onClick={handleBuild}>Transpile</button>
-			<pre>{output}</pre>
-		</section>
+		<div className="editor-wrapper">
+			<MonacoEditor
+				value={intialValue}
+				beforeMount={initMonaco}
+				onMount={onEditorDidMount}
+				options={MonacoConfig}
+				language="typescript"
+				theme="vs-dark"
+				height="100%"
+			/>
+		</div>
+	);
+};
+
+export const OptionsPanel = () => {
+	const { editor } = useContext(CodeBoxContext);
+
+	const onFormatClick = () => {
+		if (!editor) return;
+		editor.getAction("editor.action.formatDocument").run();
+	};
+
+	return (
+		<div className="absolute top-0 z-20 flex  justify-end right-0 flex-grow px-6 py-2 gap-x-5">
+			<button
+				onClick={onFormatClick}
+				className="btn rounded-full  btn-warning"
+				role="button"
+				aria-pressed="true"
+			>
+				Format
+			</button>
+		</div>
 	);
 };

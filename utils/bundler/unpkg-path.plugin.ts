@@ -1,10 +1,10 @@
-import * as esbuild from "esbuild-wasm";
+import { PluginBuild } from "esbuild-wasm";
 
 const unpkg_path = "http://unpkg.com";
 
 export const unpkgPathPlugin = () => ({
 	name: "unpkg-path-plugin",
-	setup(build: esbuild.PluginBuild) {
+	setup(build: PluginBuild) {
 		/**
 		 * Resolve the entry file eg. `index.js`
 		 */
