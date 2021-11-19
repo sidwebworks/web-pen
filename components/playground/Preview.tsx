@@ -26,22 +26,30 @@ export const Preview: React.FC<PreviewProps> = ({ code }) => {
 const _html = `
 <html lang="en">
     <head> 
-    <style>
-    background: white;
-    </style>
     </head>
     <body>
     <div id="root"></div>
     <script>
+    const handleError = (err) => {
+        const root = document.querySelector("#root")
+        root.innerHTML = '<div style="color:red;"><h4>' + err + '</h4></div>'
+        console.error(err)
+    }
+    window.addEventListener(
+        "error",
+        (event) => {
+            event.preventDefault()
+           handleError(event.error)
+        },
+        false
+    );
         window.addEventListener(
             "message",
             (event) => {
                 try {
                     eval(event.data)
                 } catch (err) {
-                    const root = document.querySelector("#root")
-                    root.innerHTML = '<div style="color:red;"><h4>' + err + '</h4></div>'
-                    console.error(err)
+                    handleError(err)
                 }
             },
             false

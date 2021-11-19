@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { Fragment, useEffect, useMemo } from "react";
 import { createContext, useState } from "react";
+import { CodeLayout } from "../components/playground";
 import { Editor, OptionsPanel } from "../components/playground/Editor";
 import { Preview } from "../components/playground/Preview";
 import { Resizeable } from "../components/playground/Resizeable";
@@ -33,7 +34,7 @@ const Home: NextPage = () => {
 		const timeout = setTimeout(async () => {
 			const result = await bundler(code);
 			setOutput(result);
-		}, 1000);
+		}, 750);
 
 		return () => clearTimeout(timeout);
 	}, [code]);
@@ -42,12 +43,7 @@ const Home: NextPage = () => {
 		<main className="bg-gray-800 min-h-screen max-h-screen overflow-y-hidden">
 			<CodeBoxProvider>
 				<OptionsPanel />
-				<Resizeable direction="vertical">
-					<Resizeable direction="horizontal">
-						<Editor onChange={setCode} intialValue={initialSnippet} />
-					</Resizeable>
-					<Preview code={output} />
-				</Resizeable>
+				<CodeLayout initialSnippet={initialSnippet} output={output} setCode={setCode} />
 			</CodeBoxProvider>
 		</main>
 	);

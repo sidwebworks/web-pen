@@ -1,56 +1,41 @@
-import { memo, useRef, useState } from "react";
-import { ResizableBox, ResizableBoxProps } from "react-resizable";
+import { ResizableBox } from "react-resizable";
 import { ResizableProps } from "../../typings/interfaces";
-import { useIsomorphicEffect } from "../../utils/hooks/use-isomorphic-effect";
+import { useResizeable } from "../../utils/hooks/use-resizeable";
 
-export const Resizeable: React.FC<ResizableProps> = memo(({ direction, children }) => {
+export const Resizeable: React.FC<ResizableProps> = ({ direction, children }) => {
 	let resizableProps: ResizableProps = {};
 
-	const [height, setHeight] = useState(800);
-	const [width, setWidth] = useState(800);
+	const { width, innerHeight, innerWidth, setWidth } = useResizeable();
 
-	useIsomorphicEffect(() => {
-		let timer: any;
-
-		const handler = () => {
-			if (timer) {
-				clearTimeout(timer);
-			}
-
-			timer = setTimeout(() => {
-				setWidth(window.innerWidth);
-				setHeight(window.innerHeight);
-			}, 200);
-		};
-
-		handler();
-
-		window.addEventListener("resize", handler);
-
-		return () => window.removeEventListener("resize", handler);
-	}, []);
+	if (!innerHeight || !innerWidth) return null;
 
 	if (direction === "horizontal") {
 		resizableProps = {
 			className: "resize-horizontal",
-			minConstraints: [width * 0.2, Infinity],
-			maxConstraints: [width * 0.75, Infinity],
+			minConstraints: [innerWidth! * 0.2, Infinity],
+			maxConstraints: [innerWidth! * 0.75, Infinity],
 			height: Infinity,
-			width: width,
+			width,
 			resizeHandles: ["e"],
+			onResizeStop: (e, data) => {
+				setWidth(data.size.width);
+			},
 		};
 	} else {
 		resizableProps = {
-			maxConstraints: [Infinity, height],
-			height: height,
+			minConstraints: [Infinity, 24],
+			lockAspectRatio: true,
+			maxConstraints: [Infinity, innerWidth * 0.74],
+			height: innerHeight - 20,
 			width: Infinity,
+			resizeHandles: ["s"],
 		};
 	}
 
 	return (
 		//@ts-ignore
 		<ResizableBox {...resizableProps}>
-			<div className="flex  flex-grow w-full h-full">{children}</div>
+			<div className="flex flex-grow w-full h-full">{children}</div>
 		</ResizableBox>
 	);
-});
+};

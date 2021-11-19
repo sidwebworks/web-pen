@@ -72,6 +72,11 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@devbookhq/splitter@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@devbookhq/splitter/-/splitter-1.2.4.tgz#5ad4ff8e5b26ad698dba171a9c9e9ac782a86fa3"
+  integrity sha512-g7WOqG5fxraYSVVnJgGrROw+ebuczrtOt7X+ilq5n3m7ge4I6esMQzlo+A3qQdOdNLmBg+e9U38edeHuZrIdhQ==
+
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"
@@ -2887,11 +2892,6 @@ react-resizable@^3.0.4:
   dependencies:
     prop-types "15.x"
     react-draggable "^4.0.3"
-
-react-resizeable@^0.2.6:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/react-resizeable/-/react-resizeable-0.2.6.tgz#ef3cc6178eb6b80c7ec3b3e9489fd088db0164fc"
-  integrity sha512-C5FXuIJqG0Hm2Thn+g7lnYiL3pXrASuTf9l2X3RrNGm1kTD38B0Z5SFMgtGIo8YMNDv0HqAvP9Q22f+H6VquNA==
 
 react@17.0.2:
   version "17.0.2"
