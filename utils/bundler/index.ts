@@ -13,19 +13,24 @@ const bundler = async (rawCode: string) => {
 		serviceLoaded = true;
 	}
 
-	const result = await build({
-		entryPoints: ["index.js"],
-		outdir: "public/code",
-		bundle: true,
-		write: false,
-		plugins: [unpkgPathPlugin(), fetchPlugin(rawCode)],
-		define: {
-			"process.env.NODE_ENV": `"production"`,
-			global: "window",
-		},
-	});
+	try {
+		const result = await build({
+			entryPoints: ["index.js"],
+			bundle: true,
+			platform: "browser",
+			write: false,
+			plugins: [unpkgPathPlugin(), fetchPlugin(rawCode)],
+			define: {
+				"process.env.NODE_ENV": `"production"`,
+				global: "window",
+			},
+		});
 
-	return result.outputFiles[0].text;
+		return { code: result.outputFiles[0].text, err: "" };
+
+	} catch (error: any) {
+		return { code: "", err: error.message };
+	}
 };
 
 export const normalizeCss = (data: string) => {

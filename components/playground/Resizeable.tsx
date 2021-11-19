@@ -2,7 +2,11 @@ import { ResizableBox } from "react-resizable";
 import { ResizableProps } from "../../typings/interfaces";
 import { useResizeable } from "../../utils/hooks/use-resizeable";
 
-export const Resizeable: React.FC<ResizableProps> = ({ direction, children }) => {
+export const Resizeable: React.FC<ResizableProps> = ({
+	direction,
+	children,
+	height = Infinity,
+}) => {
 	let resizableProps: ResizableProps = {};
 
 	const { width, innerHeight, innerWidth, setWidth } = useResizeable();
@@ -12,9 +16,9 @@ export const Resizeable: React.FC<ResizableProps> = ({ direction, children }) =>
 	if (direction === "horizontal") {
 		resizableProps = {
 			className: "resize-horizontal",
-			minConstraints: [innerWidth! * 0.2, Infinity],
+			minConstraints: [innerWidth! * 0.4, Infinity],
 			maxConstraints: [innerWidth! * 0.75, Infinity],
-			height: Infinity,
+			height: innerHeight,
 			width,
 			resizeHandles: ["e"],
 			onResizeStop: (e, data) => {
@@ -24,11 +28,9 @@ export const Resizeable: React.FC<ResizableProps> = ({ direction, children }) =>
 	} else {
 		resizableProps = {
 			minConstraints: [Infinity, 24],
-			lockAspectRatio: true,
 			maxConstraints: [Infinity, innerWidth * 0.74],
-			height: innerHeight - 20,
+			height: innerHeight,
 			width: Infinity,
-			resizeHandles: ["s"],
 		};
 	}
 

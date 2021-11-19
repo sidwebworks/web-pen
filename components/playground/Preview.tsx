@@ -1,11 +1,26 @@
-import { memo, useEffect, useRef } from "react";
+import { Dispatch, memo, SetStateAction, useEffect, useRef } from "react";
+import { ErrorComponent } from "./Console";
 
 interface PreviewProps {
 	code: string;
+	error: string;
+	setError: Dispatch<SetStateAction<string>>;
 }
 
-export const Preview: React.FC<PreviewProps> = ({ code }) => {
+export const Preview: React.FC<PreviewProps> = ({ code, error, setError }) => {
 	const iFrameRef = useRef<HTMLIFrameElement | null>(null);
+
+	useEffect(() => {
+		const handler = (event: any) => {
+			if (event.data.type === "error") {
+				setError(event.data.error.toString());
+			}
+		};
+
+		window.addEventListener("message", handler);
+
+		return () => window.removeEventListener("message", handler);
+	}, []);
 
 	useEffect(() => {
 		iFrameRef.current!.srcdoc = _html;
@@ -19,6 +34,7 @@ export const Preview: React.FC<PreviewProps> = ({ code }) => {
 	return (
 		<div className="preview-wrapper">
 			<iframe title="preview" srcDoc={_html} ref={iFrameRef} sandbox="allow-scripts" />{" "}
+			<ErrorComponent error={error} />
 		</div>
 	);
 };
@@ -30,31 +46,36 @@ const _html = `
     <body>
     <div id="root"></div>
     <script>
-    const handleError = (err) => {
-        const root = document.querySelector("#root")
-        root.innerHTML = '<div style="color:red;"><h4>' + err + '</h4></div>'
-        console.error(err)
-    }
-    window.addEventListener(
-        "error",
-        (event) => {
-            event.preventDefault()
-           handleError(event.error)
-        },
-        false
-    );
+        const handleError = (err) => {
+            console.log('err: ', err);
+            const message = {
+                error: err,
+                type: "error"
+            };
+            window.parent.postMessage(message, '*');
+        }
+
         window.addEventListener(
-            "message",
+            "error",
             (event) => {
-                try {
-                    eval(event.data)
-                } catch (err) {
-                    handleError(err)
-                }
+                console.log('error event: ', event);
+               handleError(event.error)
             },
             false
         );
-        
+       
+            window.addEventListener(
+                "message",
+                (event) => {
+                    try {
+                        eval(event.data)
+                    } catch (err) {
+                        handleError(err)
+                    }
+                },
+                false
+            );
+            
     </script>
     </body>
 </html>

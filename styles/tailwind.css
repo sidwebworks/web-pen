@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("./syntax.css");
 
 #__next {
 	min-height: 100vh;
@@ -8,7 +9,7 @@
 
 .preview-wrapper {
 	position: relative;
-	height: 100%;
+	min-height: 100%;
 	flex-grow: 1;
 }
 
@@ -18,7 +19,7 @@
 	background: white;
 }
 
-body .preview-wrapper:after {
+.react-draggable-transparent-selection .preview-wrapper:after {
 	content: "";
 	position: absolute;
 	top: 0;

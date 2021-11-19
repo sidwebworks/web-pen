@@ -1,24 +1,22 @@
-import load from "next/dynamic";
-import React, { memo, useContext, useRef } from "react";
-
-import { CodeBoxContext } from "../../pages";
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+	ssr: false,
+});
+import { OnMount, useMonaco } from "@monaco-editor/react";
+import dynamic from "next/dynamic";
+import React, { useEffect, useRef } from "react";
+import Loader from "react-loader-spinner";
 import { CodeEditorProps } from "../../typings/interfaces";
 import { ICodeEditor } from "../../typings/types";
 import { MonacoConfig } from "../../utils/monaco";
 import { initMonaco } from "../../utils/monaco/initialize";
 
-const MonacoEditor = load(() => import("@monaco-editor/react"), {
-	loading: () => <p>Booting up...</p>,
-});
+
 
 export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => {
 	const editorRef = useRef<ICodeEditor | null>(null);
 
-	const { setEditor } = useContext(CodeBoxContext);
-
-	const onEditorDidMount = (editor: ICodeEditor) => {
+	const onEditorDidMount: OnMount = (editor: ICodeEditor, monaco) => {
 		editorRef.current = editor;
-		setEditor(editor);
 
 		editor.onDidChangeModelContent(() => {
 			onChange(editor.getValue());
@@ -32,8 +30,9 @@ export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => 
 				beforeMount={initMonaco}
 				onMount={onEditorDidMount}
 				options={MonacoConfig}
-				language="typescript"
+				language="javascript"
 				theme="vs-dark"
+				loading={<Loader type="Grid" color="cyan" />}
 				height="100%"
 			/>
 		</div>
@@ -41,21 +40,23 @@ export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => 
 };
 
 export const OptionsPanel = () => {
-	const { editor } = useContext(CodeBoxContext);
+	const monaco = useMonaco();
+	const format = useRef<any>();
 
-	const onFormatClick = () => {
-		if (!editor) return;
-		editor.getAction("editor.action.formatDocument").run();
-	};
+	useEffect(() => {
+		if (!monaco?.editor) return;
+		if (!format.current) {
+			format.current = monaco.editor.onDidCreateEditor((codeEditor) => {
+				format.current = codeEditor.getAction("editor.action.formatDocument");
+			});
+		}
+	}, []);
+
+	const runFormat = () => format.current.run();
 
 	return (
-		<div className="absolute top-0 z-20 flex  justify-end right-0 flex-grow px-6 py-2 gap-x-5">
-			<button
-				onClick={onFormatClick}
-				className="btn rounded-full  btn-warning"
-				role="button"
-				aria-pressed="true"
-			>
+		<div className="absolute top-0 right-0 z-20 flex justify-end flex-grow px-6 py-2 gap-x-5">
+			<button onClick={runFormat} className="rounded-full btn btn-success" role="button">
 				Format
 			</button>
 		</div>
