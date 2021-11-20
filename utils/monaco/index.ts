@@ -1,123 +1,57 @@
-import { Monaco, OnMount } from "@monaco-editor/react";
 import { editor as Internalmonaco } from "monaco-editor";
-import { ICodeEditor } from "../../typings/types";
-import { createWorkerQueue } from "../../workers/";
+import { Monaco, OnMount } from "@monaco-editor/react";
+import { registerEmmet } from "./plugins/emmet";
+import { registerDocumentPrettier } from "./plugins/register-prettier";
+import { registerSyntaxHighlighter } from "./plugins/syntax-highlight-support";
+import theme from "./theme/night-owl.json";
+
+export const initMonaco = (monaco: Monaco) => {
+	monaco.editor.defineTheme("night-owl", theme as any);
+
+	monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
+	monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
+
+	monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+	monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+
+	/**
+	 * Configure the typescript compiler to detect JSX and load type definitions
+	 */
+	const compilerOptions: any = {
+		allowJs: true,
+		allowSyntheticDefaultImports: true,
+		alwaysStrict: true,
+		noLib: true,
+		allowNonTsExtensions: true,
+		jsx: "React",
+		jsxFactory: "React.createElement",
+	};
+
+	monaco.languages.typescript.typescriptDefaults.setCompilerOptions(compilerOptions);
+	monaco.languages.typescript.javascriptDefaults.setCompilerOptions(compilerOptions);
+};
+
+export const initWorkers: OnMount = (editor, monaco) => {
+	registerSyntaxHighlighter(editor, monaco);
+	registerDocumentPrettier(editor, monaco);
+	registerEmmet(monaco);
+};
 
 export const MonacoConfig: Internalmonaco.IStandaloneEditorConstructionOptions = {
 	wordWrap: "bounded",
 	minimap: { enabled: false },
 	showUnused: false,
 	folding: true,
+	quickSuggestions: true,
 	padding: {
 		top: 10,
 		bottom: 10,
 	},
+	cursorBlinking: "expand",
+	fontLigatures: true,
 	automaticLayout: true,
 	lineNumbersMinChars: 3,
 	fontSize: 16,
 	contextmenu: true,
 	scrollBeyondLastLine: false,
 };
-
-export const initWorkers: OnMount = (editor, monaco) => {
-	registerSyntaxHighlighter(editor, monaco);
-	registerDocumentFormattingEditProviders(editor, monaco);
-};
-
-function registerDocumentFormattingEditProviders(editor: ICodeEditor, monaco: Monaco) {
-	const disposables: any = [];
-	let prettierWorker: any;
-
-	const formattingEditProvider = {
-		async provideDocumentFormattingEdits(model: any, _options: any, _token: any) {
-			if (!prettierWorker) {
-				prettierWorker = createWorkerQueue(
-					new Worker(new URL("../../workers/prettier.worker.js", import.meta.url))
-				);
-			}
-
-			const { canceled, error, pretty } = await prettierWorker?.emit({
-				text: model.getValue(),
-				language: model.getModeId(),
-			});
-
-			if (canceled || error) return [];
-			return [
-				{
-					range: model.getFullModelRange(),
-					text: pretty,
-				},
-			];
-		},
-	};
-
-	disposables.push(
-		monaco.languages.registerDocumentFormattingEditProvider(
-			"javascriptreact",
-			formattingEditProvider
-		)
-	);
-	
-	disposables.push(
-		monaco.languages.registerDocumentFormattingEditProvider(
-			"javascript",
-			formattingEditProvider
-		)
-	);
-
-	disposables.push(
-		monaco.languages.registerDocumentFormattingEditProvider(
-			"typescript",
-			formattingEditProvider
-		)
-	);
-
-	return {
-		dispose() {
-			disposables.forEach((disposable: any) => disposable.dispose());
-			if (prettierWorker) {
-				prettierWorker.terminate();
-			}
-		},
-	};
-}
-
-function registerSyntaxHighlighter(editor: ICodeEditor, monaco: Monaco) {
-	const { worker: syntaxWorker } = createWorkerQueue(
-		new Worker(new URL("../../workers/syntax-highlight.worker.js", import.meta.url))
-	);
-
-	const code = editor.getValue();
-
-	const title = "script.js";
-	const version = editor.getModel()?.getVersionId();
-
-	syntaxWorker.postMessage({
-		code,
-		title,
-		version,
-	});
-
-	syntaxWorker.addEventListener("message", (event: any) => {
-		const { classifications } = event.data;
-
-		requestAnimationFrame(() => {
-			const oldDecor: any = editor.getModel()?.getAllDecorations();
-			const decorations = classifications.map((classification: any) => ({
-				range: new monaco.Range(
-					classification.startLine,
-					classification.start,
-					classification.endLine,
-					classification.end
-				),
-				options: {
-					inlineClassName: classification.type
-						? `${classification.kind} ${classification.type}-of-${classification.parentKind}`
-						: classification.kind,
-				},
-			}));
-
-			editor.deltaDecorations(oldDecor, decorations);
-		});
-	});
-}

@@ -3,6 +3,7 @@
 @tailwind utilities;
 @import url("./syntax.css");
 
+
 #__next {
 	min-height: 100vh;
 }
@@ -84,29 +85,4 @@
 .monaco-editor .view-overlays .current-line {
 	border: none !important;
 	background-color: rgba(23, 25, 27, 1);
-}
-.mtk5 {
-	color: #99c794 !important;
-}
-.JsxText,
-.JsxSelfClosingElement,
-.JsxClosingElement {
-	color: #e0e0e0;
-}
-.tagName-of-JsxOpeningElement,
-.tagName-of-JsxClosingElement,
-.tagName-of-JsxSelfClosingElement {
-	color: #ec5f67;
-}
-.name-of-JsxAttribute {
-	color: #aa759f;
-}
-.name-of-PropertyAssignment {
-	color: #99c794;
-}
-.typeName-of-TypeReference {
-	color: #5faeec;
-}
-.name-of-PropertyAccessExpression {
-	color: #83bdc9;
 }

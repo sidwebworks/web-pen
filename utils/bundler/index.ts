@@ -4,12 +4,15 @@ import { unpkgPathPlugin } from "./unpkg-path.plugin";
 
 let serviceLoaded: boolean | null = null;
 
+declare const window: any;
+
 const bundler = async (rawCode: string) => {
 	if (!serviceLoaded) {
 		await initialize({
 			wasmURL: "https://unpkg.com/esbuild-wasm@0.13.14/esbuild.wasm",
 			worker: true,
 		});
+		window.bundler_initialized = true;
 		serviceLoaded = true;
 	}
 
@@ -27,7 +30,6 @@ const bundler = async (rawCode: string) => {
 		});
 
 		return { code: result.outputFiles[0].text, err: "" };
-
 	} catch (error: any) {
 		return { code: "", err: error.message };
 	}

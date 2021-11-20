@@ -7,8 +7,7 @@ import React, { useEffect, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { CodeEditorProps } from "../../typings/interfaces";
 import { ICodeEditor } from "../../typings/types";
-import { initWorkers, MonacoConfig } from "../../utils/monaco";
-import { initMonaco } from "../../utils/monaco/initialize";
+import { initMonaco, initWorkers, MonacoConfig } from "../../utils/monaco";
 
 export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => {
 	const editorRef = useRef<ICodeEditor | null>(null);

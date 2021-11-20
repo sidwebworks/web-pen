@@ -1,13 +1,6 @@
-import { ResizableBox } from "react-resizable";
-import { ResizableProps } from "../../typings/interfaces";
-import { useResizeable } from "../../utils/hooks/use-resizeable";
+import { useState } from "react";
 import SplitPane from "react-split-pane";
-import { useCallback, useState } from "react";
-
-const HEADER_HEIGHT = 60 - 1;
-const TAB_BAR_HEIGHT = 40;
-const RESIZER_SIZE = 1;
-const DEFAULT_RESPONSIVE_SIZE = { width: 540, height: 720 };
+import { useResizeable } from "../../utils/hooks/use-resizeable";
 
 export const Resizeable: React.FC<any> = ({
 	direction,
@@ -38,6 +31,7 @@ export const Resizeable: React.FC<any> = ({
 			minSize={100}
 			defaultSize={3000}
 			size={width}
+			primary="first"
 			className="react-resizer"
 			resizerClassName={"react-resizable-handle"}
 			onChange={(s: number) => setWidth(s)}
