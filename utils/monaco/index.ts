@@ -51,16 +51,13 @@ function registerDocumentFormattingEditProviders(editor: ICodeEditor, monaco: Mo
 		},
 	};
 
-	// override the built-in HTML formatter
-	const _registerDocumentFormattingEditProvider =
-		monaco.languages.registerDocumentFormattingEditProvider;
-	monaco.languages.registerDocumentFormattingEditProvider = (id, provider) => {
-		if (id !== "html") {
-			return _registerDocumentFormattingEditProvider(id, provider);
-		}
-		return _registerDocumentFormattingEditProvider("html", formattingEditProvider);
-	};
-
+	disposables.push(
+		monaco.languages.registerDocumentFormattingEditProvider(
+			"javascriptreact",
+			formattingEditProvider
+		)
+	);
+	
 	disposables.push(
 		monaco.languages.registerDocumentFormattingEditProvider(
 			"javascript",

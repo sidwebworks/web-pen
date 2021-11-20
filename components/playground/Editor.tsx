@@ -17,7 +17,7 @@ export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => 
 		editorRef.current = editor;
 
 		initWorkers(editor, monaco);
-		
+
 		editor.onDidChangeModelContent(() => {
 			onChange(editor.getValue());
 		});
@@ -46,11 +46,11 @@ export const OptionsPanel = () => {
 	useEffect(() => {
 		if (!monaco?.editor) return;
 		if (!format.current) {
-			format.current = monaco.editor.onDidCreateEditor((codeEditor) => {
+			monaco.editor.onDidCreateEditor((codeEditor) => {
 				format.current = codeEditor.getAction("editor.action.formatDocument");
 			});
 		}
-	}, []);
+	}, [monaco]);
 
 	const runFormat = () => format.current?.run();
 

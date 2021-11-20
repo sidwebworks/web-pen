@@ -35,14 +35,12 @@ export const Resizeable: React.FC<any> = ({
 		//@ts-ignore
 		<SplitPane
 			split={"vertical"}
-			minSize={50}
-			defaultSize={width}
+			minSize={100}
+			defaultSize={3000}
 			size={width}
 			className="react-resizer"
 			resizerClassName={"react-resizable-handle"}
 			onChange={(s: number) => setWidth(s)}
-			paneStyle={{ marginTop: -1 }}
-			pane1Style={{ display: "flex", flexDirection: "column" }}
 			onDragStarted={handleDragStart}
 			onDragFinished={handleDragEnd}
 		>

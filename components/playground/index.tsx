@@ -10,9 +10,10 @@ import { Resizeable } from "./Resizeable";
 const initialSnippet = `
 import React from "react"
 import ReactDOM from "react-dom"
+import Select from "react-select"
 
 const App = () => {
-	return(<h1>Hello React!</h1>)
+	return(<> <h1>Hello React!</h1> <Select/> </>)
 }
 
 ReactDOM.render(<App/>, document.querySelector("#root"))
