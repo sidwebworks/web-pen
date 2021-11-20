@@ -1,20 +1,9 @@
-import { useState } from "react";
 import SplitPane from "react-split-pane";
 import { useResizeable } from "../../utils/hooks/use-resizeable";
+import { debounce } from "../../utils";
 
-export const Resizeable: React.FC<any> = ({
-	direction,
-	children,
-	initialLayout,
-	initialActiveTab,
-	height = Infinity,
-}) => {
-	const { width, innerHeight, innerWidth, setWidth } = useResizeable();
-
-	const [activeTab, setActiveTab] = useState(initialActiveTab);
-	const [activePane, setActivePane] = useState(
-		initialLayout === "preview" ? "preview" : "editor"
-	);
+export const Resizeable: React.FC<any> = ({ children }) => {
+	const { width, innerWidth, setWidth } = useResizeable();
 
 	const handleDragStart = () => {
 		document.body.classList.add("react-draggable-transparent-selection");
@@ -24,17 +13,23 @@ export const Resizeable: React.FC<any> = ({
 		document.body.classList.remove("react-draggable-transparent-selection");
 	};
 
+	const handleChange = debounce((s: number) => {
+		setWidth(s);
+	}, 250);
+
+	if (!innerWidth) return null;
+
 	return (
 		//@ts-ignore
 		<SplitPane
 			split={"vertical"}
-			minSize={100}
-			defaultSize={3000}
+			minSize={innerWidth && innerWidth * 0.35}
+			defaultSize={innerWidth && innerWidth * 0.5}
 			size={width}
 			primary="first"
 			className="react-resizer"
 			resizerClassName={"react-resizable-handle"}
-			onChange={(s: number) => setWidth(s)}
+			onChange={handleChange}
 			onDragStarted={handleDragStart}
 			onDragFinished={handleDragEnd}
 		>

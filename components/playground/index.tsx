@@ -6,7 +6,6 @@ import { Editor, OptionsPanel } from "./Editor";
 import { Preview } from "./Preview";
 import { Resizeable } from "./Resizeable";
 
-
 const initialSnippet = `
 import React from "react"
 import ReactDOM from "react-dom"
@@ -29,14 +28,13 @@ const Playground = () => {
 			const { code, err } = await bundler(input);
 			setOutput(code);
 			setError(err);
-		}, 750);
+		}, 600);
 
 		return () => clearTimeout(timeout);
 	}, [input]);
 
 	return (
 		<>
-			<OptionsPanel />
 			<div className="flex flex-row flex-grow h-full">
 				<Resizeable direction="horizontal">
 					<Editor onChange={setInput} intialValue={initialSnippet} />

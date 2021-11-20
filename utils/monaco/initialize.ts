@@ -1,15 +1,17 @@
-import { editor as Internalmonaco } from "monaco-editor";
 import { Monaco, OnMount } from "@monaco-editor/react";
 import { registerEmmet } from "./plugins/emmet";
 import { registerDocumentPrettier } from "./plugins/register-prettier";
 import { registerSyntaxHighlighter } from "./plugins/syntax-highlight-support";
-import { registerAutoCompletion } from "./plugins/autocomplete";
-
 import theme from "./theme/night-owl.json";
 
 export const initMonaco = (monaco: Monaco) => {
+	// const themeData = JSON.parse(theme);
 	monaco.editor.defineTheme("night-owl", theme as any);
 
+	// /**
+	//  * Sync all the models to the worker eagerly.
+	//  * This enables intelliSense for all files without needing an `addExtraLib` call.
+	//  */
 	monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
 	monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
 
@@ -36,32 +38,5 @@ export const initMonaco = (monaco: Monaco) => {
 export const initWorkers: OnMount = (editor, monaco) => {
 	registerSyntaxHighlighter(editor, monaco);
 	registerDocumentPrettier(editor, monaco);
-	const { dispose } = registerEmmet(monaco);
-	registerAutoCompletion(monaco);
-
-	return () => {
-		dispose.jsx();
-		dispose.html();
-		dispose.css();
-	};
-};
-
-export const MonacoConfig: Internalmonaco.IStandaloneEditorConstructionOptions = {
-	wordWrap: "on",
-	minimap: { enabled: false },
-	showUnused: false,
-	folding: false,
-	quickSuggestions: true,
-	padding: {
-		top: 10,
-		bottom: 10,
-	},
-	cursorBlinking: "expand",
-	fontLigatures: true,
-	automaticLayout: true,
-	lineNumbersMinChars: 3,
-	autoClosingQuotes: "always",
-	fontSize: 16,
-	contextmenu: true,
-	scrollBeyondLastLine: false,
+	registerEmmet(monaco);
 };

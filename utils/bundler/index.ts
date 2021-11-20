@@ -12,8 +12,8 @@ const bundler = async (rawCode: string) => {
 			wasmURL: "https://unpkg.com/esbuild-wasm@0.13.14/esbuild.wasm",
 			worker: true,
 		});
-		window.bundler_initialized = true;
 		serviceLoaded = true;
+		window.bundler_initialized = true;
 	}
 
 	try {

@@ -1,10 +1,6 @@
 // /* eslint-disable no-param-reassign */
 import path from "path";
 
-self.importScripts([
-	"https://cdnjs.cloudflare.com/ajax/libs/typescript/2.7.2/typescript.min.js",
-]);
-
 const ROOT_URL = `https://cdn.jsdelivr.net/`;
 
 const loadedTypings = [];
