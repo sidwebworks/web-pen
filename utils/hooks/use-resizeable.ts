@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
+import { useDebouncedState } from "./use-debounced-state";
 import { useIsomorphicEffect } from "./use-isomorphic-effect";
 
 export const useResizeable = () => {
 	const [innerHeight, setInnerHeight] = useState<number>();
-	const [width, setWidth] = useState<number>();
+	const [width, setWidth] = useDebouncedState();
 	const [innerWidth, setInnerWidth] = useState<number>();
 	const isInitialMount = useRef(true);
 
@@ -25,7 +26,7 @@ export const useResizeable = () => {
 
 		if (isInitialMount.current) {
 			handler();
-			setWidth(window.innerWidth);
+			setWidth(window.innerWidth / 2);
 		}
 
 		isInitialMount.current = false;

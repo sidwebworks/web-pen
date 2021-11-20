@@ -1,7 +1,6 @@
 import PQueue from "p-queue";
 
-export function createWorkerQueue(Worker) {
-	const worker = new Worker();
+export function createWorkerQueue(worker) {
 	const queue = new PQueue({ concurrency: 1 });
 	return {
 		worker,

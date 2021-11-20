@@ -1,9 +1,11 @@
 import { createContext, useEffect, useMemo, useState } from "react";
 import { ICodeEditor } from "../../typings/types";
 import bundler from "../../utils/bundler";
+import { useDebouncedState } from "../../utils/hooks/use-debounced-state";
 import { Editor, OptionsPanel } from "./Editor";
 import { Preview } from "./Preview";
 import { Resizeable } from "./Resizeable";
+
 
 const initialSnippet = `
 import React from "react"
@@ -37,8 +39,8 @@ const Playground = () => {
 			<div className="flex flex-row flex-grow h-full">
 				<Resizeable direction="horizontal">
 					<Editor onChange={setInput} intialValue={initialSnippet} />
+					<Preview code={output} error={error} setError={setError} />
 				</Resizeable>
-				<Preview code={output} error={error} setError={setError} />
 			</div>
 		</>
 	);

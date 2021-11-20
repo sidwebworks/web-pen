@@ -80,7 +80,8 @@ function addChildNodes(node, lines, classifications) {
 
 // Respond to message from parent thread
 self.addEventListener("message", (event) => {
-	const { code, title, version } = event.data;
+	console.log('event: ', event);
+	let { code, title, version } = event.data;
 	try {
 		const classifications = [];
 		const sourceFile = self.ts.createSourceFile(
@@ -93,7 +94,7 @@ self.addEventListener("message", (event) => {
 
 		addChildNodes(sourceFile, lines, classifications);
 
-		self.postMessage({ classifications, version });
+		self.postMessage({ classifications, version }, { targetOrigin: "*" });
 	} catch (e) {
 		/* Ignore error */
 	}

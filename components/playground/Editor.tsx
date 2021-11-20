@@ -7,10 +7,8 @@ import React, { useEffect, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { CodeEditorProps } from "../../typings/interfaces";
 import { ICodeEditor } from "../../typings/types";
-import { MonacoConfig } from "../../utils/monaco";
+import { initWorkers, MonacoConfig } from "../../utils/monaco";
 import { initMonaco } from "../../utils/monaco/initialize";
-
-
 
 export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => {
 	const editorRef = useRef<ICodeEditor | null>(null);
@@ -18,6 +16,8 @@ export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => 
 	const onEditorDidMount: OnMount = (editor: ICodeEditor, monaco) => {
 		editorRef.current = editor;
 
+		initWorkers(editor, monaco);
+		
 		editor.onDidChangeModelContent(() => {
 			onChange(editor.getValue());
 		});
@@ -31,7 +31,7 @@ export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => 
 				onMount={onEditorDidMount}
 				options={MonacoConfig}
 				language="javascript"
-				theme="vs-dark"
+				theme="night-owl"
 				loading={<Loader type="Grid" color="cyan" />}
 				height="100%"
 			/>
@@ -52,7 +52,7 @@ export const OptionsPanel = () => {
 		}
 	}, []);
 
-	const runFormat = () => format.current.run();
+	const runFormat = () => format.current?.run();
 
 	return (
 		<div className="absolute top-0 right-0 z-20 flex justify-end flex-grow px-6 py-2 gap-x-5">

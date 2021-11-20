@@ -12,6 +12,10 @@ export const Preview: React.FC<PreviewProps> = ({ code, error, setError }) => {
 
 	useEffect(() => {
 		const handler = (event: any) => {
+            if (event.data?.title === "script.js") {
+                console.log('web worker: ', event);
+
+            }
 			if (event.data.type === "error") {
 				setError(event.data.error.toString());
 			}

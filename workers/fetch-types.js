@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+// /* eslint-disable no-param-reassign */
 import path from "path";
 
 self.importScripts([
