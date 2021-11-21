@@ -1,17 +1,19 @@
-import { editor as Internalmonaco } from "monaco-editor";
 import { Monaco, OnMount } from "@monaco-editor/react";
+import { editor as Internalmonaco } from "monaco-editor";
+import store from "../../redux";
 import { registerEmmet } from "./plugins/emmet";
 import { registerDocumentPrettier } from "./plugins/register-prettier";
-import { registerSyntaxHighlighter } from "./plugins/syntax-highlight-support";
-import { registerAutoCompletion } from "./plugins/autocomplete";
-
 import theme from "./theme/night-owl.json";
+
 
 export const initMonaco = (monaco: Monaco) => {
 	monaco.editor.defineTheme("night-owl", theme as any);
 
-	monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
-	monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
+	const files = store.getState().code.files;
+
+	files.forEach((el) => {
+		monaco.editor.createModel(el.value, el.language, monaco.Uri.parse(el.filename));
+	});
 
 	monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 	monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -23,9 +25,7 @@ export const initMonaco = (monaco: Monaco) => {
 		allowJs: true,
 		allowSyntheticDefaultImports: true,
 		alwaysStrict: true,
-		noLib: true,
 		allowNonTsExtensions: true,
-		jsx: "React",
 		jsxFactory: "React.createElement",
 	};
 
@@ -34,10 +34,10 @@ export const initMonaco = (monaco: Monaco) => {
 };
 
 export const initWorkers: OnMount = (editor, monaco) => {
-	registerSyntaxHighlighter(editor, monaco);
+	// registerSyntaxHighlighter(editor, monaco);
 	registerDocumentPrettier(editor, monaco);
 	const { dispose } = registerEmmet(monaco);
-	registerAutoCompletion(monaco);
+	// registerAutoCompletion(monaco);
 
 	return () => {
 		dispose.jsx();
@@ -51,17 +51,14 @@ export const MonacoConfig: Internalmonaco.IStandaloneEditorConstructionOptions =
 	minimap: { enabled: false },
 	showUnused: false,
 	folding: false,
-	quickSuggestions: true,
 	padding: {
 		top: 10,
 		bottom: 10,
 	},
 	cursorBlinking: "expand",
-	fontLigatures: true,
-	automaticLayout: true,
 	lineNumbersMinChars: 3,
-	autoClosingQuotes: "always",
 	fontSize: 16,
 	contextmenu: true,
 	scrollBeyondLastLine: false,
 };
+

@@ -29,18 +29,18 @@ export function registerDocumentPrettier(editor, monaco) {
 
 	disposables.push(
 		monaco.languages.registerDocumentFormattingEditProvider(
-			"javascriptreact",
-			formattingEditProvider
-		)
-	);
-
-	disposables.push(
-		monaco.languages.registerDocumentFormattingEditProvider(
 			"javascript",
 			formattingEditProvider
 		)
 	);
 
+	disposables.push(
+		monaco.languages.registerDocumentFormattingEditProvider("html", formattingEditProvider)
+	);
+
+	disposables.push(
+		monaco.languages.registerDocumentFormattingEditProvider("css", formattingEditProvider)
+	);
 	disposables.push(
 		monaco.languages.registerDocumentFormattingEditProvider(
 			"typescript",
@@ -57,4 +57,3 @@ export function registerDocumentPrettier(editor, monaco) {
 		},
 	};
 }
-

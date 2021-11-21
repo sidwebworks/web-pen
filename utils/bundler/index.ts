@@ -20,7 +20,6 @@ const bundler = async (rawCode: string) => {
 		const result = await build({
 			entryPoints: ["index.js"],
 			bundle: true,
-			platform: "browser",
 			write: false,
 			plugins: [unpkgPathPlugin(), fetchPlugin(rawCode)],
 			define: {
@@ -29,9 +28,9 @@ const bundler = async (rawCode: string) => {
 			},
 		});
 
-		return { code: result.outputFiles[0].text, err: "" };
+		return { code: result.outputFiles[0].text, err: null };
 	} catch (error: any) {
-		return { code: "", err: error.message };
+		return { code: "", err: error.message.split("error:") };
 	}
 };
 

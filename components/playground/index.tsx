@@ -1,44 +1,36 @@
-import { createContext, useEffect, useMemo, useState } from "react";
-import { ICodeEditor } from "../../typings/types";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux";
+import {
+	UPDATE_BUNDLE, UPDATE_ERROR
+} from "../../redux/actions/code.actions";
 import bundler from "../../utils/bundler";
-import { useDebouncedState } from "../../utils/hooks/use-debounced-state";
-import { Editor, OptionsPanel } from "./Editor";
+import { Editor } from "./Editor";
 import { Preview } from "./Preview";
 import { Resizeable } from "./Resizeable";
 
-const initialSnippet = `
-import React from "react"
-import ReactDOM from "react-dom"
-import Select from "react-select"
-
-const App = () => {
-	return(<> <h1>Hello React!</h1> <Select/> </>)
-}
-
-ReactDOM.render(<App/>, document.querySelector("#root"))
-`;
-
 const Playground = () => {
-	const [input, setInput] = useState(initialSnippet);
-	const [output, setOutput] = useState("");
-	const [error, setError] = useState("");
+	const unBundled = useSelector<RootState, any>(
+		(s) => s.code.files.find((el) => el.language === "javascript")!.value
+	);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const timeout = setTimeout(async () => {
-			const { code, err } = await bundler(input);
-			setOutput(code);
-			setError(err);
+			const { code, err } = await bundler(unBundled);
+			dispatch(UPDATE_BUNDLE(code));
+			dispatch(UPDATE_ERROR(err || null));
 		}, 600);
 
 		return () => clearTimeout(timeout);
-	}, [input]);
+	}, [unBundled]);
 
 	return (
 		<>
 			<div className="flex flex-row flex-grow h-full">
-				<Resizeable direction="horizontal">
-					<Editor onChange={setInput} intialValue={initialSnippet} />
-					<Preview code={output} error={error} setError={setError} />
+				<Resizeable direction="vertical">
+					<Editor />
+					<Preview />
 				</Resizeable>
 			</div>
 		</>

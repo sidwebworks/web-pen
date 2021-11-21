@@ -1,67 +1,78 @@
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 	ssr: false,
 });
-import { OnMount, useMonaco } from "@monaco-editor/react";
+import { OnMount } from "@monaco-editor/react";
 import dynamic from "next/dynamic";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import Loader from "react-loader-spinner";
-import { CodeEditorProps } from "../../typings/interfaces";
-import { ICodeEditor } from "../../typings/types";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux";
+import { UPDATE_EDITOR } from "../../redux/actions/code.actions";
+import { debounce } from "../../utils";
 import { initMonaco, initWorkers, MonacoConfig } from "../../utils/monaco";
+import { ICodeEditor } from "../../utils/typings/types";
+import { HeaderPanel } from "./Header";
 
-export const Editor: React.FC<CodeEditorProps> = ({ intialValue, onChange }) => {
-	const editorRef = useRef<ICodeEditor | null>(null);
+export const Editor: React.FC = () => {
+	const instance = useRef<{ editor: ICodeEditor; format: any } | null>(null);
+	const activeModel = useRef<any>();
+	const dispatch = useDispatch();
+	const active = useSelector<RootState, any>((s) => s.code.active_tab);
+	const file = useSelector<RootState, any>((s) =>
+		s.code.files.find((e) => e.filename === active)
+	);
 
-	const onEditorDidMount: OnMount = (editor: ICodeEditor, monaco) => {
-		editorRef.current = editor;
+	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
+		const format = editor.getAction("editor.action.formatDocument");
+
+		instance.current = { editor, format };
+
+		activeModel.current = editor.getModel();
 
 		initWorkers(editor, monaco);
 
-		editor.onDidChangeModelContent(() => {
-			onChange(editor.getValue());
+		editor.onDidChangeModel((e) => {
+			const uri = e.newModelUrl;
+			if (uri) {
+				activeModel.current = monaco.editor.getModel(uri);
+			}
 		});
-	};
+
+		editor.onDidChangeModelContent(
+			debounce(() => {
+				const model = activeModel.current;
+				if (model) {
+					model.editor.saveViewState();
+				}
+			}, 500)
+		);
+
+		editor.onDidChangeModelContent(() => {
+			const model = activeModel.current;
+			const language = model._languageIdentifier.language;
+
+			dispatch(UPDATE_EDITOR({ type: language, code: model.getValue() }));
+		});
+	}, []);
+
+	const formatCode = () => instance.current?.format.run();
 
 	return (
 		<>
-			<OptionsPanel />
-
+			<HeaderPanel formatCode={formatCode} />
 			<div className="editor-wrapper">
 				<MonacoEditor
-					value={intialValue}
 					beforeMount={initMonaco}
 					onMount={onEditorDidMount}
 					options={MonacoConfig}
-					language="javascript"
-					theme="night-owl"
+					theme="vs-dark"
+					path={active}
+					value={file.value}
+					language={file.language}
 					loading={<Loader type="Grid" color="cyan" />}
-					height="100%"
+					height="100vh"
 				/>
 			</div>
 		</>
-	);
-};
-
-export const OptionsPanel = () => {
-	const monaco = useMonaco();
-	const format = useRef<any>();
-
-	useEffect(() => {
-		if (!monaco?.editor) return;
-		if (!format.current) {
-			monaco.editor.onDidCreateEditor((codeEditor) => {
-				format.current = codeEditor.getAction("editor.action.formatDocument");
-			});
-		}
-	}, [monaco]);
-
-	const runFormat = () => format.current?.run();
-
-	return (
-		<div className="top-0 right-0 z-20 flex justify-end flex-grow px-6 py-1 gap-x-5">
-			<button onClick={runFormat} className="rounded-full btn-sm btn-success" role="button">
-				Format
-			</button>
-		</div>
 	);
 };

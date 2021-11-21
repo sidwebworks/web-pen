@@ -1,23 +1,41 @@
-import { Dispatch, memo, SetStateAction, useEffect, useRef } from "react";
-import { ErrorComponent } from "./Console";
+import { nanoid } from "@reduxjs/toolkit";
+import {
+    SyntheticEvent,
+    useEffect,
+    useRef
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux";
+import { ADD_LOG } from "../../redux/actions/code.actions";
+import { ConsoleComponent } from "./Console";
+import { Resizeable } from "./Resizeable";
 
-interface PreviewProps {
-	code: string;
-	error: string;
-	setError: Dispatch<SetStateAction<string>>;
-}
-
-export const Preview: React.FC<PreviewProps> = ({ code, error, setError }) => {
+export const Preview: React.FC = () => {
 	const iFrameRef = useRef<HTMLIFrameElement | null>(null);
+	const dispatch = useDispatch();
+
+	const html = useSelector<RootState, string>(
+		(s) => s.code.files.find((s) => s.language === "html")!.value
+	);
+	const css = useSelector<RootState, string>(
+		(s) => s.code.files.find((s) => s.language === "css")!.value
+	);
+	const javascript = useSelector<RootState, string>((s) => s.code.bundle);
+
+	const loadCode = (e: HTMLIFrameElement) => {
+		e.contentWindow!.postMessage({ html: html }, "*");
+		e.contentWindow!.postMessage({ css: css }, "*");
+		e.contentWindow!.postMessage({ javascript: javascript }, "*");
+	};
 
 	useEffect(() => {
 		const handler = (event: any) => {
-            if (event.data?.title === "script.js") {
-                console.log('web worker: ', event);
-
-            }
 			if (event.data.type === "error") {
-				setError(event.data.error.toString());
+				console.log(event.data.error);
+			}
+			if (event.data.type === "console") {
+				console.log("event: ", event);
+				dispatch(ADD_LOG({ method: event.data.method, data: event.data.data, id: nanoid() }));
 			}
 		};
 
@@ -26,61 +44,114 @@ export const Preview: React.FC<PreviewProps> = ({ code, error, setError }) => {
 		return () => window.removeEventListener("message", handler);
 	}, []);
 
-	useEffect(() => {
-		iFrameRef.current!.srcdoc = _html;
-		const timeout = setTimeout(() => {
-			iFrameRef.current!.contentWindow!.postMessage(code, "*");
-		}, 50);
+	const onInit = (e: SyntheticEvent<HTMLIFrameElement>) => {
+		loadCode(e.currentTarget);
+	};
 
-		return () => clearTimeout(timeout);
-	}, [code]);
+	useEffect(() => {
+		if (iFrameRef.current) {
+			loadCode(iFrameRef.current);
+		}
+	}, [javascript, css, html]);
 
 	return (
-		<div className="preview-wrapper">
-			<iframe title="preview" srcDoc={_html} ref={iFrameRef} sandbox="allow-scripts" />{" "}
-			<ErrorComponent error={error} />
-		</div>
+		<Resizeable direction="horizontal">
+			<div className="preview-wrapper">
+				<iframe
+					onLoad={(e) => onInit(e)}
+					title="preview"
+					srcDoc={_html}
+					ref={iFrameRef}
+					sandbox="allow-scripts"
+				/>
+			</div>
+			<ConsoleComponent />
+		</Resizeable>
 	);
 };
 
 const _html = `
 <html lang="en">
     <head> 
+    <style id="_style">
+    </style>
     </head>
     <body>
-    <div id="root"></div>
-    <script>
-        const handleError = (err) => {
-            console.log('err: ', err);
-            const message = {
-                error: err,
-                type: "error"
-            };
-            window.parent.postMessage(message, '*');
-        }
+    </body>
 
+    <script>
+    const handleError = (err) => {
+        const message = {
+            error: err,
+            type: "error"
+        };
+        window.parent.postMessage(message, '*');
+    }
+
+    const _log = console.log
+
+    const types = ['log', 'debug', 'info', 'warn', 'error', 'table', 'clear', 'time', 'timeEnd', 'count' , 'assert']
+
+    function proxy(context, method, message) { 
+        return function() {
+            window.parent.postMessage({type: "console", method: method.name, data: Array.prototype.slice.apply(arguments)}, '*');
+        }
+      }
+
+      types.forEach(el =>  {
+        window.console[el] = proxy(console, console[el], el)
+      })
+
+    function setHtml(html) {
+          document.body.innerHTML = html
+    }
+
+      function executeJs(javascript) {
+        try {
+            eval(javascript)
+        } catch (err) {
+            handleError(err.message)
+        }
+    }
+
+   
+      function setCss(css) {
+        const style = document.getElementById('_style')
+        const newStyle = document.createElement('style')
+        newStyle.id = '_style'
+        newStyle.innerHTML = typeof css === 'undefined' ? '' : css
+        style.parentNode.replaceChild(newStyle, style)
+        hasCss = typeof css === 'undefined' ? false : true
+      }
+   
+
+      window.addEventListener(
+        "error",
+        (event) => {
+           handleError(event.error)
+        },
+        false
+    );
+   
         window.addEventListener(
-            "error",
-            (event) => {
-                console.log('error event: ', event);
-               handleError(event.error)
+            "message",
+            (e) => {
+                if (typeof e.data.html !== 'undefined'){
+                    setHtml(e.data.html)
+                }
+
+               if (typeof e.data.javascript !== 'undefined'){
+                 executeJs(e.data.javascript)
+               } 
+
+               if (typeof e.data.css !== 'undefined'){
+                setCss(e.data.css)
+               } 
             },
             false
         );
-       
-            window.addEventListener(
-                "message",
-                (event) => {
-                    try {
-                        eval(event.data)
-                    } catch (err) {
-                        handleError(err)
-                    }
-                },
-                false
-            );
-            
-    </script>
-    </body>
+        
+</script>
+
 </html>
 `;

@@ -4,16 +4,29 @@ const options = {
 	html: async () => ({
 		parser: "html",
 		plugins: [await import("prettier/parser-html")],
-		printWidth: 120,
+		printWidth: 100,
+	}),
+
+	css: async () => ({
+		parser: "css",
+		plugins: [await import("prettier/parser-postcss")],
+		printWidth: 100,
 	}),
 
 	javascript: async () => ({
 		parser: "babel",
 		plugins: [await import("prettier/parser-babel")],
-		printWidth: 90,
+		printWidth: 100,
 		semi: true,
+		useTabs: false,
+		singleQuote: true,
+	}),
+	typescript: async () => ({
 		parser: "babel",
-		useTabs: true,
+		plugins: [await import("prettier/parser-babel")],
+		printWidth: 100,
+		semi: true,
+		useTabs: false,
 		singleQuote: true,
 	}),
 };
