@@ -1,3 +1,4 @@
+import { nanoid } from "@reduxjs/toolkit";
 import { build, BuildOptions, initialize } from "esbuild-wasm";
 import { fetchPlugin } from "./fetch.plugin";
 import { unpkgPathPlugin } from "./unpkg-path.plugin";
@@ -30,7 +31,7 @@ const bundler = async (rawCode: string) => {
 
 		return { code: result.outputFiles[0].text, err: null };
 	} catch (error: any) {
-		return { code: "", err: error.message.split("error:") };
+		return { code: "", err: { method: "error", data: [error.message], id: nanoid() } };
 	}
 };
 

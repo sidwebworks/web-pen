@@ -3,8 +3,8 @@ import { editor as Internalmonaco } from "monaco-editor";
 import store from "../../redux";
 import { registerEmmet } from "./plugins/emmet";
 import { registerDocumentPrettier } from "./plugins/register-prettier";
-import theme from "./theme/night-owl.json";
 
+import theme from "./theme/night-owl.json";
 
 export const initMonaco = (monaco: Monaco) => {
 	monaco.editor.defineTheme("night-owl", theme as any);
@@ -61,4 +61,3 @@ export const MonacoConfig: Internalmonaco.IStandaloneEditorConstructionOptions =
 	contextmenu: true,
 	scrollBeyondLastLine: false,
 };
-

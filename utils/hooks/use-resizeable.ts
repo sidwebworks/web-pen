@@ -2,9 +2,11 @@ import { useRef, useState } from "react";
 import { useDebouncedState } from "./use-debounced-state";
 import { useIsomorphicEffect } from "./use-isomorphic-effect";
 
-export const useResizeable = () => {
+export const useResizeable = (type) => {
 	const [innerHeight, setInnerHeight] = useState<number>();
 	const [width, setWidth] = useDebouncedState();
+	const [height, setHeight] = useDebouncedState();
+	const isVertical = type === "vertical";
 	const [innerWidth, setInnerWidth] = useState<number>();
 	const isInitialMount = useRef(true);
 
@@ -18,15 +20,21 @@ export const useResizeable = () => {
 			timer = setTimeout(() => {
 				setInnerWidth(window.innerWidth);
 				setInnerHeight(window.innerHeight);
-				if (window.innerWidth * 0.75 < width!) {
+				if (isVertical && window.innerWidth * 0.75 < width!) {
 					setWidth(window.innerWidth * 0.75);
+				} else if (window.innerHeight * 0.75 < height!) {
+					setHeight(window.innerHeight * 0.75);
 				}
 			}, 100);
 		};
 
 		if (isInitialMount.current) {
 			handler();
-			setWidth(window.innerWidth / 2);
+			if (isVertical) {
+				setWidth(window.innerWidth / 2);
+			} else {
+				setHeight(window.innerHeight / 2);
+			}
 		}
 
 		isInitialMount.current = false;
@@ -36,5 +44,5 @@ export const useResizeable = () => {
 		return () => window.removeEventListener("resize", handler);
 	}, [width]);
 
-	return { innerHeight, innerWidth, width, setWidth };
+	return { innerHeight, height, setHeight, innerWidth, width, setWidth };
 };

@@ -38,14 +38,14 @@ export const Editor: React.FC = () => {
 			}
 		});
 
-		editor.onDidChangeModelContent(
+		editor.onDidChangeModelContent(() => {
+			const model = activeModel.current;
 			debounce(() => {
-				const model = activeModel.current;
-				if (model) {
+				if (model.editor?.saveViewState) {
 					model.editor.saveViewState();
 				}
-			}, 500)
-		);
+			});
+		});
 
 		editor.onDidChangeModelContent(() => {
 			const model = activeModel.current;

@@ -3,35 +3,30 @@ import { Console } from "console-feed";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux";
-export const ErrorComponent = ({ error }: { error: string }) => {
-	return (
-		<h1
-			className={clsx([
-				error ? "absolute bottom-0 w-full bg-black text-red-500 p-2" : "hidden",
-			])}
-		>
-			{error}
-		</h1>
-	);
-};
 
 export const ConsoleComponent = () => {
-	const logs = useSelector<RootState, { data: any; method: string }[]>((s) => s.code.logs);
+	const logs = useSelector<RootState, any[]>((s) => s.code.logs);
 
 	return (
-		<div className="relative bg-gray-800 pt-5 ">
-			<div className="absolute -top-2 inset-x-0 max-w-xs mx-auto bg-gray-800 h-4 rounded-t-full" />
+		<div className="relative bg-gray-900 pt-3 ">
+			<div className="absolute -top-2 inset-x-0 max-w-xs mx-auto bg-gray-900 h-4 rounded-t-full" />
+			<div className="w-full max-h-[47.5vh] bg-scroll overflow-y-auto">
 			<Console
 				styles={{
-					BASE_BACKGROUND_COLOR: "#27272A",
-					BASE_COLOR: "#27272A",
-					LOG_ERROR_BACKGROUND: "#27272A",
-					LOG_BACKGROUND: "#27272A",
-					LOG_RESULT_BACKGROUND: "#27272A",
+					BASE_BACKGROUND_COLOR: "#18181B",
+					LOG_ERROR_BORDER: "red",
+					LOG_ERROR_COLOR: "red",
+					LOG_ERROR_ICON: " red",
+					LOG_ERROR_BACKGROUND: "#18181B",
+					BASE_COLOR: "gray",
+					LOG_BACKGROUND: "#18181B",
+					LOG_RESULT_BACKGROUND: "#18181B",
+					
 				}}
 				variant="dark"
 				logs={logs}
 			/>
+			</div>
 		</div>
 	);
 };

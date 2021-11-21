@@ -16,7 +16,7 @@ export function registerSyntaxHighlighter(editor, monaco) {
 				title,
 				version,
 			});
-		}, 700)
+		}, 200)
 	);
 
 	syntaxWorker.addEventListener("message", (event) => {

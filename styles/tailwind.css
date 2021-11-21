@@ -3,15 +3,42 @@
 @tailwind utilities;
 @import url("./syntax.css");
 
-
 #__next {
 	min-height: 100vh;
 }
 
 .preview-wrapper {
 	position: relative;
-	height: 100%;
+	min-height: 100%;
 	flex-grow: 1;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hideScroll::-webkit-scrollbar-track {
+	-webkit-appearance: none;
+}
+.hideScroll::-webkit-scrollbar {
+	width: 0;
+}
+.hideScroll::-webkit-scrollbar-thumb {
+	-webkit-appearance: none;
+}
+
+*::-webkit-scrollbar {
+	width: 6px; /* width of the entire scrollbar */
+}
+*::-webkit-scrollbar-track {
+	background: transparent; /* color of the tracking area */
+}
+*::-webkit-scrollbar-thumb {
+	background-color: rgba(184, 184, 184, 0.4); /* color of the scroll thumb */
+	border-radius: 20px; /* roundness of the scroll thumb */
+	/* creates padding around scroll thumb */
+}
+
+.hideScroll {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 .preview-wrapper iframe {

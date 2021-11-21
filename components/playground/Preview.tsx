@@ -1,9 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
-import {
-    SyntheticEvent,
-    useEffect,
-    useRef
-} from "react";
+import { SyntheticEvent, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
 import { ADD_LOG } from "../../redux/actions/code.actions";
@@ -30,12 +26,14 @@ export const Preview: React.FC = () => {
 
 	useEffect(() => {
 		const handler = (event: any) => {
-			if (event.data.type === "error") {
-				console.log(event.data.error);
-			}
 			if (event.data.type === "console") {
-				console.log("event: ", event);
-				dispatch(ADD_LOG({ method: event.data.method, data: event.data.data, id: nanoid() }));
+				dispatch(
+					ADD_LOG({
+						method: event.data.method,
+						data: JSON.parse(event.data.data),
+						id: nanoid(),
+					})
+				);
 			}
 		};
 
@@ -80,13 +78,7 @@ const _html = `
     </body>
 
     <script>
-    const handleError = (err) => {
-        const message = {
-            error: err,
-            type: "error"
-        };
-        window.parent.postMessage(message, '*');
-    }
+   
 
     const _log = console.log
 
@@ -94,7 +86,7 @@ const _html = `
 
     function proxy(context, method, message) { 
         return function() {
-            window.parent.postMessage({type: "console", method: method.name, data: Array.prototype.slice.apply(arguments)}, '*');
+            window.parent.postMessage({type: "console", method: method.name, data: JSON.stringify(Array.prototype.slice.apply(arguments))}, '*');
         }
       }
 
@@ -110,7 +102,7 @@ const _html = `
         try {
             eval(javascript)
         } catch (err) {
-            handleError(err.message)
+            console.error(err.message)
         }
     }
 
@@ -128,7 +120,7 @@ const _html = `
       window.addEventListener(
         "error",
         (event) => {
-           handleError(event.error)
+           console.error(event.error)
         },
         false
     );
