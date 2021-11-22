@@ -4,11 +4,7 @@ import store from "../../redux";
 import { registerEmmet } from "./plugins/emmet";
 import { registerDocumentPrettier } from "./plugins/register-prettier";
 
-import theme from "./theme/night-owl.json";
-
 export const initMonaco = (monaco: Monaco) => {
-	monaco.editor.defineTheme("night-owl", theme as any);
-
 	const files = store.getState()?.editor.files;
 
 	files.forEach((el) => {

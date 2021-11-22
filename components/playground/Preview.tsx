@@ -1,8 +1,9 @@
-import { nanoid } from "@reduxjs/toolkit";
-import clsx from "clsx";
-import { SyntheticEvent, useCallback, useEffect, useRef } from "react";
+import { Transition } from "@headlessui/react";
+import { useCallback, useEffect, useRef } from "react";
+import Loader from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
+import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import { PRINT_CONSOLE } from "../../redux/actions/editor.actions";
 import { ConsoleComponent } from "./Console";
 import { Resizeable } from "./Resizeable";
@@ -11,6 +12,9 @@ export const Preview: React.FC = () => {
 	const iFrameRef = useRef<HTMLIFrameElement | null>(null);
 	const dispatch = useDispatch();
 	const javascript = useSelector<RootState, string>((s) => s.bundler.bundle);
+	const isBundling = useSelector<RootState, boolean>((s) => s.bundler.isBundling);
+	const isInit = useSelector<RootState, boolean>((s) => s.bundler.initialized);
+
 	const html = useSelector<RootState, string>(
 		(s) => s.editor.files.find((s) => s.language === "html")!.value
 	);
@@ -34,6 +38,10 @@ export const Preview: React.FC = () => {
 	}, [javascript, css, html]);
 
 	useEffect(() => {
+		if (!javascript) {
+			dispatch(CREATE_BUNDLE());
+		}
+
 		const handler = (event: any) => {
 			if (event.data.type === "console") {
 				dispatch(
@@ -50,15 +58,25 @@ export const Preview: React.FC = () => {
 		return () => window.removeEventListener("message", handler);
 	}, []);
 
-	const onInit = (e: SyntheticEvent<HTMLIFrameElement>) => {
-		loadCode(e.currentTarget);
-	};
-
 	return (
 		<Resizeable direction="horizontal">
 			<div className={"preview-wrapper"}>
+				<Transition
+					appear={true}
+					show={isBundling || !isInit}
+					key={"asdasd"}
+					enter="transition duration-100  ease-out"
+					enterFrom="transform  opacity-0"
+					enterTo="transform opacity-100"
+					leave="transition duration-75 ease-out"
+					leaveFrom="transform opacity-100"
+					leaveTo="transform opacity-0"
+					className="w-full h-full absolute z-10 bg-gray-900 grid place-items-center"
+				>
+					<Loader type="ThreeDots" color="cyan" />
+				</Transition>
 				<iframe
-					onLoad={(e) => onInit(e)}
+					onLoad={(e) => loadCode(e.currentTarget)}
 					title="preview"
 					srcDoc={_html}
 					ref={iFrameRef}
@@ -102,7 +120,7 @@ function proxy(context, method, message) {
   })
 
 function setHtml(html) {
-      document.body.innerHTML = html
+    document.body.innerHTML = html
 }
 
   function executeJs(javascript) {

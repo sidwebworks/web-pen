@@ -2,20 +2,20 @@ import SplitPane from "react-split-pane";
 import { useResizeable } from "../../utils/hooks/use-resizeable";
 import { debounce } from "../../utils";
 
-export const Resizeable: React.FC<any> = ({ children, direction, ...rest }) => {
+export const Resizeable: React.FC<any> = ({ children, direction }) => {
 	const { width, innerWidth, innerHeight, setWidth, setHeight } = useResizeable(direction);
 
 	const isVertical = direction === "vertical";
 
 	const innerSize = isVertical ? innerWidth : innerHeight;
-	
+
 	const handleDragStart = () => {
 		document.body.classList.add("react-draggable-transparent-selection");
 	};
 
 	const handleDragEnd = debounce(() => {
 		document.body.classList.remove("react-draggable-transparent-selection");
-	}, 200);
+	});
 
 	const handleChange = debounce((s: number) => {
 		if (isVertical) {

@@ -8,7 +8,7 @@ import { debounce } from "../../utils";
 
 export const HeaderPanel = ({ formatCode }: any) => {
 	const dispatch = useDispatch();
-    
+
 	const runCode = debounce(() => {
 		dispatch(CREATE_BUNDLE());
 	});
@@ -24,11 +24,11 @@ export const HeaderPanel = ({ formatCode }: any) => {
 					className="rounded-full btn btn-xs border-0 bg-gray-800"
 					role="button"
 				>
-					<AlignLeft className="w-5 h-5 stroke-current text-cyan-400" />
+					<AlignLeft className="w-5 h-5 stroke-current text-green-400" />
 				</button>
 				<button
-					aria-label="format code"
-					title="format code"
+					aria-label="bundle code"
+					title="bundle code"
 					onClick={runCode}
 					className="rounded-full btn  btn-xs border-0 bg-gray-800"
 					role="button"

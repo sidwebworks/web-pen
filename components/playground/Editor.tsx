@@ -1,20 +1,19 @@
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
-	ssr: false,
-});
+import MonacoEditor from "@monaco-editor/react";
 import { OnMount } from "@monaco-editor/react";
-import dynamic from "next/dynamic";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import Loader from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
+import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
+import { UPDATE_CODE } from "../../redux/actions/editor.actions";
 import { debounce } from "../../utils";
 import { initMonaco, initWorkers, MonacoConfig } from "../../utils/monaco";
 import { ICodeEditor } from "../../utils/typings/types";
-import { HeaderPanel } from "./Header";
-import Loader from "react-loader-spinner";
-import { UPDATE_CODE } from "../../redux/actions/editor.actions";
 import { FooterPanel } from "./Footer";
+import { HeaderPanel } from "./Header";
 
-export const Editor: React.FC = () => {
+let isInit = true;
+const Editor: React.FC = () => {
 	const instance = useRef<{ editor: ICodeEditor; format: any } | null>(null);
 	const activeModel = useRef<any>();
 	const dispatch = useDispatch();
@@ -23,6 +22,20 @@ export const Editor: React.FC = () => {
 	const file = useSelector<RootState, any>((s) =>
 		s.editor.files.find((e) => e.filename === active_file)
 	);
+	const javascript = useSelector<RootState, any>((s) =>
+		s.editor.files.find((e) => e.language === "javascript")
+	);
+
+	useEffect(() => {
+		if (isInit) {
+			isInit = false;
+			return;
+		}
+		const timer = setTimeout(() => {
+			dispatch(CREATE_BUNDLE());
+		}, 800);
+		return () => clearInterval(timer);
+	}, [javascript]);
 
 	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
 		const format = editor.getAction("editor.action.formatDocument");
@@ -53,7 +66,6 @@ export const Editor: React.FC = () => {
 			debounce(() => {
 				const model = activeModel.current;
 				const language = model._languageIdentifier.language;
-
 				dispatch(UPDATE_CODE({ type: language, code: model.getValue() }));
 			})
 		);
@@ -74,9 +86,10 @@ export const Editor: React.FC = () => {
 				value={file.value}
 				language={file.language}
 				height={"100%"}
-				loading={<Loader type="Puff" color="cyan" />}
 			/>
 			<FooterPanel />
 		</main>
 	);
 };
+
+export default Editor;

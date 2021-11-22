@@ -10,12 +10,14 @@ export const ConsoleComponent = () => {
 	const logs = useSelector<RootState, any[]>((s) => s.editor.console);
 	const dispatch = useDispatch();
 
+
+
+
 	const handleClear = () => dispatch(CLEAR_LOGS());
 
 	return (
 		<div className="relative bottom-0 bg-gray-900 group pt-3 ">
-			<div className="absolute -top-3 text-sm text-gray-500 inset-x-0  transition-opacity duration-200 ease-in-out group-hover:opacity-0  text-center max-w-xs mx-auto bg-gray-900 h-4 rounded-t-full">
-				console
+			<div className="absolute -top-2 text-sm text-gray-500 inset-x-0  transition-opacity duration-200 ease-in-out group-hover:opacity-0  text-center max-w-xs mx-auto bg-gray-900 h-4 rounded-t-full">
 			</div>
 			<button
 				onClick={handleClear}
