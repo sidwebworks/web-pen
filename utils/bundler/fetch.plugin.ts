@@ -39,12 +39,15 @@ export const fetchPlugin = (inputCode: string) => ({
 			const { data, request } = await axios.get(args.path);
 
 			const contents = normalizeCss(data);
+			console.log(args.path);
 
 			const result: OnLoadResult = {
 				loader: "jsx",
 				contents,
 				resolveDir: new URL("./", request.responseURL).pathname,
 			};
+
+			console.log(request.responseURL);
 
 			await fileCache.setItem(args.path, result);
 
@@ -53,12 +56,14 @@ export const fetchPlugin = (inputCode: string) => ({
 
 		build.onLoad({ filter: /.*/ }, async (args: any) => {
 			const { data, request } = await axios.get(args.path);
-
+			console.log(args.path);
 			const result: OnLoadResult = {
 				loader: "jsx",
 				contents: data,
 				resolveDir: new URL("./", request.responseURL).pathname,
 			};
+
+			console.log(request.responseURL);
 
 			await fileCache.setItem(args.path, result);
 

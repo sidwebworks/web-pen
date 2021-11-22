@@ -16,9 +16,11 @@ export const unpkgPathPlugin = () => ({
 		 * Resolve relative modules imports
 		 */
 		build.onResolve({ filter: /^\.+\// }, (args: any) => {
+			const url = new URL(args.path, unpkg_path + args.resolveDir + "/").href
+			console.log('url: ', url);
 			return {
 				namespace: "a",
-				path: new URL(args.path, unpkg_path + args.resolveDir + "/").href,
+				path: url,
 			};
 		});
 
