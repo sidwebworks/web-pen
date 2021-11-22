@@ -1,11 +1,12 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { build, BuildOptions, initialize } from "esbuild-wasm";
+import { build, BuildOptions, initialize, analyzeMetafile } from "esbuild-wasm";
+import store from "../../redux";
+import { INIT_BUNDLER } from "../../redux/actions/bundler.actions";
+import { PRINT_CONSOLE } from "../../redux/actions/editor.actions";
 import { fetchPlugin } from "./fetch.plugin";
 import { unpkgPathPlugin } from "./unpkg-path.plugin";
 
 let serviceLoaded: boolean | null = null;
-
-declare const window: any;
 
 const bundler = async (rawCode: string) => {
 	if (!serviceLoaded) {
@@ -14,7 +15,8 @@ const bundler = async (rawCode: string) => {
 			worker: true,
 		});
 		serviceLoaded = true;
-		window.bundler_initialized = true;
+		store.dispatch(INIT_BUNDLER());
+		store.dispatch(PRINT_CONSOLE({method:"info", data: ["Bundler initialized...Happy coding ❤️"]}));
 	}
 
 	try {

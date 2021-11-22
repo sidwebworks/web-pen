@@ -18,6 +18,7 @@ export function registerDocumentPrettier(editor, monaco) {
 			});
 
 			if (canceled || error) return [];
+
 			return [
 				{
 					range: model.getFullModelRange(),

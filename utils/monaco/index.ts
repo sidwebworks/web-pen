@@ -9,11 +9,15 @@ import theme from "./theme/night-owl.json";
 export const initMonaco = (monaco: Monaco) => {
 	monaco.editor.defineTheme("night-owl", theme as any);
 
-	const files = store.getState().code.files;
+	const files = store.getState()?.editor.files;
 
 	files.forEach((el) => {
-		monaco.editor.createModel(el.value, el.language, monaco.Uri.parse(el.filename));
+		const uri = monaco.Uri.parse(el.filename);
+		monaco.editor.createModel(el.value, el.language, uri);
 	});
+
+	monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
+	monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
 
 	monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 	monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -47,17 +51,31 @@ export const initWorkers: OnMount = (editor, monaco) => {
 };
 
 export const MonacoConfig: Internalmonaco.IStandaloneEditorConstructionOptions = {
-	wordWrap: "on",
+	wordWrap: "off",
 	minimap: { enabled: false },
 	showUnused: false,
-	folding: false,
+	folding: true,
 	padding: {
 		top: 10,
-		bottom: 10,
+		bottom: 70,
 	},
 	cursorBlinking: "expand",
 	lineNumbersMinChars: 3,
 	fontSize: 16,
 	contextmenu: true,
 	scrollBeyondLastLine: false,
+};
+
+export const defaultSnippets = {
+	html: `<div id="root"></div>`,
+	js: [
+		"import React from 'react';",
+		"import ReactDOM from 'react-dom';",
+		"import Select from 'react-select';",
+		"",
+		"const App = () => <div>Hello React! <Select /> </div>",
+		"",
+		"ReactDOM.render(<App />, document.querySelector('#root'));",
+	].join("\n"),
+	css: ["body {", " background-color: white;", "}"].join("\n"),
 };

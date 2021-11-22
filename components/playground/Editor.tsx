@@ -4,22 +4,24 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 import { OnMount } from "@monaco-editor/react";
 import dynamic from "next/dynamic";
 import React, { useCallback, useRef } from "react";
-import Loader from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
-import { UPDATE_EDITOR } from "../../redux/actions/code.actions";
 import { debounce } from "../../utils";
 import { initMonaco, initWorkers, MonacoConfig } from "../../utils/monaco";
 import { ICodeEditor } from "../../utils/typings/types";
 import { HeaderPanel } from "./Header";
+import Loader from "react-loader-spinner";
+import { UPDATE_CODE } from "../../redux/actions/editor.actions";
+import { FooterPanel } from "./Footer";
 
 export const Editor: React.FC = () => {
 	const instance = useRef<{ editor: ICodeEditor; format: any } | null>(null);
 	const activeModel = useRef<any>();
 	const dispatch = useDispatch();
-	const active = useSelector<RootState, any>((s) => s.code.active_tab);
+	const active_file = useSelector<RootState, any>((s) => s.editor.active_file);
+
 	const file = useSelector<RootState, any>((s) =>
-		s.code.files.find((e) => e.filename === active)
+		s.editor.files.find((e) => e.filename === active_file)
 	);
 
 	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
@@ -47,32 +49,34 @@ export const Editor: React.FC = () => {
 			});
 		});
 
-		editor.onDidChangeModelContent(() => {
-			const model = activeModel.current;
-			const language = model._languageIdentifier.language;
+		editor.onDidChangeModelContent(
+			debounce(() => {
+				const model = activeModel.current;
+				const language = model._languageIdentifier.language;
 
-			dispatch(UPDATE_EDITOR({ type: language, code: model.getValue() }));
-		});
+				dispatch(UPDATE_CODE({ type: language, code: model.getValue() }));
+			})
+		);
 	}, []);
 
 	const formatCode = () => instance.current?.format.run();
 
 	return (
-		<>
+		<main className="h-full min-h-screen relative">
 			<HeaderPanel formatCode={formatCode} />
-			<div className="editor-wrapper">
-				<MonacoEditor
-					beforeMount={initMonaco}
-					onMount={onEditorDidMount}
-					options={MonacoConfig}
-					theme="vs-dark"
-					path={active}
-					value={file.value}
-					language={file.language}
-					loading={<Loader type="Grid" color="cyan" />}
-					height="100vh"
-				/>
-			</div>
-		</>
+			<MonacoEditor
+				beforeMount={initMonaco}
+				onMount={onEditorDidMount}
+				options={MonacoConfig}
+				theme="vs-dark"
+				className="absolute inset-0 w-full h-full"
+				path={active_file}
+				value={file.value}
+				language={file.language}
+				height={"100%"}
+				loading={<Loader type="Puff" color="cyan" />}
+			/>
+			<FooterPanel />
+		</main>
 	);
 };

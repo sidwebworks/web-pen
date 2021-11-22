@@ -8,6 +8,7 @@ export const Resizeable: React.FC<any> = ({ children, direction, ...rest }) => {
 	const isVertical = direction === "vertical";
 
 	const innerSize = isVertical ? innerWidth : innerHeight;
+	
 	const handleDragStart = () => {
 		document.body.classList.add("react-draggable-transparent-selection");
 	};
@@ -22,7 +23,7 @@ export const Resizeable: React.FC<any> = ({ children, direction, ...rest }) => {
 		} else {
 			setHeight(s);
 		}
-	}, 300);
+	}, 250);
 
 	if (!innerSize) return null;
 
@@ -36,8 +37,8 @@ export const Resizeable: React.FC<any> = ({ children, direction, ...rest }) => {
 			onDragStarted={handleDragStart}
 			onDragFinished={handleDragEnd}
 			maxSize={isVertical ? innerSize * 0.9 : innerSize * 0.99}
-			minSize={isVertical ? innerSize * 0.3 : innerSize * 0.60}
-			defaultSize={isVertical ? innerSize * 0.3 : innerSize * 0.99}
+			minSize={isVertical ? innerSize * 0.3 : innerSize * 0.6}
+			defaultSize={isVertical ? innerSize * 0.3 : innerSize * 0.98}
 			size={width}
 		>
 			{children}

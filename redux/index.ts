@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { codeReducer } from "./reducers/code.reducer";
+import { bundlerReducer } from "./reducers/bundler.reducer";
+import { editorReducer } from "./reducers/editor.reducer";
 
 const store = configureStore({
 	reducer: {
-		code: codeReducer,
+		editor: editorReducer,
+		bundler: bundlerReducer,
 	},
 });
 

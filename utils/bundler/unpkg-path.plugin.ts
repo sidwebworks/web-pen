@@ -1,6 +1,6 @@
 import { PluginBuild } from "esbuild-wasm";
 
-const unpkg_path = "http://unpkg.com";
+const unpkg_path = "https://unpkg.com";
 
 export const unpkgPathPlugin = () => ({
 	name: "unpkg-path-plugin",

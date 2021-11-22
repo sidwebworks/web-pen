@@ -1,37 +1,45 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { SyntheticEvent, useEffect, useRef } from "react";
+import clsx from "clsx";
+import { SyntheticEvent, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
-import { ADD_LOG } from "../../redux/actions/code.actions";
+import { PRINT_CONSOLE } from "../../redux/actions/editor.actions";
 import { ConsoleComponent } from "./Console";
 import { Resizeable } from "./Resizeable";
 
 export const Preview: React.FC = () => {
 	const iFrameRef = useRef<HTMLIFrameElement | null>(null);
 	const dispatch = useDispatch();
-
+	const javascript = useSelector<RootState, string>((s) => s.bundler.bundle);
 	const html = useSelector<RootState, string>(
-		(s) => s.code.files.find((s) => s.language === "html")!.value
+		(s) => s.editor.files.find((s) => s.language === "html")!.value
 	);
 	const css = useSelector<RootState, string>(
-		(s) => s.code.files.find((s) => s.language === "css")!.value
+		(s) => s.editor.files.find((s) => s.language === "css")!.value
 	);
-	const javascript = useSelector<RootState, string>((s) => s.code.bundle);
 
-	const loadCode = (e: HTMLIFrameElement) => {
-		e.contentWindow!.postMessage({ html: html }, "*");
-		e.contentWindow!.postMessage({ css: css }, "*");
-		e.contentWindow!.postMessage({ javascript: javascript }, "*");
-	};
+	const loadCode = useCallback(
+		(e: HTMLIFrameElement) => {
+			e.contentWindow!.postMessage({ html: html }, "*");
+			e.contentWindow!.postMessage({ css: css }, "*");
+			e.contentWindow!.postMessage({ javascript: javascript }, "*");
+		},
+		[html, css, javascript]
+	);
+
+	useEffect(() => {
+		if (iFrameRef.current) {
+			loadCode(iFrameRef.current);
+		}
+	}, [javascript, css, html]);
 
 	useEffect(() => {
 		const handler = (event: any) => {
 			if (event.data.type === "console") {
 				dispatch(
-					ADD_LOG({
+					PRINT_CONSOLE({
 						method: event.data.method,
 						data: JSON.parse(event.data.data),
-						id: nanoid(),
 					})
 				);
 			}
@@ -46,15 +54,9 @@ export const Preview: React.FC = () => {
 		loadCode(e.currentTarget);
 	};
 
-	useEffect(() => {
-		if (iFrameRef.current) {
-			loadCode(iFrameRef.current);
-		}
-	}, [javascript, css, html]);
-
 	return (
 		<Resizeable direction="horizontal">
-			<div className="preview-wrapper">
+			<div className={"preview-wrapper"}>
 				<iframe
 					onLoad={(e) => onInit(e)}
 					title="preview"
@@ -70,80 +72,84 @@ export const Preview: React.FC = () => {
 
 const _html = `
 <html lang="en">
-    <head> 
-    <style id="_style">
-    </style>
-    </head>
-    <body>
-    </body>
 
-    <script>
-   
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview</title>
+    <style id="_style"></style>
+</head>
 
-    const _log = console.log
+<body>
+    <div id="root"></div>
+</body>
 
-    const types = ['log', 'debug', 'info', 'warn', 'error', 'table', 'clear', 'time', 'timeEnd', 'count' , 'assert']
+<script>
 
-    function proxy(context, method, message) { 
-        return function() {
-            window.parent.postMessage({type: "console", method: method.name, data: JSON.stringify(Array.prototype.slice.apply(arguments))}, '*');
-        }
-      }
+const _log = console.log
 
-      types.forEach(el =>  {
-        window.console[el] = proxy(console, console[el], el)
-      })
+const types = ['log', 'debug', 'info', 'warn', 'error', 'table', 'clear', 'time', 'timeEnd', 'count' , 'assert']
 
-    function setHtml(html) {
-          document.body.innerHTML = html
+function proxy(context, method, message) { 
+    return function() {
+        window.parent.postMessage({type: "console", method: method.name, data: JSON.stringify(Array.prototype.slice.apply(arguments))}, '*');
     }
+  }
 
-      function executeJs(javascript) {
-        try {
-            eval(javascript)
-        } catch (err) {
-            console.error(err.message)
-        }
+  types.forEach(el =>  {
+    window.console[el] = proxy(console, console[el], el)
+  })
+
+function setHtml(html) {
+      document.body.innerHTML = html
+}
+
+  function executeJs(javascript) {
+    try {
+        eval(javascript)
+    } catch (err) {
+        console.error(err.message)
     }
+}
 
-   
-      function setCss(css) {
-        const style = document.getElementById('_style')
-        const newStyle = document.createElement('style')
-        newStyle.id = '_style'
-        newStyle.innerHTML = typeof css === 'undefined' ? '' : css
-        style.parentNode.replaceChild(newStyle, style)
-        hasCss = typeof css === 'undefined' ? false : true
-      }
-   
 
-      window.addEventListener(
-        "error",
-        (event) => {
-           console.error(event.error)
+  function setCss(css) {
+    const style = document.getElementById('_style')
+    const newStyle = document.createElement('style')
+    newStyle.id = '_style'
+    newStyle.innerHTML = typeof css === 'undefined' ? '' : css
+    style.parentNode.replaceChild(newStyle, style)
+    hasCss = typeof css === 'undefined' ? false : true
+  }
+
+
+  window.addEventListener(
+    "error",
+    (event) => {
+       console.error(event.error)
+    },
+    false
+);
+
+    window.addEventListener(
+        "message",
+        (e) => {
+            if (typeof e.data.html !== 'undefined'){
+                setHtml(e.data.html)
+            }
+
+           if (typeof e.data.javascript !== 'undefined'){
+             executeJs(e.data.javascript)
+           } 
+
+           if (typeof e.data.css !== 'undefined'){
+            setCss(e.data.css)
+           } 
         },
         false
     );
-   
-        window.addEventListener(
-            "message",
-            (e) => {
-                if (typeof e.data.html !== 'undefined'){
-                    setHtml(e.data.html)
-                }
-
-               if (typeof e.data.javascript !== 'undefined'){
-                 executeJs(e.data.javascript)
-               } 
-
-               if (typeof e.data.css !== 'undefined'){
-                setCss(e.data.css)
-               } 
-            },
-            false
-        );
-        
-</script>
+    </script> 
 
 </html>
 `;

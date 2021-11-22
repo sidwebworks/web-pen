@@ -5,6 +5,7 @@ const options = {
 		parser: "html",
 		plugins: [await import("prettier/parser-html")],
 		printWidth: 100,
+
 	}),
 
 	css: async () => ({
@@ -22,8 +23,8 @@ const options = {
 		singleQuote: true,
 	}),
 	typescript: async () => ({
-		parser: "babel",
-		plugins: [await import("prettier/parser-babel")],
+		parser: "typescript",
+		plugins: [await import("prettier/parser-typescript")],
 		printWidth: 100,
 		semi: true,
 		useTabs: false,

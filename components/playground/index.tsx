@@ -1,34 +1,22 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
-import { UPDATE_BUNDLE, UPDATE_ERROR } from "../../redux/actions/code.actions";
+import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import bundler from "../../utils/bundler";
 import { Editor } from "./Editor";
 import { Preview } from "./Preview";
 import { Resizeable } from "./Resizeable";
 
 const Playground = () => {
-	const unBundled = useSelector<RootState, any>(
-		(s) => s.code.files.find((el) => el.language === "javascript")!.value
-	);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		const timeout = setTimeout(async () => {
-			const { code, err } = await bundler(unBundled);
-			dispatch(UPDATE_BUNDLE(code));
-			if (err) {
-				//@ts-ignore
-				dispatch(UPDATE_ERROR(err));
-			}
-		}, 600);
-
-		return () => clearTimeout(timeout);
-	}, [unBundled]);
+		dispatch(CREATE_BUNDLE());
+	}, []);
 
 	return (
 		<>
-			<div className="flex flex-row flex-grow h-full">
+			<div className="flex flex-row flex-grow min-h-screen max-h-screen">
 				<Resizeable direction="vertical">
 					<Editor />
 					<Preview />
