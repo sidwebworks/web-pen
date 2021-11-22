@@ -4,7 +4,7 @@ const options = {
 	html: async () => ({
 		parser: "html",
 		plugins: [await import("prettier/parser-html")],
-		printWidth: 100,
+		printWidth: 90,
 	}),
 
 	css: async () => ({

@@ -18,6 +18,7 @@ const Editor: React.FC = () => {
 	const activeModel = useRef<any>();
 	const dispatch = useDispatch();
 	const active_file = useSelector<RootState, any>((s) => s.editor.active_file);
+	console.log("active_file: ", active_file);
 
 	const file = useSelector<RootState, any>((s) =>
 		s.editor.files.find((e) => e.filename === active_file)
@@ -34,7 +35,8 @@ const Editor: React.FC = () => {
 		const timer = setTimeout(() => {
 			dispatch(CREATE_BUNDLE());
 		}, 800);
-		return () => clearInterval(timer);
+
+		return () => clearTimeout(timer);
 	}, [javascript]);
 
 	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
@@ -66,6 +68,7 @@ const Editor: React.FC = () => {
 			debounce(() => {
 				const model = activeModel.current;
 				const language = model._languageIdentifier.language;
+
 				dispatch(UPDATE_CODE({ type: language, code: model.getValue() }));
 			})
 		);
@@ -74,7 +77,7 @@ const Editor: React.FC = () => {
 	const formatCode = () => instance.current?.format.run();
 
 	return (
-		<main className="h-full min-h-screen relative">
+		<main className="h-full min-h-screen relative border-r-2 border-gray-800">
 			<HeaderPanel formatCode={formatCode} />
 			<MonacoEditor
 				beforeMount={initMonaco}
@@ -86,6 +89,7 @@ const Editor: React.FC = () => {
 				value={file.value}
 				language={file.language}
 				height={"100%"}
+				loading={<h3 className="text-cyan-500 font-medium">Booting Up...</h3>}
 			/>
 			<FooterPanel />
 		</main>

@@ -1,23 +1,41 @@
-import { debounce } from "../..";
 import { createWorkerQueue } from "../../../workers";
+
 export function registerSyntaxHighlighter(editor, monaco) {
 	const { worker: syntaxWorker } = createWorkerQueue(
 		new Worker(new URL("../../../workers/syntax-highlight.worker.js", import.meta.url))
 	);
 
-	const title = "script.js";
-	const version = editor.getModel()?.getVersionId();
+	editor.onDidChangeModel(() => {
+		const title = "app.js";
+		const model = editor.getModel();
+		const version = model?.getVersionId();
+		const lang = model._languageIdentifier.language;
 
-	editor.onDidChangeModelContent(
-		debounce(() => {
+		if (lang === "javascript") {
 			const code = editor.getValue();
 			syntaxWorker.postMessage({
 				code,
 				title,
 				version,
 			});
-		}, 200)
-	);
+		}
+	});
+
+	editor.onDidChangeModelContent(() => {
+		const title = "app.js";
+		const model = editor.getModel();
+		const version = model?.getVersionId();
+		const lang = model._languageIdentifier.language;
+
+		if (lang === "javascript") {
+			const code = editor.getValue();
+			syntaxWorker.postMessage({
+				code,
+				title,
+				version,
+			});
+		}
+	});
 
 	syntaxWorker.addEventListener("message", (event) => {
 		const { classifications } = event.data;

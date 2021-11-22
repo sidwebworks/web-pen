@@ -1,4 +1,5 @@
 import { Transition } from "@headlessui/react";
+import clsx from "clsx";
 import { useCallback, useEffect, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -63,15 +64,15 @@ export const Preview: React.FC = () => {
 			<div className={"preview-wrapper"}>
 				<Transition
 					appear={true}
-					show={isBundling || !isInit}
+					show={true && !isInit}
 					key={"asdasd"}
 					enter="transition duration-100  ease-out"
-					enterFrom="transform  opacity-0"
+					enterFrom="transform  opacity-100"
 					enterTo="transform opacity-100"
 					leave="transition duration-75 ease-out"
 					leaveFrom="transform opacity-100"
 					leaveTo="transform opacity-0"
-					className="w-full h-full absolute z-10 bg-gray-900 grid place-items-center"
+					className="w-full h-full absolute z-10 bg-gray-900  grid place-items-center"
 				>
 					<Loader type="ThreeDots" color="cyan" />
 				</Transition>

@@ -16,7 +16,9 @@ const bundler = async (rawCode: string) => {
 		});
 		serviceLoaded = true;
 		store.dispatch(INIT_BUNDLER());
-		store.dispatch(PRINT_CONSOLE({method:"info", data: ["Bundler initialized...Happy coding ❤️"]}));
+		store.dispatch(
+			PRINT_CONSOLE({ method: "info", data: ["Bundler initialized...Happy coding ❤️"] })
+		);
 	}
 
 	try {

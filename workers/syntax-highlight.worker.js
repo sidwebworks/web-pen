@@ -2,7 +2,7 @@ self.importScripts([
 	"https://cdnjs.cloudflare.com/ajax/libs/typescript/2.4.2/typescript.min.js",
 ]);
 
-console.log(self);
+
 
 function getLineNumberAndOffset(start, lines) {
 	let line = 0;
@@ -82,7 +82,7 @@ function addChildNodes(node, lines, classifications) {
 
 // Respond to message from parent thread
 self.addEventListener("message", (event) => {
-	console.log("event: ", event);
+	
 	let { code, title, version } = event.data;
 	try {
 		const classifications = [];
@@ -98,7 +98,7 @@ self.addEventListener("message", (event) => {
 
 		self.postMessage({ classifications, version }, { targetOrigin: "*" });
 	} catch (e) {
-		console.log('e: ', e);
+		
 		/* Ignore error */
 	}
 });
