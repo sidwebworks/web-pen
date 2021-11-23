@@ -22,13 +22,14 @@ const Editor: React.FC = () => {
 		if (active_file.name === "app.js") {
 			let timer: NodeJS.Timeout;
 			let promise;
+
 			timer = setTimeout(() => {
+				console.log("bundling");
 				promise = dispatch(CREATE_BUNDLE());
-				// @ts-ignore
-				return console.log("i died");
-			}, 700);
+			}, 600);
 
 			return () => {
+				promise?.abort();
 				clearTimeout(timer);
 			};
 		}
