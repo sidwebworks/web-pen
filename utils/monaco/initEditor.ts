@@ -3,7 +3,7 @@ import { registerEmmet } from "./plugins/emmet";
 import { registerDocumentPrettier } from "./plugins/register-prettier";
 import { registerSyntaxHighlighter } from "./plugins/syntax-highlight-support";
 
-export const initWorkers: OnMount = (editor, monaco) => {
+export const initEditor: OnMount = (editor, monaco) => {
 	registerSyntaxHighlighter(editor, monaco);
 	registerDocumentPrettier(editor, monaco);
 	const { dispose } = registerEmmet(monaco);

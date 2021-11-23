@@ -1,3 +1,4 @@
+import { debounce } from "../..";
 import { createWorkerQueue } from "../../../workers";
 
 export function registerSyntaxHighlighter(editor, monaco) {
@@ -12,7 +13,7 @@ export function registerSyntaxHighlighter(editor, monaco) {
 		const lang = model._languageIdentifier.language;
 
 		if (lang === "javascript") {
-			const code = editor.getValue();
+			const code = model.getValue();
 			syntaxWorker.postMessage({
 				code,
 				title,
@@ -20,10 +21,10 @@ export function registerSyntaxHighlighter(editor, monaco) {
 			});
 		}
 	};
+	
+	editor.onDidChangeModel(() => debounce(colorize, 20));
 
-	editor.onDidChangeModel(colorize);
-
-	editor.onDidChangeModelContent(colorize);
+	editor.onDidChangeModelContent(() => debounce(colorize, 20));
 
 	syntaxWorker.addEventListener("message", (event) => {
 		const { classifications } = event.data;

@@ -34,7 +34,6 @@ const options = {
 let current;
 
 addEventListener("message", async (event) => {
-	console.log('event: ', event);
 	if (event.data._current) {
 		current = event.data._current;
 		return;

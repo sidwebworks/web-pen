@@ -4,6 +4,8 @@ export function registerDocumentPrettier(editor, monaco) {
 	const disposables = [];
 	let prettierWorker;
 
+
+
 	const formattingEditProvider = {
 		async provideDocumentFormattingEdits(model, _options, _token) {
 			if (!prettierWorker) {
@@ -50,7 +52,7 @@ export function registerDocumentPrettier(editor, monaco) {
 	);
 
 	editor.getAction("editor.action.formatDocument").run();
-
+	
 	return {
 		dispose() {
 			disposables.forEach((disposable) => disposable.dispose());

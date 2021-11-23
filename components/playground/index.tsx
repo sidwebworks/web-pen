@@ -4,6 +4,7 @@ import { Resizeable } from "./Resizeable";
 const Editor = dynamic(() => import("./Editor"));
 
 const Playground = () => {
+
 	return (
 		<>
 			<div className="flex flex-row flex-grow min-h-screen max-h-screen">

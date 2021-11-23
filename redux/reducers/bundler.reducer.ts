@@ -37,7 +37,7 @@ export const bundlerReducer = createReducer(initialState, (builder) => {
 			state.isBundling = false;
 			state.hasError = true;
 			// @ts-ignore
-			state.error = action.payload.data[0];
+			state.error = action.payload?.data[0];
 		}
 	});
 });

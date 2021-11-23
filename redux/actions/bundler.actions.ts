@@ -10,7 +10,7 @@ export const CREATE_BUNDLE = createAsyncThunk<BundleOutput, void, { state: RootS
 	async (_, { getState, rejectWithValue }) => {
 		const files = getState()?.editor.files;
 
-		const unBundled = files.javascript.value || "";
+		const unBundled = files.script.value || "";
 
 		const result = await bundler(unBundled);
 

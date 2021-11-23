@@ -1,15 +1,15 @@
 import clsx from "clsx";
 import { memo, useCallback, useMemo } from "react";
 import { AlignLeft, Zap } from "react-feather";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import { SWITCH_FILE } from "../../redux/actions/editor.actions";
-import { useActions } from "../../utils/hooks/use-actions";
+import { useTypedSelector } from "../../utils/hooks/use-actions";
 
 export const HeaderPanel: React.FC<{ onFormat: any }> = memo(({ onFormat }) => {
 	const dispatch = useDispatch();
 
-	const active_file = useActions<any>((s) => s.editor.active_file.name);
+	const active_file = useTypedSelector<any>((s) => s.editor.active_file);
 
 	const runCode = useCallback(() => {
 		let timer = setTimeout(() => {
@@ -46,43 +46,39 @@ export const HeaderPanel: React.FC<{ onFormat: any }> = memo(({ onFormat }) => {
 	);
 });
 
-HeaderPanel.displayName = "HeaderPanel"
+HeaderPanel.displayName = "HeaderPanel";
 
 export const Tabs = ({ active_file }) => {
-	const files = [
-		{ name: "index.html", lang: "html" },
-		{ name: "app.js", lang: "javascript" },
-		{ name: "styles.css", lang: "css" },
-	];
+	const filesObj = useTypedSelector<any[]>((s) => s.editor.files);
+	const files = Object.keys(filesObj);
 
 	return (
 		<div className="flex items-center relative z-10 gap-x-4">
 			{files.map((file: any) => (
 				<Tab
-					label={file.name}
-					key={file.name}
-					files={files}
-					isActive={file.name === active_file}
+					name={filesObj[file].filename}
+					key={file}
+					lang={filesObj[file].language}
+					type={file}
+					isActive={filesObj[file].filename === active_file.name}
 				/>
 			))}
 		</div>
 	);
 };
 
-const Tab = ({ label, isActive, files }: any) => {
-	const current = files.find((el) => el.name === label);
-
+const Tab = ({ name, isActive, lang, type }: any) => {
 	const dispatch = useDispatch();
 
 	const handleClick = () => {
 		if (isActive) return;
-		dispatch(SWITCH_FILE(current));
+		dispatch(SWITCH_FILE({ lang, name, type }));
 	};
 
 	return (
 		<button
 			onClick={handleClick}
-			title={label}
+			title={name}
 			className={clsx([
 				" py-2 text-sm border-b-2 transition-all duration-200 ease-in-out mb-[-2.5px] font-medium",
 				isActive
@@ -90,7 +86,7 @@ const Tab = ({ label, isActive, files }: any) => {
 					: " border-trueGray-700 text-trueGray-600 hover:text-opacity-40 ",
 			])}
 		>
-			{label}
+			{name}
 		</button>
 	);
 };

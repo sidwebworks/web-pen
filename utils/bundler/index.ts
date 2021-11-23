@@ -1,5 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { build, BuildOptions, initialize, analyzeMetafile } from "esbuild-wasm";
+import { build, initialize } from "esbuild-wasm";
 import store from "../../redux";
 import { INIT_BUNDLER } from "../../redux/actions/bundler.actions";
 import { PRINT_CONSOLE } from "../../redux/actions/editor.actions";
@@ -32,6 +32,7 @@ const bundler = async (rawCode: string) => {
 				global: "window",
 			},
 		});
+
 
 		return { code: result.outputFiles[0].text, err: null };
 	} catch (error: any) {

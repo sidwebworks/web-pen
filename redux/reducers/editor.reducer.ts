@@ -22,6 +22,7 @@ interface initState {
 	active_file: {
 		name: Files;
 		lang: EditorLanguages;
+		type: "markup" | "script" | "styles";
 	};
 	console: ConsoleLog[];
 	config: EditorSettings;
@@ -29,19 +30,19 @@ interface initState {
 
 const initialState: initState = {
 	files: {
-		html: {
+		markup: {
 			value: defaultSnippets.html,
 			language: "html",
 			filename: "index.html",
 			uri: null,
 		},
-		css: {
+		styles: {
 			value: defaultSnippets.css,
 			filename: "styles.css",
 			language: "css",
 			uri: null,
 		},
-		javascript: {
+		script: {
 			value: defaultSnippets.js,
 			filename: "app.js",
 			language: "javascript",
@@ -49,8 +50,9 @@ const initialState: initState = {
 		},
 	},
 	active_file: {
-		name: "app.js",
-		lang: "javascript",
+		name: "index.html",
+		type: "markup",
+		lang: "html",
 	},
 	config: MonacoConfig,
 	console: [],

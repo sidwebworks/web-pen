@@ -2,6 +2,7 @@ import { OnLoadResult, PluginBuild } from "esbuild-wasm";
 import axios from "axios";
 import localforage from "localforage";
 import { normalizeCss } from ".";
+import { Monaco } from "@monaco-editor/react";
 
 const fileCache = localforage.createInstance({
 	name: "filecache",
@@ -66,3 +67,10 @@ export const fetchPlugin = (inputCode: string) => ({
 		});
 	},
 });
+
+// const libSource = ReactTypes.toString()
+
+// 	const libUri = "ts:filename/facts.d.ts";
+// 	monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
+
+// 	monaco.editor.createModel(libSource, "typescript", monaco.Uri.parse(libUri));

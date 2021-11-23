@@ -6,7 +6,11 @@ export const UPDATE_CODE =
 	createAction<{ type: EditorLanguages; code: string }>("EDITOR.UPDATE_CODE");
 
 export const SWITCH_FILE =
-	createAction<{ name: Files; lang: EditorLanguages }>("EDITOR.SWITCH_FILE");
+	createAction<{
+		name: Files;
+		lang: EditorLanguages;
+		type: "script" | "markup" | "styles";
+	}>("EDITOR.SWITCH_FILE");
 
 export const PRINT_CONSOLE = createAction<ConsoleLog>("EDITOR.PRINT_CONSOLE");
 
