@@ -7,9 +7,8 @@
 
 An open-source codepen on Steroids.
 
-## I am Looking for contributors
-
 # Technologies used
+
 - Next JS (React)
 - Typescript
 - Monaco Editor
