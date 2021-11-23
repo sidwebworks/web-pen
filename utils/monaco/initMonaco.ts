@@ -8,10 +8,30 @@ export const initMonaco = (monaco: Monaco) => {
 	monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 	monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
 
-	monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+	monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 		noSemanticValidation: true,
-		noSyntaxValidation: true, // This line disables errors in jsx tags like <div>, etc.
+		noSyntaxValidation: false,
 	});
+
+	// compiler options
+	monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+		target: monaco.languages.typescript.ScriptTarget.ES2020,
+		allowNonTsExtensions: true,
+	});
+
+	const libSource = [
+		"declare class Facts {",
+		"    /**",
+		"     * Returns the next fact",
+		"     */",
+		"    static next():string",
+		"}",
+	].join("\n");
+
+	const libUri = "ts:filename/facts.d.ts";
+	monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
+
+	monaco.editor.createModel(libSource, "typescript", monaco.Uri.parse(libUri));
 
 	/**
 	 * Configure the typescript compiler to detect JSX and load type definitions

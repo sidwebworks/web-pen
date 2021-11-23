@@ -58,7 +58,6 @@ const initialState: initState = {
 
 export const editorReducer = createReducer(initialState, (builder) => {
 	builder.addCase(SWITCH_FILE, (state, action) => {
-		console.log('action: ', action);
 		state.active_file = action.payload;
 	});
 

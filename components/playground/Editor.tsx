@@ -39,8 +39,6 @@ const Editor: React.FC = () => {
 	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
 		const format = editor.getAction("editor.action.formatDocument");
 
-		editor.focus();
-
 		instance.current = { editor, format };
 
 		activeModel.current = editor.getModel();
@@ -56,13 +54,11 @@ const Editor: React.FC = () => {
 			}
 		});
 
-		editor.onDidChangeModelContent((e) => {
+		editor.onDidChangeModelContent(() => {
 			const model = activeModel.current;
-			debounce(() => {
-				if (model.editor?.saveViewState) {
-					model.editor.saveViewState();
-				}
-			});
+			if (model.editor?.saveViewState) {
+				model.editor.saveViewState();
+			}
 		});
 	}, []);
 
