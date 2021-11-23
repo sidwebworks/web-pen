@@ -1,17 +1,22 @@
 import clsx from "clsx";
+import { memo } from "react";
 import { AlignLeft, Zap } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
 import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import { SWITCH_FILE } from "../../redux/actions/editor.actions";
 import { debounce } from "../../utils";
+import { useActions } from "../../utils/hooks/use-actions";
 
-export const HeaderPanel = ({ formatCode }: any) => {
+export const HeaderPanel = memo(({ formatCode }: any) => {
 	const dispatch = useDispatch();
 
-	const runCode = debounce(() => {
-		dispatch(CREATE_BUNDLE());
-	});
+	const runCode = () => {
+		let timer = setTimeout(() => {
+			dispatch(CREATE_BUNDLE());
+		}, 50);
+		return () => clearTimeout(timer);
+	};
 
 	return (
 		<div className="w-full h-[2.44rem] bg-gray-900 flex justify-between px-5 border-b-2  border-trueGray-700 items-center flex-grow ">
@@ -38,27 +43,39 @@ export const HeaderPanel = ({ formatCode }: any) => {
 			</div>
 		</div>
 	);
-};
+});
 
 export const Tabs = () => {
-	const active_file = useSelector<RootState, any>((s) => s.editor.active_file);
-	const files = useSelector<RootState, any>((s) => s.editor.files);
+	const active_file = useActions<any>((s) => s.editor.active_file);
+
+	const files = [
+		{ name: "index.html", lang: "html" },
+		{ name: "app.js", lang: "javascript" },
+		{ name: "styles.css", lang: "css" },
+	];
 
 	return (
 		<div className="flex items-center   relative z-10 gap-x-4">
-			{files.map((el: any) => (
-				<Tab label={el.filename} key={el.filename} isActive={active_file === el.filename} />
+			{files.map((file: any) => (
+				<Tab
+					label={file.name}
+					key={file.name}
+					files={files}
+					isActive={file.name === active_file.name}
+				/>
 			))}
 		</div>
 	);
 };
 
-const Tab = ({ label, isActive }: any) => {
+const Tab = ({ label, isActive, files }: any) => {
+	const current = files.find((el) => el.name === label);
+
 	const dispatch = useDispatch();
 
 	const handleClick = () => {
 		if (isActive) return;
-		dispatch(SWITCH_FILE(label));
+		dispatch(SWITCH_FILE(current));
 	};
 
 	return (

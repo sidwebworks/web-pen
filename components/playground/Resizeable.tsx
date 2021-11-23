@@ -36,9 +36,9 @@ export const Resizeable: React.FC<any> = ({ children, direction }) => {
 			onChange={handleChange}
 			onDragStarted={handleDragStart}
 			onDragFinished={handleDragEnd}
-			maxSize={isVertical ? innerSize * 0.9 : innerSize * 0.99}
+			maxSize={isVertical ? innerSize * 0.9 : innerSize * 0.955}
 			minSize={isVertical ? innerSize * 0.3 : innerSize * 0.6}
-			defaultSize={isVertical ? innerSize * 0.3 : innerSize * 0.98}
+			defaultSize={isVertical ? innerSize * 0.3 : innerSize * 0.955}
 			size={width}
 		>
 			{children}

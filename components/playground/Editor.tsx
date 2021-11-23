@@ -1,43 +1,38 @@
-import MonacoEditor from "@monaco-editor/react";
-import { OnMount } from "@monaco-editor/react";
-import React, { useCallback, useEffect, useRef } from "react";
-import Loader from "react-loader-spinner";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux";
+import MonacoEditor, { OnChange, OnMount } from "@monaco-editor/react";
+import React, { useCallback, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import { UPDATE_CODE } from "../../redux/actions/editor.actions";
 import { debounce } from "../../utils";
+import { useActions } from "../../utils/hooks/use-actions";
+import { useEffectAfterMount } from "../../utils/hooks/use-effect-aftermount";
 import { initMonaco, initWorkers, MonacoConfig } from "../../utils/monaco";
 import { ICodeEditor } from "../../utils/typings/types";
 import { FooterPanel } from "./Footer";
 import { HeaderPanel } from "./Header";
 
-let isInit = true;
 const Editor: React.FC = () => {
 	const instance = useRef<{ editor: ICodeEditor; format: any } | null>(null);
 	const activeModel = useRef<any>();
 	const dispatch = useDispatch();
-	const active_file = useSelector<RootState, any>((s) => s.editor.active_file);
-	console.log("active_file: ", active_file);
+	const active_file = useActions<any>((s) => s.editor.active_file);
+	const code = useActions<string>((s) => s.editor.files[active_file.lang].value);
 
-	const file = useSelector<RootState, any>((s) =>
-		s.editor.files.find((e) => e.filename === active_file)
-	);
-	const javascript = useSelector<RootState, any>((s) =>
-		s.editor.files.find((e) => e.language === "javascript")
-	);
+	useEffectAfterMount(() => {
+		if (active_file.name === "app.js") {
+			let timer: NodeJS.Timeout;
+			let promise;
+			timer = setTimeout(() => {
+				promise = dispatch(CREATE_BUNDLE());
+				// @ts-ignore
+				return console.log("i died");
+			}, 700);
 
-	useEffect(() => {
-		if (isInit) {
-			isInit = false;
-			return;
+			return () => {
+				clearTimeout(timer);
+			};
 		}
-		const timer = setTimeout(() => {
-			dispatch(CREATE_BUNDLE());
-		}, 800);
-
-		return () => clearTimeout(timer);
-	}, [javascript]);
+	}, [code]);
 
 	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
 		const format = editor.getAction("editor.action.formatDocument");
@@ -55,7 +50,7 @@ const Editor: React.FC = () => {
 			}
 		});
 
-		editor.onDidChangeModelContent(() => {
+		editor.onDidChangeModelContent((e: OnChange) => {
 			const model = activeModel.current;
 			debounce(() => {
 				if (model.editor?.saveViewState) {
@@ -63,16 +58,15 @@ const Editor: React.FC = () => {
 				}
 			});
 		});
-
-		editor.onDidChangeModelContent(
-			debounce(() => {
-				const model = activeModel.current;
-				const language = model._languageIdentifier.language;
-
-				dispatch(UPDATE_CODE({ type: language, code: model.getValue() }));
-			})
-		);
 	}, []);
+
+	const onChangeHandler = debounce<OnChange>((code) => {
+		const model = activeModel.current;
+		const language = model._languageIdentifier.language;
+		if (code) {
+			dispatch(UPDATE_CODE({ type: language, code }));
+		}
+	}, 80);
 
 	const formatCode = () => instance.current?.format.run();
 
@@ -85,9 +79,10 @@ const Editor: React.FC = () => {
 				options={MonacoConfig}
 				theme="vs-dark"
 				className="absolute inset-0 w-full h-full"
-				path={active_file}
-				value={file.value}
-				language={file.language}
+				path={active_file.name}
+				value={code}
+				onChange={onChangeHandler}
+				language={active_file.lang}
 				height={"100%"}
 				loading={<h3 className="text-cyan-500 font-medium">Booting Up...</h3>}
 			/>

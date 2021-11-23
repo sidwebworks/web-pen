@@ -6,13 +6,6 @@ import { registerDocumentPrettier } from "./plugins/register-prettier";
 import { registerSyntaxHighlighter } from "./plugins/syntax-highlight-support";
 
 export const initMonaco = (monaco: Monaco) => {
-	const files = store.getState()?.editor.files;
-
-	files.forEach((el) => {
-		const uri = monaco.Uri.parse(el.filename);
-		monaco.editor.createModel(el.value, el.language, uri);
-	});
-
 	monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
 	monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
 

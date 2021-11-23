@@ -6,7 +6,7 @@ export function useDebouncedState(initialValue?: any, timeout = 100) {
 	const handler = useRef<any>();
 
 	useEffect(() => {
-		handler.current = window.setTimeout(() => {
+		handler.current = setTimeout(() => {
 			setDebouncedValue(value.value);
 		}, timeout);
 		return () => {
@@ -23,10 +23,10 @@ export function useDebouncedState(initialValue?: any, timeout = 100) {
 		},
 		// setXImmediate
 		(newValue: any) => {
-			window.clearTimeout(handler.current);
+			clearTimeout(handler.current);
 			setDebouncedValue(newValue);
 		},
 		// cancelSetX
-		() => window.clearTimeout(handler.current),
+		() => clearTimeout(handler.current),
 	];
 }

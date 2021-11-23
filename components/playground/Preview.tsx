@@ -13,15 +13,9 @@ export const Preview: React.FC = () => {
 	const iFrameRef = useRef<HTMLIFrameElement | null>(null);
 	const dispatch = useDispatch();
 	const javascript = useSelector<RootState, string>((s) => s.bundler.bundle);
-	const isBundling = useSelector<RootState, boolean>((s) => s.bundler.isBundling);
 	const isInit = useSelector<RootState, boolean>((s) => s.bundler.initialized);
-
-	const html = useSelector<RootState, string>(
-		(s) => s.editor.files.find((s) => s.language === "html")!.value
-	);
-	const css = useSelector<RootState, string>(
-		(s) => s.editor.files.find((s) => s.language === "css")!.value
-	);
+	const html = useSelector<RootState, string>((s) => s.editor.files.html.value);
+	const css = useSelector<RootState, string>((s) => s.editor.files.css.value);
 
 	const loadCode = useCallback(
 		(e: HTMLIFrameElement) => {

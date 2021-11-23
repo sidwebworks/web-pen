@@ -25,7 +25,7 @@ export const useResizeable = (type) => {
 				} else if (window.innerHeight * 0.75 < height!) {
 					setHeight(window.innerHeight * 0.75);
 				}
-			}, 100);
+			}, 200);
 		};
 
 		if (isInitialMount.current) {
