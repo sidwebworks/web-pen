@@ -1,31 +1,32 @@
 import clsx from "clsx";
-import { memo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { AlignLeft, Zap } from "react-feather";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux";
+import { useDispatch } from "react-redux";
 import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import { SWITCH_FILE } from "../../redux/actions/editor.actions";
-import { debounce } from "../../utils";
 import { useActions } from "../../utils/hooks/use-actions";
 
-export const HeaderPanel = memo(({ formatCode }: any) => {
+export const HeaderPanel: React.FC<{ onFormat: any }> = memo(({ onFormat }) => {
 	const dispatch = useDispatch();
 
-	const runCode = () => {
+	const active_file = useActions<any>((s) => s.editor.active_file.name);
+
+	const runCode = useCallback(() => {
 		let timer = setTimeout(() => {
 			dispatch(CREATE_BUNDLE());
 		}, 50);
+
 		return () => clearTimeout(timer);
-	};
+	}, []);
 
 	return (
 		<div className="w-full h-[2.44rem] bg-gray-900 flex justify-between px-5 border-b-2  border-trueGray-700 items-center flex-grow ">
-			<Tabs />
+			<Tabs active_file={active_file} />
 			<div className="max-w-sm flex items-center gap-4">
 				<button
+					onClick={onFormat}
 					aria-label="format code"
 					title="format code"
-					onClick={formatCode}
 					className="rounded-full btn btn-xs border-0 bg-gray-800"
 					role="button"
 				>
@@ -45,9 +46,9 @@ export const HeaderPanel = memo(({ formatCode }: any) => {
 	);
 });
 
-export const Tabs = () => {
-	const active_file = useActions<any>((s) => s.editor.active_file);
+HeaderPanel.displayName = "HeaderPanel"
 
+export const Tabs = ({ active_file }) => {
 	const files = [
 		{ name: "index.html", lang: "html" },
 		{ name: "app.js", lang: "javascript" },
@@ -55,13 +56,13 @@ export const Tabs = () => {
 	];
 
 	return (
-		<div className="flex items-center   relative z-10 gap-x-4">
+		<div className="flex items-center relative z-10 gap-x-4">
 			{files.map((file: any) => (
 				<Tab
 					label={file.name}
 					key={file.name}
 					files={files}
-					isActive={file.name === active_file.name}
+					isActive={file.name === active_file}
 				/>
 			))}
 		</div>

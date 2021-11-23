@@ -1,7 +1,7 @@
 import * as monaco from "monaco-editor";
 
-export type ICodeEditor = editor.IStandaloneCodeEditor;
-export type EditorSettings = editor.IStandaloneEditorConstructionOptions;
+export type ICodeEditor = monaco.editor.IStandaloneCodeEditor;
+export type EditorSettings = monaco.editor.IStandaloneEditorConstructionOptions;
 
 export type File = {
 	value: string;
@@ -47,6 +47,6 @@ export type BundleOutput =
 			};
 	  };
 
-export type MonacoOptions = monaco.IStandaloneEditorConstructionOptions;
+export type MonacoOptions = monaco.editor.IStandaloneEditorConstructionOptions;
 
 export type CompilerOptions = monaco.languages.typescript.CompilerOptions;

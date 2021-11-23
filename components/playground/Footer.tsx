@@ -1,19 +1,34 @@
-import { AlignLeft, BatteryCharging, Pause, Zap } from "react-feather";
-import { useDispatch, useSelector } from "react-redux";
+import clsx from "clsx";
+import { AlertOctagon, BatteryCharging } from "react-feather";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux";
-import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 
 export const FooterPanel = () => {
 	const isBundling = useSelector<RootState, any>((s) => s.bundler.isBundling);
 	const isInitialized = useSelector<RootState, any>((s) => s.bundler.initialized);
+	const hasError = useSelector<RootState, any>((s) => s.bundler.hasError);
 
 	return (
 		<div className="w-full bg-gray-900 absolute inset-x-0 bottom-0 flex justify-between px-3 py-1  items-center flex-grow ">
 			<div className="max-w-sm flex items-center ">
-				{(isBundling || !isInitialized) ? <Loader /> : <BatteryCharging className="h-4 w-4 mr-2 text-gray-500 "/>}
+				{isBundling || !isInitialized ? (
+					<Loader />
+				) : hasError ? (
+					<AlertOctagon className="h-4 w-4 mr-2 text-red-500 " />
+				) : (
+					<BatteryCharging className="h-4 w-4 mr-2 text-cyan-500 " />
+				)}
 				<span className="block py-0.5 text-xs  text-gray-500">
 					Bundler state:{" "}
-					<span className="text-cyan-500">{!isInitialized ? "Initializing..." : isBundling ? "Bundling..." : "Idle"}</span>
+					<span className={clsx(hasError ? "text-red-500" : "text-cyan-500")}>
+						{!hasError && !isInitialized
+							? "Initializing..."
+							: hasError
+							? "Bundling Error"
+							: isBundling
+							? "Bundling..."
+							: "Idle"}
+					</span>
 				</span>
 			</div>
 		</div>

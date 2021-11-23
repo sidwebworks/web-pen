@@ -5,7 +5,7 @@ export function registerSyntaxHighlighter(editor, monaco) {
 		new Worker(new URL("../../../workers/syntax-highlight.worker.js", import.meta.url))
 	);
 
-	editor.onDidChangeModel(() => {
+	const colorize = () => {
 		const title = "app.js";
 		const model = editor.getModel();
 		const version = model?.getVersionId();
@@ -19,23 +19,11 @@ export function registerSyntaxHighlighter(editor, monaco) {
 				version,
 			});
 		}
-	});
+	};
 
-	editor.onDidChangeModelContent(() => {
-		const title = "app.js";
-		const model = editor.getModel();
-		const version = model?.getVersionId();
-		const lang = model._languageIdentifier.language;
+	editor.onDidChangeModel(colorize);
 
-		if (lang === "javascript") {
-			const code = editor.getValue();
-			syntaxWorker.postMessage({
-				code,
-				title,
-				version,
-			});
-		}
-	});
+	editor.onDidChangeModelContent(colorize);
 
 	syntaxWorker.addEventListener("message", (event) => {
 		const { classifications } = event.data;

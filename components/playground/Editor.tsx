@@ -6,7 +6,9 @@ import { UPDATE_CODE } from "../../redux/actions/editor.actions";
 import { debounce } from "../../utils";
 import { useActions } from "../../utils/hooks/use-actions";
 import { useEffectAfterMount } from "../../utils/hooks/use-effect-aftermount";
-import { initMonaco, initWorkers, MonacoConfig } from "../../utils/monaco";
+import { MonacoConfig } from "../../utils/monaco";
+import { initWorkers } from "../../utils/monaco/initEditor";
+import { initMonaco } from "../../utils/monaco/initMonaco";
 import { ICodeEditor } from "../../utils/typings/types";
 import { FooterPanel } from "./Footer";
 import { HeaderPanel } from "./Header";
@@ -22,7 +24,6 @@ const Editor: React.FC = () => {
 		if (active_file.name === "app.js") {
 			let timer: NodeJS.Timeout;
 			let promise;
-
 			timer = setTimeout(() => {
 				console.log("bundling");
 				promise = dispatch(CREATE_BUNDLE());
@@ -38,6 +39,8 @@ const Editor: React.FC = () => {
 	const onEditorDidMount: OnMount = useCallback((editor: ICodeEditor, monaco) => {
 		const format = editor.getAction("editor.action.formatDocument");
 
+		editor.focus();
+
 		instance.current = { editor, format };
 
 		activeModel.current = editor.getModel();
@@ -45,13 +48,15 @@ const Editor: React.FC = () => {
 		initWorkers(editor, monaco);
 
 		editor.onDidChangeModel((e) => {
+			editor.focus();
+
 			const uri = e.newModelUrl;
 			if (uri) {
 				activeModel.current = monaco.editor.getModel(uri);
 			}
 		});
 
-		editor.onDidChangeModelContent((e: OnChange) => {
+		editor.onDidChangeModelContent((e) => {
 			const model = activeModel.current;
 			debounce(() => {
 				if (model.editor?.saveViewState) {
@@ -67,13 +72,13 @@ const Editor: React.FC = () => {
 		if (code) {
 			dispatch(UPDATE_CODE({ type: language, code }));
 		}
-	}, 80);
+	}, 50);
 
-	const formatCode = () => instance.current?.format.run();
+	const formatCode = useCallback(() => instance.current?.format.run(), [instance.current]);
 
 	return (
 		<main className="h-full min-h-screen relative border-r-2 border-gray-800">
-			<HeaderPanel formatCode={formatCode} />
+			<HeaderPanel onFormat={formatCode} />
 			<MonacoEditor
 				beforeMount={initMonaco}
 				onMount={onEditorDidMount}

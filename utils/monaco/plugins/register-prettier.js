@@ -49,6 +49,8 @@ export function registerDocumentPrettier(editor, monaco) {
 		)
 	);
 
+	editor.getAction("editor.action.formatDocument").run();
+
 	return {
 		dispose() {
 			disposables.forEach((disposable) => disposable.dispose());
