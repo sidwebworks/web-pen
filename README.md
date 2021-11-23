@@ -7,6 +7,13 @@
 
 An open-source codepen on Steroids.
 
+# Technologies used
+
+- Next JS (React)
+- Typescript
+- Monaco Editor
+- TailwindCSS
+- ESBUILD (Bundler)
 
 ## Authors
 
