@@ -21,10 +21,10 @@ export function registerSyntaxHighlighter(editor, monaco) {
 			});
 		}
 	};
-	
-	editor.onDidChangeModel(() => debounce(colorize, 20));
 
-	editor.onDidChangeModelContent(() => debounce(colorize, 20));
+	editor.onDidChangeModel(colorize);
+
+	editor.onDidChangeModelContent(colorize);
 
 	syntaxWorker.addEventListener("message", (event) => {
 		const { classifications } = event.data;
