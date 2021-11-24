@@ -48,7 +48,7 @@ const Editor: React.FC = () => {
 		editor.onDidChangeModel((e) => {
 			const uri = e.newModelUrl;
 			if (uri) {
-				activeModel.current = monaco.editor.getModel(uri);
+				const model = monaco.editor.getModel(uri);
 			}
 		});
 
@@ -70,7 +70,7 @@ const Editor: React.FC = () => {
 				options={MonacoConfig}
 				theme="ayu-dark"
 				className="absolute inset-0 w-full h-full"
-				path={active_file.type}
+				path={active_file.name}
 				value={code}
 				onChange={onChangeHandler}
 				language={active_file.lang}
@@ -102,11 +102,19 @@ const LangSwitcher = ({ file }: any) => {
 			<Listbox value={selectedLang} onChange={onLangChange}>
 				<Listbox.Options className="flex flex-col py-2 space-y-2 text-xs bg-gray-900 rounded-md text-cyan-400">
 					{formats.map((lang) => (
-						<Listbox.Option key={lang.id} className="pl-2 pr-4 text-right cursor-pointer " value={lang}>
+						<Listbox.Option
+							key={lang.id}
+							className="pl-2 pr-4 text-right cursor-pointer "
+							value={lang}
+						>
 							{({ active, selected }) => (
 								<span
 									className={`${
-										active ? "text-cyan-500 " : lang.id === selectedLang?.id ? "text-cyan-500" : "text-gray-600"
+										active
+											? "text-cyan-500 "
+											: lang.id === selectedLang?.id
+											? "text-cyan-500"
+											: "text-gray-600"
 									}`}
 								>
 									{lang.name}

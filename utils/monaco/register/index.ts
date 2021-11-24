@@ -51,7 +51,7 @@ const baseConfigure = (monaco: Monaco) => {
 
 	// compiler options
 	monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-		target: monaco.languages.typescript.ScriptTarget.ES2015,
+		target: monaco.languages.typescript.ScriptTarget.Latest,
 		allowNonTsExtensions: true,
 	});
 
@@ -61,16 +61,16 @@ const baseConfigure = (monaco: Monaco) => {
 
 	const opts: CompilerOptions = {
 		allowJs: true,
-		allowSyntheticDefaultImports: true,
-		alwaysStrict: true,
-		moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-		noEmit: true,
-		reactNamespace: "React",
-		typeRoots: ["node_modules/@types"],
-		jsx: monaco.languages.typescript.JsxEmit.React,
+		// allowSyntheticDefaultImports: true,
+		// alwaysStrict: true,
+		// moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+		// noEmit: true,
+		// reactNamespace: "React",
+		// typeRoots: ["node_modules/@types"],
+		// jsx: monaco.languages.typescript.JsxEmit.React,
 		allowNonTsExtensions: true,
-		target: monaco.languages.typescript.ScriptTarget.ES2016,
-		jsxFactory: "React.createElement",
+		// target: monaco.languages.typescript.ScriptTarget.ES2016,
+		// jsxFactory: "React.createElement",
 	};
 
 	monaco.languages.typescript.typescriptDefaults.setCompilerOptions(opts);
