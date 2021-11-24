@@ -11,9 +11,10 @@ export const CREATE_BUNDLE = createAsyncThunk<BundleOutput, void, { state: RootS
 		const files = getState()?.editor.files;
 
 		const unBundled = files.script.value || "";
+		const lang: any = files.script.filename.split(".")[1] || "jsx";
 
-		const result = await bundler(unBundled);
-
+		const result = await bundler(unBundled, lang);
+		
 		// If bundle gives an error,
 		// reject and return the error message
 		if (result.err) {
