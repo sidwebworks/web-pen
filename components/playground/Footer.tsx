@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { AlertOctagon, BatteryCharging } from "react-feather";
+import { AlertOctagon, BatteryCharging, PhoneIncoming } from "react-feather";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux";
 
@@ -9,14 +9,14 @@ export const FooterPanel = () => {
 	const hasError = useSelector<RootState, any>((s) => s.bundler.hasError);
 
 	return (
-		<div className="w-full bg-gray-900 absolute inset-x-0 bottom-0 flex justify-between px-3 py-1  items-center flex-grow ">
-			<div className="max-w-sm flex items-center ">
+		<div className="absolute bottom-0 flex items-center justify-between w-full px-3 py-1 bg-gray-900 ">
+			<div className="flex items-center max-w-sm ">
 				{isBundling || !isInitialized ? (
 					<Loader />
 				) : hasError ? (
-					<AlertOctagon className="h-4 w-4 mr-2 text-red-500 " />
+					<AlertOctagon className="w-4 h-4 mr-2 text-red-500 " />
 				) : (
-					<BatteryCharging className="h-4 w-4 mr-2 text-cyan-500 " />
+					<BatteryCharging className="w-4 h-4 mr-2 text-cyan-500 " />
 				)}
 				<span className="block py-0.5 text-xs  text-gray-500">
 					Bundler state:{" "}
@@ -38,7 +38,7 @@ export const FooterPanel = () => {
 const Loader = () => {
 	return (
 		<svg
-			className="animate-spin -ml-1 mr-2 h-3 w-3 text-white"
+			className="w-3 h-3 mr-2 -ml-1 text-white animate-spin"
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 24 24"

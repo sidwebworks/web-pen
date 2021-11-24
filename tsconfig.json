@@ -24,7 +24,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "workers/fetch-types.js"  ],
   "exclude": [
     "node_modules"
   ]

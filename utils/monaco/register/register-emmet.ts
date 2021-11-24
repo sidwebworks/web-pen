@@ -1,4 +1,6 @@
+import { Monaco } from "@monaco-editor/react";
 import { emmetCSS, emmetHTML, emmetJSX } from "emmet-monaco-es";
+import { ICodeEditor, MonacoModel } from "../../typings/types";
 
 let _html, _css, _jsx;
 
@@ -11,3 +13,7 @@ export function registerEmmet(monaco) {
 
 	return { dispose: { html: _html, css: _css, jsx: _jsx } };
 }
+
+export const closeHtmlTags = (editor: ICodeEditor, monaco: Monaco) => {
+	if (!editor.getModel) return;
+};

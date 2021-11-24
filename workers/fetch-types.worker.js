@@ -1,24 +1,23 @@
-// /* eslint-disable no-param-reassign */
+/**
+ * Worker to fetch typescript definitions for dependencies.
+ * Credits to @CompuIves
+ * https://github.com/CompuIves/codesandbox-client/blob/dcdb4169bcbe3e5aeaebae19ff1d45940c1af834/packages/app/src/app/components/CodeEditor/Monaco/workers/fetch-dependency-typings.js
+ *
+ */
+
 import path from "path";
 
+self.importScripts(
+	"https://cdnjs.cloudflare.com/ajax/libs/typescript/2.4.2/typescript.min.js"
+);
+
 const ROOT_URL = `https://cdn.jsdelivr.net/`;
-
-const loadedTypings = [];
-
-/**
- * Send the typings library to the editor, the editor can then add them to the
- * registry
- * @param {string} virtualPath Path of typings
- * @param {string} typings Typings
- */
-const addLib = (virtualPath, typings, fetchedPaths) => {
-	fetchedPaths[virtualPath] = typings;
-};
 
 const fetchCache = new Map();
 
 const doFetch = (url) => {
 	const cached = fetchCache.get(url);
+
 	if (cached) {
 		return cached;
 	}
@@ -30,12 +29,13 @@ const doFetch = (url) => {
 			}
 
 			const error = new Error(response.statusText || response.status);
-			error.response = response;
+
 			return Promise.reject(error);
 		})
 		.then((response) => response.text());
 
 	fetchCache.set(url, promise);
+
 	return promise;
 };
 
@@ -43,7 +43,7 @@ const fetchFromDefinitelyTyped = (dependency, version, fetchedPaths) =>
 	doFetch(
 		`${ROOT_URL}npm/@types/${dependency.replace("@", "").replace(/\//g, "__")}/index.d.ts`
 	).then((typings) => {
-		addLib(`node_modules/@types/${dependency}/index.d.ts`, typings, fetchedPaths);
+		fetchedPaths[`node_modules/${dependency}/index.d.ts`] = typings;
 	});
 
 const getRequireStatements = (title, code) => {
@@ -125,7 +125,7 @@ const getFileTypes = (depUrl, dependency, depPath, fetchedPaths, fileMetaData) =
 	return doFetch(`${depUrl}/${depPath}`).then((typings) => {
 		if (fetchedPaths[virtualPath]) return null;
 
-		addLib(virtualPath, typings, fetchedPaths);
+		fetchedPaths[virtualPath] = typings;
 
 		// Now find all require statements, so we can download those types too
 		return Promise.all(
@@ -145,6 +145,7 @@ const getFileTypes = (depUrl, dependency, depPath, fetchedPaths, fileMetaData) =
 
 function fetchFromMeta(dependency, version, fetchedPaths) {
 	const depUrl = `https://data.jsdelivr.com/v1/package/npm/${dependency}@${version}/flat`;
+
 	return doFetch(depUrl)
 		.then((response) => JSON.parse(response))
 		.then((meta) => {
@@ -163,14 +164,14 @@ function fetchFromMeta(dependency, version, fetchedPaths) {
 			}
 
 			if (dtsFiles.length === 0) {
-				throw new Error("No inline typings found.");
+				throw new Error(`No inline typings found for ${dependency}@${version}`);
 			}
 
 			dtsFiles.forEach((file) => {
 				doFetch(`https://cdn.jsdelivr.net/npm/${dependency}@${version}${file}`)
-					.then((dtsFile) =>
-						addLib(`node_modules/${dependency}${file}`, dtsFile, fetchedPaths)
-					)
+					.then((dtsFile) => {
+						fetchedPaths[`node_modules/${dependency}${file}`] = dtsFile;
+					})
 					.catch(() => {});
 			});
 		});
@@ -178,17 +179,14 @@ function fetchFromMeta(dependency, version, fetchedPaths) {
 
 function fetchFromTypings(dependency, version, fetchedPaths) {
 	const depUrl = `${ROOT_URL}npm/${dependency}@${version}`;
+
 	return doFetch(`${depUrl}/package.json`)
 		.then((response) => JSON.parse(response))
 		.then((packageJSON) => {
 			const types = packageJSON.typings || packageJSON.types;
 			if (types) {
 				// Add package.json, since this defines where all types lie
-				addLib(
-					`node_modules/${dependency}/package.json`,
-					JSON.stringify(packageJSON),
-					fetchedPaths
-				);
+				fetchedPaths[`node_modules/${dependency}/package.json`] = JSON.stringify(packageJSON);
 
 				// get all files in the specified directory
 				return getFileMetaData(dependency, version, path.join("/", path.dirname(types))).then(
@@ -203,49 +201,55 @@ function fetchFromTypings(dependency, version, fetchedPaths) {
 				);
 			}
 
-			throw new Error("No typings field in package.json");
+			throw new Error(`No typings field in package.json for ${dependency}@${version}`);
 		});
 }
 
-async function fetchAndAddDependencies(dependencies) {
+function fetchDefinitions(name, version) {
+	if (!version) {
+		return Promise.reject(new Error(`No version specified for ${name}`));
+	}
+
+	// Query cache for the defintions
+	const key = `${name}@${version}`;
+
+	// If result is empty, fetch from remote
 	const fetchedPaths = {};
 
-	const depNames = Object.keys(dependencies);
+	return fetchFromTypings(name, version, fetchedPaths)
+		.catch(() =>
+			// not available in package.json, try checking meta for inline .d.ts files
+			fetchFromMeta(name, version, fetchedPaths)
+		)
+		.catch(() =>
+			// Not available in package.json or inline from meta, try checking in @types/
+			fetchFromDefinitelyTyped(name, version, fetchedPaths)
+		)
+		.then(() => {
+			if (Object.keys(fetchedPaths).length) {
+				// Also cache the definitions
 
-	await Promise.all(
-		depNames.map(async (dep) => {
-			try {
-				if (loadedTypings.indexOf(dep) === -1) {
-					loadedTypings.push(dep);
-
-					const depVersion = await doFetch(
-						`https://data.jsdelivr.com/v1/package/resolve/npm/${dep}@${dependencies[dep]}`
-					)
-						.then((x) => JSON.parse(x))
-						.then((x) => x.version);
-					// eslint-disable-next-line no-await-in-loop
-					await fetchFromTypings(dep, depVersion, fetchedPaths).catch(() =>
-						// not available in package.json, try checking meta for inline .d.ts files
-						fetchFromMeta(dep, depVersion, fetchedPaths).catch(() =>
-							// Not available in package.json or inline from meta, try checking in @types/
-							fetchFromDefinitelyTyped(dep, depVersion, fetchedPaths)
-						)
-					);
-				}
-			} catch (e) {
-				// Don't show these cryptic messages to users, because this is not vital
-				if (process.env.NODE_ENV === "development") {
-					console.error(`Couldn't find typings for ${dep}`, e);
-				}
+				return fetchedPaths;
+			} else {
+				throw new Error(`Type definitions are empty for ${key}`);
 			}
-		})
-	);
-
-	self.postMessage(fetchedPaths);
+		});
 }
 
 self.addEventListener("message", (event) => {
-	const { dependencies } = event.data;
+	const { name, version } = event.data;
 
-	fetchAndAddDependencies(dependencies);
+	fetchDefinitions(name, version)
+		.then((result) => {
+			self.postMessage({
+				name,
+				version,
+				typings: result,
+			});
+		})
+		.catch((error) => {
+			if (process.env.NODE_ENV !== "production") {
+				console.error(error);
+			}
+		});
 });

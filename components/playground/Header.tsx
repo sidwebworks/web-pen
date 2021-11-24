@@ -1,15 +1,17 @@
 import clsx from "clsx";
-import { memo, useCallback, useMemo } from "react";
-import { AlignLeft, Zap } from "react-feather";
-import { useDispatch, useSelector } from "react-redux";
+import { memo, useCallback, useState } from "react";
+import { AlignLeft, Settings, Zap } from "react-feather";
+import { useDispatch } from "react-redux";
 import { CREATE_BUNDLE } from "../../redux/actions/bundler.actions";
 import { SWITCH_FILE } from "../../redux/actions/editor.actions";
 import { useTypedSelector } from "../../utils/hooks/use-actions";
+import { SettingsModal } from "./SettingsModal";
 
 export const HeaderPanel: React.FC<{ onFormat: any }> = memo(({ onFormat }) => {
 	const dispatch = useDispatch();
 
 	const active_file = useTypedSelector<any>((s) => s.editor.active_file);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const runCode = useCallback(() => {
 		let timer = setTimeout(() => {
@@ -20,29 +22,41 @@ export const HeaderPanel: React.FC<{ onFormat: any }> = memo(({ onFormat }) => {
 	}, []);
 
 	return (
-		<div className="w-full h-[2.44rem] bg-gray-900 flex justify-between px-5 border-b-2  border-trueGray-700 items-center flex-grow ">
-			<Tabs active_file={active_file} />
-			<div className="max-w-sm flex items-center gap-4">
+		<>
+			<SettingsModal isOpen={isOpen} setIsOpen={setIsOpen} />
+			<div className="w-full h-[2.44rem] bg-gray-900 flex gap-x-3 px-4 border-b-2  border-trueGray-700 items-center flex-grow ">
 				<button
-					onClick={onFormat}
+					// onClick={() => setIsOpen(e => !e)}
 					aria-label="format code"
 					title="format code"
-					className="rounded-full btn btn-xs border-0 bg-gray-800"
+					className="rounded-full "
 					role="button"
 				>
-					<AlignLeft className="w-5 h-5 stroke-current text-green-400" />
+					<Settings className="w-4 h-4 mr-2 text-gray-400 stroke-current" />
 				</button>
-				<button
-					aria-label="bundle code"
-					title="bundle code"
-					onClick={runCode}
-					className="rounded-full btn  btn-xs border-0 bg-gray-800"
-					role="button"
-				>
-					<Zap className="w-4 h-4 fill-current text-cyan-400" />
-				</button>
+				<Tabs active_file={active_file} />
+				<div className="flex items-center max-w-sm gap-4 ml-auto">
+					<button
+						onClick={onFormat}
+						aria-label="format code"
+						title="format code"
+						className="bg-gray-800 border-0 rounded-full btn btn-xs"
+						role="button"
+					>
+						<AlignLeft className="w-5 h-5 text-green-400 stroke-current" />
+					</button>
+					<button
+						aria-label="bundle code"
+						title="bundle code"
+						onClick={runCode}
+						className="bg-gray-800 border-0 rounded-full btn btn-xs"
+						role="button"
+					>
+						<Zap className="w-4 h-4 fill-current text-cyan-400" />
+					</button>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 });
 
@@ -53,7 +67,7 @@ export const Tabs = ({ active_file }) => {
 	const files = Object.keys(filesObj);
 
 	return (
-		<div className="flex items-center relative z-10 gap-x-4">
+		<div className="relative z-10 flex items-center gap-x-4">
 			{files.map((file: any) => (
 				<Tab
 					name={filesObj[file].filename}

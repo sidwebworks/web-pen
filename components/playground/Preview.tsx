@@ -39,6 +39,7 @@ export const Preview: React.FC = () => {
 
 		const handler = (event: any) => {
 			if (event.data.type === "console") {
+				console[event.data.method](JSON.parse(event.data.data).join(" "));
 				dispatch(
 					PRINT_CONSOLE({
 						method: event.data.method,
@@ -66,7 +67,7 @@ export const Preview: React.FC = () => {
 					leave="transition duration-75 ease-out"
 					leaveFrom="transform opacity-100"
 					leaveTo="transform opacity-0"
-					className="w-full h-full absolute z-10 bg-gray-900  grid place-items-center"
+					className="absolute z-10 grid w-full h-full bg-gray-900 place-items-center"
 				>
 					<Loader type="ThreeDots" color="cyan" />
 				</Transition>
@@ -98,7 +99,7 @@ const _html = `
     <div id="root"></div>
 </body>
 
-<script>
+<script type="module">
 
 const _log = console.log
 
@@ -126,16 +127,13 @@ function setHtml(html) {
     }
 }
 
-
   function setCss(css) {
     const style = document.getElementById('_style')
     const newStyle = document.createElement('style')
     newStyle.id = '_style'
     newStyle.innerHTML = typeof css === 'undefined' ? '' : css
     style.parentNode.replaceChild(newStyle, style)
-    hasCss = typeof css === 'undefined' ? false : true
   }
-
 
   window.addEventListener(
     "error",

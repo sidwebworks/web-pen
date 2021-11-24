@@ -1,7 +1,6 @@
 import { createReducer, nanoid } from "@reduxjs/toolkit";
 import { defaultSnippets, MonacoConfig } from "../../utils/monaco";
 import {
-	Files,
 	File,
 	ConsoleLog,
 	EditorSettings,
@@ -13,6 +12,7 @@ import {
 	CLEAR_LOGS,
 	UPDATE_CODE,
 	SWITCH_FILE,
+	SWITCH_LANG,
 } from "../actions/editor.actions";
 
 interface initState {
@@ -20,7 +20,7 @@ interface initState {
 		[key: string]: File;
 	};
 	active_file: {
-		name: Files;
+		name: string;
 		lang: EditorLanguages;
 		type: "markup" | "script" | "styles";
 	};
@@ -44,7 +44,7 @@ const initialState: initState = {
 		},
 		script: {
 			value: defaultSnippets.js,
-			filename: "app.js",
+			filename: "app.jsx",
 			language: "javascript",
 			uri: null,
 		},
@@ -61,6 +61,16 @@ const initialState: initState = {
 export const editorReducer = createReducer(initialState, (builder) => {
 	builder.addCase(SWITCH_FILE, (state, action) => {
 		state.active_file = action.payload;
+	});
+	builder.addCase(SWITCH_LANG, (state, action) => {
+		const { ext, lang } = action.payload;
+		const name = state.files.script.filename.split(".")[0];
+		state.files.script.filename = `${name}${ext}`;
+		state.files.script.language = lang;
+		if (state.active_file.type === "script") {
+			state.active_file.lang = lang;
+			state.active_file.name = `${name}${ext}`;
+		}
 	});
 
 	builder.addCase(PRINT_CONSOLE, (state, action) => {

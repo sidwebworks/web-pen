@@ -8,13 +8,13 @@ const fileCache = localforage.createInstance({
 	name: "filecache",
 });
 
-export const fetchPlugin = (inputCode: string) => ({
+export const fetchPlugin = (inputCode: string, lang: OnLoadResult["loader"]) => ({
 	name: "fetch-plugin",
 
 	setup(build: PluginBuild) {
-		build.onLoad({ filter: /^index\.js$/ }, async () => {
+		build.onLoad({ filter: /^index\.js$/ }, () => {
 			return {
-				loader: "jsx",
+				loader: lang,
 				contents: inputCode,
 			};
 		});

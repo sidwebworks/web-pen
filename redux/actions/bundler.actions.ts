@@ -12,8 +12,10 @@ export const CREATE_BUNDLE = createAsyncThunk<BundleOutput, void, { state: RootS
 
 		const unBundled = files.script.value || "";
 		const lang: any = files.script.filename.split(".")[1] || "jsx";
+		console.log('lang: ', lang);
 
 		const result = await bundler(unBundled, lang);
+		console.log('result: ', result);
 		
 		// If bundle gives an error,
 		// reject and return the error message

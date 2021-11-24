@@ -1,10 +1,9 @@
 import { createWorkerQueue } from "../../../workers";
+import { IDisposable } from "../../typings/types";
 
 export function registerDocumentPrettier(editor, monaco) {
-	const disposables = [];
+	const disposables: IDisposable[] = [];
 	let prettierWorker;
-
-
 
 	const formattingEditProvider = {
 		async provideDocumentFormattingEdits(model, _options, _token) {
@@ -52,7 +51,7 @@ export function registerDocumentPrettier(editor, monaco) {
 	);
 
 	editor.getAction("editor.action.formatDocument").run();
-	
+
 	return {
 		dispose() {
 			disposables.forEach((disposable) => disposable.dispose());

@@ -3,6 +3,8 @@ import * as monaco from "monaco-editor";
 export type ICodeEditor = monaco.editor.IStandaloneCodeEditor;
 export type EditorSettings = monaco.editor.IStandaloneEditorConstructionOptions;
 
+export type IDisposable = monaco.IDisposable;
+
 export type File = {
 	value: string;
 	filename: string;
@@ -10,9 +12,10 @@ export type File = {
 	uri: null | typeof Uri;
 };
 
-export type Files = "index.html" | "styles.css" | "app.js";
+export type MonacoModel = monaco.editor.ITextModel;
 
-export type EditorLanguages = "javascript" | "html" | "css";
+
+export type EditorLanguages = "javascript" | "html" | "css" | "typescript";
 
 export type Methods =
 	| "log"

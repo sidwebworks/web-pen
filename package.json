@@ -16,6 +16,7 @@
 		"console-feed": "^3.2.2",
 		"emmet-monaco-es": "^5.0.2",
 		"esbuild-wasm": "^0.13.14",
+		"idb-keyval": "^6.0.3",
 		"localforage": "^1.10.0",
 		"monaco-editor": "^0.30.1",
 		"next": "12.0.4",
