@@ -3,11 +3,11 @@ import { CompilerOptions } from "../../typings/types";
 import { registerDocumentPrettier } from "../register/register-prettier";
 import theme from "../theme/dark";
 import { closeHtmlTags, registerEmmet } from "./register-emmet";
-// import { registerJsxHighlighter } from "./register-jsx";
+import { registerJsxHighlighter } from "./register-jsx";
 import { registerTypesWorker } from "./register-typings";
 
 export const initEditor: OnMount = (editor, monaco) => {
-	// registerJsxHighlighter(editor, monaco);
+	registerJsxHighlighter(editor, monaco);
 	registerDocumentPrettier(editor, monaco);
 	// closeHtmlTags(editor, monaco);
 
@@ -61,16 +61,16 @@ const baseConfigure = (monaco: Monaco) => {
 
 	const opts: CompilerOptions = {
 		allowJs: true,
-		// allowSyntheticDefaultImports: true,
-		// alwaysStrict: true,
-		// moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-		// noEmit: true,
-		// reactNamespace: "React",
-		// typeRoots: ["node_modules/@types"],
-		// jsx: monaco.languages.typescript.JsxEmit.React,
+		allowSyntheticDefaultImports: true,
+		alwaysStrict: true,
+		moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+		noEmit: true,
+		reactNamespace: "React",
+		typeRoots: ["node_modules/@types"],
+		jsx: monaco.languages.typescript.JsxEmit.React,
 		allowNonTsExtensions: true,
-		// target: monaco.languages.typescript.ScriptTarget.ES2016,
-		// jsxFactory: "React.createElement",
+		target: monaco.languages.typescript.ScriptTarget.ES2016,
+		jsxFactory: "React.createElement",
 	};
 
 	monaco.languages.typescript.typescriptDefaults.setCompilerOptions(opts);

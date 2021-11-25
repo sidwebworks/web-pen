@@ -44,7 +44,6 @@ const Editor: React.FC = () => {
 
 		initEditor(editor, monaco);
 
-
 		editor.onDidChangeModel((e) => {
 			const uri = e.newModelUrl;
 			if (uri) {
@@ -70,7 +69,7 @@ const Editor: React.FC = () => {
 				options={MonacoConfig}
 				theme="ayu-dark"
 				className="absolute inset-0 w-full h-full"
-				path={active_file.name}
+				path={"script.tsx"}
 				value={code}
 				onChange={onChangeHandler}
 				language={active_file.lang}
