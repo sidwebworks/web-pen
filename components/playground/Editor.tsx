@@ -69,7 +69,7 @@ const Editor: React.FC = () => {
 				options={MonacoConfig}
 				theme="ayu-dark"
 				className="absolute inset-0 w-full h-full"
-				path={"script.tsx"}
+				path={active_file.name}
 				value={code}
 				onChange={onChangeHandler}
 				language={active_file.lang}
