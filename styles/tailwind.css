@@ -1,4 +1,37 @@
 @tailwind base;
+@layer base {
+	/* Common overrides */
+	.monaco-editor .line-numbers {
+		color: currentColor;
+		opacity: 0.5;
+	}
+
+	/* Dark theme overrides */
+	.ayu-dark .JsxText {
+		color: #d9d7ce;
+	}
+
+	.ayu-dark .JsxSelfClosingElement,
+	.ayu-dark .JsxOpeningElement,
+	.ayu-dark .JsxClosingElement,
+	.ayu-dark .tagName-of-JsxOpeningElement,
+	.ayu-dark .tagName-of-JsxClosingElement,
+	.ayu-dark .tagName-of-JsxSelfClosingElement {
+		color: #5ccfe6;
+	}
+
+	.ayu-dark .name-of-JsxAttribute {
+		color: #ffcf71;
+	}
+
+	.ayu-dark .name-of-PropertyAssignment {
+		color: #bae67e;
+	}
+
+	.ayu-dark .name-of-PropertyAccessExpression {
+		color: #ffcf71;
+	}
+}
 @tailwind components;
 @tailwind utilities;
 @import url("./syntax.css");

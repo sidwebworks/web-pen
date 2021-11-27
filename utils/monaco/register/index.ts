@@ -7,6 +7,7 @@ import { registerJsxHighlighter } from "./register-jsx";
 import { registerTypesWorker } from "./register-typings";
 
 export const initEditor: OnMount = (editor, monaco) => {
+	console.log("Init editor")
 	registerJsxHighlighter(editor, monaco);
 	registerDocumentPrettier(editor, monaco);
 	// closeHtmlTags(editor, monaco);
@@ -24,6 +25,8 @@ export const initEditor: OnMount = (editor, monaco) => {
 };
 
 export const initMonaco = (monaco: Monaco) => {
+	console.log("Init Monaco")
+
 	baseConfigure(monaco);
 
 	// const { dispose } = registerTypesWorker(monaco);

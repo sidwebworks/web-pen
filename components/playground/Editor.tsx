@@ -27,7 +27,7 @@ const Editor: React.FC = () => {
 			let promise;
 			timer = setTimeout(() => {
 				promise = dispatch(CREATE_BUNDLE());
-			}, 750);
+			}, 800);
 
 			return () => {
 				promise?.abort();
@@ -43,13 +43,6 @@ const Editor: React.FC = () => {
 		activeModel.current = editor.getModel();
 
 		initEditor(editor, monaco);
-
-		editor.onDidChangeModel((e) => {
-			const uri = e.newModelUrl;
-			if (uri) {
-				const model = monaco.editor.getModel(uri);
-			}
-		});
 
 		editor.onDidChangeModelContent(() => debounce(() => editor.saveViewState(), 200));
 	};
