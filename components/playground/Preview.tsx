@@ -76,7 +76,7 @@ export const Preview: React.FC = () => {
 					title="preview"
 					srcDoc={_html}
 					ref={iFrameRef}
-					sandbox="allow-scripts"
+					sandbox="allow-scripts allow-same-origin"
 				/>
 			</div>
 			<ConsoleComponent />
