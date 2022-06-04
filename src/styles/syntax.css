@@ -1,0 +1,153 @@
+/* Dark theme overrides */
+.ayu-dark .JsxText {
+	color: #d9d7ce;
+}
+
+.ayu-dark .JsxSelfClosingElement,
+.ayu-dark .JsxOpeningElement,
+.ayu-dark .JsxClosingElement,
+.ayu-dark .tagName-of-JsxOpeningElement,
+.ayu-dark .tagName-of-JsxClosingElement,
+.ayu-dark .tagName-of-JsxSelfClosingElement {
+	color: #5ccfe6;
+}
+
+.ayu-dark .name-of-JsxAttribute {
+	color: #ffcf71;
+}
+
+.ayu-dark .name-of-PropertyAssignment {
+	color: #bae67e;
+}
+
+.ayu-dark .name-of-PropertyAccessExpression {
+	color: #ffcf71;
+}
+
+
+/* Common overrides */
+.monaco-editor .line-numbers {
+	color: currentColor;
+	opacity: 0.5;
+}
+
+/* Light theme overrides */
+.ayu-light .JsxText {
+	color: #5c6773;
+}
+
+.ayu-light .JsxSelfClosingElement,
+.ayu-light .JsxOpeningElement,
+.ayu-light .JsxClosingElement,
+.ayu-light .tagName-of-JsxOpeningElement,
+.ayu-light .tagName-of-JsxClosingElement,
+.ayu-light .tagName-of-JsxSelfClosingElement {
+	color: #41a6d9 !important;
+}
+
+.ayu-light .name-of-JsxAttribute {
+	color: #f08c36 !important;
+}
+
+.ayu-light .name-of-PropertyAssignment {
+	color: #86b300;
+}
+
+.ayu-light .name-of-PropertyAccessExpression {
+	color: #f08c36;
+}
+
+/* Dark theme overrides */
+.ayu-dark .JsxText {
+	color: #d9d7ce;
+}
+
+.ayu-dark .JsxSelfClosingElement,
+.ayu-dark .JsxOpeningElement,
+.ayu-dark .JsxClosingElement,
+.ayu-dark .tagName-of-JsxOpeningElement,
+.ayu-dark .tagName-of-JsxClosingElement,
+.ayu-dark .tagName-of-JsxSelfClosingElement {
+	color: #5ccfe6;
+}
+
+.ayu-dark .name-of-JsxAttribute {
+	color: #ffcf71;
+}
+
+.ayu-dark .name-of-PropertyAssignment {
+	color: #bae67e;
+}
+
+.ayu-dark .name-of-PropertyAccessExpression {
+	color: #ffcf71;
+}
+
+.JsxText {
+	color: #5c6773;
+}
+
+.JsxSelfClosingElement,
+.JsxOpeningElement,
+.JsxClosingElement,
+.tagName-of-JsxOpeningElement,
+.tagName-of-JsxClosingElement,
+.tagName-of-JsxSelfClosingElement {
+	color: #41a6d9;
+}
+
+.expression-of-PropertyAccessExpression {
+	color: #4cf8d9 !important;
+}
+
+.Idetifier.tagName-of-JsxSelfClosingElement {
+	color: #baec5c !important;
+}
+
+.Identifier.name-of-PropertyAccessExpression {
+	color: #ffad65 !important;
+}
+
+.Identifier.name-of-ImportClause {
+	color: #d57df0;
+}
+
+.ImportDeclaration {
+	color: #5bbdce !important;
+}
+
+.name-of-PropertyAssignment {
+	color: #86b300;
+}
+
+.mtk58.Identifier.tagName-of-JsxSelfClosingElement {
+	color: #1ca1d6;
+}
+
+.name-of-PropertyAccessExpression {
+	color: #edf036;
+}
+
+.mtk17.ArrowFunction.initializer-of-VariableDeclaration {
+	color: #edf036;
+}
+
+.mtk1 {
+	color: #accada;
+}
+
+.mtk1.Identifier.tagName-of-JsxClosingElement {
+	color: #41a6d9;
+}
+
+.mtk1.Identifier.tagName-of-JsxOpeningElement {
+	color: #41a6d9;
+}
+
+.mtk17.EqualsGreaterThanToken.equalsGreaterThanToken-of-ArrowFunction {
+	color: #a4a9f3 !important;
+}
+
+.mtk17.VariableDeclaration {
+	color: #a4a9f3 !important;
+}
