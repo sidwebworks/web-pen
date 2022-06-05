@@ -8,10 +8,6 @@ import {
 import { useTypedSelector } from "src/utils/store/store";
 import { createSnippet } from "./preview.helpers";
 
-enum MessageType {
-  LOAD = 0,
-  UPDATE = 1,
-}
 
 const Preview: React.FC = () => {
   const { css, html, js } = useTypedSelector((p) => p.preview.source);
