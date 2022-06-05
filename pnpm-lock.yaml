@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@headlessui/react': ^1.6.4
   '@heroicons/react': ^1.0.6
-  '@monaco-editor/react': ^4.4.5
+  '@monaco-editor/react': 4.4.5
   '@reduxjs/toolkit': ^1.8.2
   '@types/lodash-es': ^4.17.6
   '@types/node': 16.11.7
@@ -25,9 +25,12 @@ specifiers:
   localforage: ^1.10.0
   lodash-es: ^4.17.21
   monaco-editor: ^0.33.0
+  monaco-editor-textmate: ^3.0.0
+  monaco-textmate: ^3.0.1
   nanoid: ^3.3.4
   next: 12.1.5
   next-transpile-modules: ^9.0.0
+  onigasm: ^2.2.5
   p-queue: ^7.2.0
   path-fx: ^2.1.2
   postcss: ^8.4.14
@@ -61,8 +64,11 @@ dependencies:
   localforage: 1.10.0
   lodash-es: 4.17.21
   monaco-editor: 0.33.0
+  monaco-editor-textmate: 3.0.0_nurowwtvogix47pnszh4m7lsnu
+  monaco-textmate: 3.0.1_onigasm@2.2.5
   nanoid: 3.3.4
   next: 12.1.5_ef5jwxihqo6n7gxfmzogljlgcm
+  onigasm: 2.2.5
   p-queue: 7.2.0
   path-fx: 2.1.2
   prettier: 2.6.2
@@ -1560,6 +1566,10 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
     dev: true
 
+  /fast-plist/0.1.2:
+    resolution: {integrity: sha512-2HxzrqJhmMoxVzARjYFvkzkL2dCBB8sogU5sD8gqcZWv5UCivK9/cXM9KIPDRwU+eD3mbRDN/GhW8bO/4dtMfg==}
+    dev: false
+
   /fastq/1.13.0:
     resolution: {integrity: sha512-YpkpUnK8od0o1hmeSc7UUs/eB/vIPWJYjKck2QKIzAf71Vm1AAQ3EbuZB3g2JIy+pg+ERD0vqI79KyZiB2e2Nw==}
     dependencies:
@@ -2151,6 +2161,12 @@ packages:
     dependencies:
       js-tokens: 4.0.0
 
+  /lru-cache/5.1.1:
+    resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
+    dependencies:
+      yallist: 3.1.1
+    dev: false
+
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
@@ -2212,8 +2228,27 @@ packages:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
     dev: true
 
+  /monaco-editor-textmate/3.0.0_nurowwtvogix47pnszh4m7lsnu:
+    resolution: {integrity: sha512-4BK3ual4WllRpiQBDcBO8NKdbk4ukdBtnl23cRYvu1eNWOWKYOBM0rYac50HvFClSbtd5GMezLPjkaim0iM7sw==}
+    peerDependencies:
+      monaco-editor: 0.x.x
+      monaco-textmate: ^3.0.0
+    dependencies:
+      monaco-editor: 0.33.0
+      monaco-textmate: 3.0.1_onigasm@2.2.5
+    dev: false
+
   /monaco-editor/0.33.0:
     resolution: {integrity: sha512-VcRWPSLIUEgQJQIE0pVT8FcGBIgFoxz7jtqctE+IiCxWugD0DwgyQBcZBhdSrdMC84eumoqMZsGl2GTreOzwqw==}
+    dev: false
+
+  /monaco-textmate/3.0.1_onigasm@2.2.5:
+    resolution: {integrity: sha512-ZxxY3OsqUczYP1sGqo97tu+CJmMBwuSW+dL0WEBdDhOZ5G1zntw72hvBc68ZQAirosWvbDKgN1dL5k173QtFww==}
+    peerDependencies:
+      onigasm: ^2.0.0
+    dependencies:
+      fast-plist: 0.1.2
+      onigasm: 2.2.5
     dev: false
 
   /ms/2.0.0:
@@ -2366,6 +2401,12 @@ packages:
     dependencies:
       wrappy: 1.0.2
     dev: true
+
+  /onigasm/2.2.5:
+    resolution: {integrity: sha512-F+th54mPc0l1lp1ZcFMyL/jTs2Tlq4SqIHKIXGZOR/VkHkF9A7Fr5rRr5+ZG/lWeRsyrClLYRq7s/yFQ/XhWCA==}
+    dependencies:
+      lru-cache: 5.1.1
+    dev: false
 
   /optionator/0.9.1:
     resolution: {integrity: sha512-74RlY5FCnhq4jRxVUPKDaRwrVNXMqsGsiW6AJw4XK8hmtm10wC0ypZBLw5IIp85NZMr91+qd1RvvENwg7jjRFw==}
@@ -3162,6 +3203,10 @@ packages:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
     dev: true
+
+  /yallist/3.1.1:
+    resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
+    dev: false
 
   /yallist/4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}

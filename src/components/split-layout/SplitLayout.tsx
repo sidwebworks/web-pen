@@ -1,7 +1,7 @@
+import { debounce } from "lodash-es";
 import React, { FC, PropsWithChildren, ReactNode } from "react";
 import SplitPane from "react-split-pane";
 import { useWindowDimensions } from "../../hooks/use-window-dimensions";
-import { debounce } from "../../utils";
 
 interface SplitLayoutProps {
   children: ReactNode;
@@ -16,10 +16,10 @@ export const Root: React.FC<SplitLayoutProps> = ({ children }) => {
 
   const handleDragEnd = debounce(() => {
     document.body.classList.remove("react-draggable-transparent-selection");
-  }, 100);
+  }, 180);
 
   return (
-    <div className="flex w-full overflow-auto items-center top-0 h-screen relative">
+    <div className="flex w-full overflow-auto items-center top-0 h-full relative">
       <SplitPane
         split="vertical"
         size={width / 2}

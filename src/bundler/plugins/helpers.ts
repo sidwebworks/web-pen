@@ -1,9 +1,8 @@
 import { Plugin } from "esbuild-wasm";
 
-type CreatePluginCallback<T = undefined> = T extends undefined
-  ? () => Plugin
-  : (data: T) => Plugin;
 
-export const createPlugin = <T>(fn: CreatePluginCallback<T>) => {
+export const createPlugin = <T = undefined>(
+  fn: T extends undefined ? () => Plugin : (data: T) => Plugin
+) => {
   return fn;
 };

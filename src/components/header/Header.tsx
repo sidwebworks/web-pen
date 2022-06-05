@@ -12,12 +12,19 @@ type HeaderButtonProps = Pick<
   "onClick" | "children" | "className" | "aria-label" | "title"
 >;
 
-export function Header({}) {
+function Header({
+  onFormat,
+  onBundle,
+}: {
+  onFormat: () => void;
+  onBundle: () => void;
+}) {
   return (
-    <header className="w-full py-2.5 bg-dark-900 flex gap-x-3 px-5 border-b  border-dark-600 items-center flex-grow ">
+    <header className="w-full relative py-2.5 bg-dark-900 flex gap-x-3 px-5 border-b  border-dark-600 items-center">
       <Tabs />
       <div className="flex items-center max-w-sm gap-4 ml-auto">
         <HeaderButton
+          onClick={onFormat}
           aria-label="Format code"
           title="Format"
           className="rounded-full btn btn-xs"
@@ -26,6 +33,7 @@ export function Header({}) {
         </HeaderButton>
         <HeaderButton
           aria-label="Bundle code"
+          onClick={onBundle}
           title="Bundle"
           className="rounded-full btn btn-xs"
         >
@@ -58,3 +66,5 @@ function HeaderButton({
     </button>
   );
 }
+
+export default Header;

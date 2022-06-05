@@ -1,40 +1,44 @@
+import { FileIcon } from "@components/file-tree/file-tree-item";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
-import { useAtom } from "jotai";
-import { filter } from "lodash-es";
-import { MouseEventHandler, useMemo } from "react";
-import { activeTabs } from "../../store/editor";
+import { memo, MouseEventHandler, useMemo } from "react";
+import { useDispatch } from "react-redux";
+import {
+  CLOSE_ACTIVE_TAB,
+  SET_ACTIVE_TAB,
+} from "../../utils/store/slices/editor";
+import { useTypedSelector } from "../../utils/store/store";
+
+type TabFile = {
+  name: string;
+  path: string;
+  id: string;
+  isActive: boolean;
+};
 
 export const Tabs = () => {
-  const [active, setActive] = useAtom(activeTabs);
+  const tabs = useTypedSelector((s) => s.editor.tabs);
+  const dispatch = useDispatch();
 
-  const files = useMemo(
+  const files: TabFile[] = useMemo(
     () =>
-      Object.keys(active).map((path) => ({
-        name: path.split("/").at(-1),
-        path,
-        isActive: active[path],
+      Object.entries(tabs).map(([id, tab]) => ({
+        name: tab.path.split("/").at(-1) || "",
+        path: tab.path,
+        id: id,
+        isActive: tab.isActive,
       })),
-    [active]
+    [tabs]
   );
 
-  const handleOpen = (path: string) => {
-    if (!path) return;
-
-    setActive((p) => {
-      Object.keys(p).forEach((v) => (p[v] = false));
-      return { ...p, [path]: true };
-    });
+  const handleOpen = (file: TabFile) => {
+    if (!file || file.isActive) return;
+    dispatch(SET_ACTIVE_TAB({ id: file.id, path: file.path }));
   };
 
-  const handleClose = (path: string) => {
-    if (!path) return;
-
-    setActive((p) => {
-      Object.keys(p).forEach((v) => (p[v] = false));
-      delete p[path];
-      return { ...p };
-    });
+  const handleClose = (file: TabFile) => {
+    if (!file) return;
+    dispatch(CLOSE_ACTIVE_TAB({ id: file.id, path: file.path }));
   };
 
   return (
@@ -42,9 +46,7 @@ export const Tabs = () => {
       {files.map((file) => (
         <Tab
           key={file.path}
-          name={file.name}
-          path={file.path}
-          isActive={file.isActive}
+          file={file}
           onClick={handleOpen}
           onClose={handleClose}
         />
@@ -53,14 +55,16 @@ export const Tabs = () => {
   );
 };
 
-const Tab = ({ name, path, isActive, onClick, onClose }: any) => {
+const Tab = memo(({ file, onClick, onClose }: any) => {
+  const { name, isActive } = file;
+
   const handleSelect = () => {
-    onClick(path);
+    onClick(file);
   };
 
   const handleClose: MouseEventHandler = (e) => {
     e.stopPropagation();
-    onClose(path);
+    onClose(file);
   };
 
   return (
@@ -74,6 +78,7 @@ const Tab = ({ name, path, isActive, onClick, onClose }: any) => {
           : "text-true-gray-600  border-true-gray-700 hover:text-opacity-70"
       )}
     >
+      <FileIcon isFolder={false} name={name} />
       {name}
       <XIcon
         onClick={handleClose}
@@ -81,4 +86,6 @@ const Tab = ({ name, path, isActive, onClick, onClose }: any) => {
       />
     </button>
   );
-};
+});
+
+Tab.displayName = "Tab";

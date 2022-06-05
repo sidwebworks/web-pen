@@ -1,12 +1,19 @@
 import type { AppProps } from "next/app";
-import { Provider } from "jotai";
+import { Provider } from "react-redux";
 import "windi.css";
+import { EditorModelsProvider } from "../hooks/use-editor-models";
+import { FileSystemProvider } from "../hooks/use-filesystem";
+import store from "../utils/store/store";
 import "../styles/global.css";
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <Provider>
-      <Component {...pageProps} />
+    <Provider store={store}>
+      <FileSystemProvider>
+        <EditorModelsProvider>
+          <Component {...pageProps} />
+        </EditorModelsProvider>
+      </FileSystemProvider>
     </Provider>
   );
 }

@@ -1,121 +1,90 @@
-import { Listbox } from "@headlessui/react";
-import MonacoEditor, {
-  BeforeMount,
-  Monaco,
-  OnMount,
-} from "@monaco-editor/react";
-import { useAtom, useAtomValue } from "jotai";
+import { useBundler } from "@hooks/use-bundler";
+import { useEditorModels } from "@hooks/use-editor-models";
+import { useFileSystem } from "@hooks/use-filesystem";
+import MonacoEditor, { Monaco, OnMount } from "@monaco-editor/react";
+import { ICodeEditor } from "@typings/types";
 import { debounce } from "lodash-es";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { activeTabs, modelsAtom, optionsAtom } from "../../store/editor";
-import { ICodeEditor } from "../../utils/typings/types";
-import { FileSystem, getLanguage } from "../file-tree";
+import React, { useCallback, useEffect, useRef } from "react";
+import { getLanguage } from "src/utils";
+import { useTypedSelector } from "../../utils/store/store";
+import { onBeforeEditorMount } from "./plugins";
+import textmate from "./plugins/texmate.plugin";
+import theme from "./themes/night_owl.json";
+import { useEditorPlugins } from "./use-editor-plugins";
 
-const fs = FileSystem.getInstance();
-
-const Editor: React.FC = () => {
-  const editorRef = useRef<ICodeEditor | null>(null);
+const Editor: React.FC<{ onMount: OnMount }> = ({ onMount }) => {
+  const options = useTypedSelector((s) => s.editor.options);
+  const fs = useFileSystem();
+  const models = useEditorModels();
+  const tabs = useTypedSelector((s) => s.editor.tabs);
+  const initial = useRef(true);
   const monacoRef = useRef<Monaco | null>(null);
-  const [models, setModels] = useAtom(modelsAtom);
-  const options = useAtomValue(optionsAtom);
-  const tabs = useAtomValue(activeTabs);
+  const editorRef = useRef<ICodeEditor | null>(null);
+  const { build } = useBundler();
 
-  const active = useMemo(() => Object.keys(tabs).find((k) => tabs[k]), [tabs]);
+  useEditorPlugins(editorRef, monacoRef);
 
   useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.setModel(models[active!]);
-    }
-  }, [active, models]);
+    if (!editorRef.current) return;
 
-  const onBeforeMount: BeforeMount = useCallback((monaco) => {
+    const active = Object.values(tabs).find((el) => el.isActive);
+
+    if (active && models[active.path]) {
+      editorRef.current.setModel(models[active.path]);
+    }
+  }, [tabs, models]);
+
+  const handleMount: OnMount = useCallback(async (editor, monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+
+    monaco.editor.defineTheme("dark", theme as any);
+
+    monaco.editor.setTheme("dark");
+
+    editor.setModel(null);
+
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      editor.getAction("editor.action.formatDocument").run();
+      build();
+    });
+
+    monaco.editor.onDidCreateModel(
+      debounce(() => {
+        if (!initial.current) return;
+        initial.current = false;
+        build();
+      }, 250)
+    );
+
     const files = fs.getFiles();
-    const _models = {};
 
     for (let file of files) {
       if (file.path in models) return;
-      _models[file.path] = monaco.editor.createModel(
+
+      monaco.editor.createModel(
         file.content,
         getLanguage(file.name),
-        monaco.Uri.parse(file.path)
+        monaco.Uri.file(file.path)
       );
     }
 
-    setModels(_models);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    onMount(editor, monaco);
 
-  const onMount: OnMount = useCallback((editor, monaco) => {
-    editorRef.current = editor;
-    monacoRef.current = monaco;
-    editor.setModel(null);
+    textmate(editor, monaco);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <MonacoEditor
-      beforeMount={onBeforeMount}
-      onMount={onMount}
+      beforeMount={onBeforeEditorMount}
+      onMount={handleMount}
       options={options}
       saveViewState={true}
-      theme="vs-dark"
-      className="relative w-full overflow-clip h-auto min-h-[100vh-6vh] inset-0"
+      theme="dark"
+      className="h-full min-h-full relative inset-0"
       loading={<h3 className="font-medium text-cyan-500">Booting Up...</h3>}
     />
-  );
-};
-
-const LangSwitcher = ({ file }: any) => {
-  const formats = [
-    { id: 1, name: "Javascript", extension: ".jsx" },
-    { id: 2, name: "Typescript", extension: ".tsx" },
-  ];
-
-  const [selectedLang, setSelectedLang] = useState(() =>
-    formats.find((e) => e.extension === "." + file.name.split(".")[1])
-  );
-
-  const onLangChange = (e: any) => {
-    setSelectedLang(e);
-  };
-  return (
-    <div className="absolute right-0 z-20 bg-transparent bottom-0.5 pb-[0.2rem] text-cyan-400  mr-3">
-      <Listbox value={selectedLang} onChange={onLangChange}>
-        <Listbox.Options className="flex flex-col py-2 space-y-2 text-xs bg-gray-900 rounded-md text-cyan-400">
-          {formats.map((lang) => (
-            <Listbox.Option
-              key={lang.id}
-              className="pl-2 pr-4 text-right cursor-pointer "
-              value={lang}
-            >
-              {({ active, selected }) => (
-                <span
-                  className={`${
-                    active
-                      ? "text-cyan-500 "
-                      : lang.id === selectedLang?.id
-                      ? "text-cyan-500"
-                      : "text-gray-600"
-                  }`}
-                >
-                  {lang.name}
-                </span>
-              )}
-            </Listbox.Option>
-          ))}
-        </Listbox.Options>
-        <Listbox.Button className="pl-5 pr-4 text-xs">
-          {" "}
-          {selectedLang?.name}{" "}
-        </Listbox.Button>
-      </Listbox>
-    </div>
   );
 };
 

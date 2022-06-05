@@ -1,94 +1,50 @@
+import { useMonaco } from "@monaco-editor/react";
+import { useAtomValue } from "jotai";
+import { IDisposable } from "monaco-editor";
+import {
+  ReactEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { useTypedSelector } from "src/utils/store/store";
+import { createSnippet } from "./preview.helpers";
+
+enum MessageType {
+  LOAD = 0,
+  UPDATE = 1,
+}
+
 const Preview: React.FC = () => {
+  const { css, html, js } = useTypedSelector((p) => p.preview.source);
+  const iframe = useRef<HTMLIFrameElement>(null);
+
+  const result = useMemo(
+    () => createSnippet({ html, css, js }),
+    [html, css, js]
+  );
+
+  useEffect(() => {
+    if (!iframe.current?.contentWindow) return;
+    iframe.current.srcdoc = result;
+  }, [result]);
+
+  const onLoad: ReactEventHandler<HTMLIFrameElement> = useCallback((ev) => {},
+  []);
+
   return (
     <div className={"preview-wrapper h-full"}>
       <iframe
+        ref={iframe}
+        onLoad={onLoad}
         title="preview"
+        srcDoc={result}
         className="h-full"
-        sandbox="allow-scripts allow-same-origin"
+        sandbox="allow-scripts allow-same-origin allow-modals"
       />
     </div>
   );
 };
 
 export default Preview;
-
-const _html = `
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview</title>
-    <style id="_style"></style>
-</head>
-
-<body>
-    <div id="root"></div>
-</body>
-
-<script type="module">
-
-const _log = console.log
-
-const types = ['log', 'debug', 'info', 'warn', 'error', 'table', 'clear', 'time', 'timeEnd', 'count' , 'assert']
-
-function proxy(context, method, message) { 
-    return function() {
-        window.parent.postMessage({type: "console", method: method.name, data: JSON.stringify(Array.prototype.slice.apply(arguments))}, '*');
-    }
-  }
-
-  types.forEach(el =>  {
-    window.console[el] = proxy(console, console[el], el)
-  })
-
-function setHtml(html) {
-    document.body.innerHTML = html
-}
-
-  function executeJs(javascript) {
-    try {
-        eval(javascript)
-    } catch (err) {
-        console.error(err.message)
-    }
-}
-
-  function setCss(css) {
-    const style = document.getElementById('_style')
-    const newStyle = document.createElement('style')
-    newStyle.id = '_style'
-    newStyle.innerHTML = typeof css === 'undefined' ? '' : css
-    style.parentNode.replaceChild(newStyle, style)
-  }
-
-  window.addEventListener(
-    "error",
-    (event) => {
-       console.error(event.error)
-    },
-    false
-);
-
-    window.addEventListener(
-        "message",
-        (e) => {
-            if (typeof e.data.html !== 'undefined'){
-                setHtml(e.data.html)
-            }
-
-           if (typeof e.data.javascript !== 'undefined'){
-             executeJs(e.data.javascript)
-           } 
-
-           if (typeof e.data.css !== 'undefined'){
-            setCss(e.data.css)
-           } 
-        },
-        false
-    );
-    </script> 
-
-</html>
-`;

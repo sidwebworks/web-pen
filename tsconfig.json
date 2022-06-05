@@ -16,16 +16,24 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "@typings/*": ["./src/typings/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@components/*": ["./src/components/*"],
+    },
     "incremental": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "workers/fetch-types.js"  ],
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next"
   ]
 }

@@ -1,12 +1,13 @@
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
+import { Directory } from "@typings/interfaces";
 import clsx from "clsx";
-import { useAtom, useSetAtom } from "jotai";
 import Image from "next/image";
 import { FocusEvent, KeyboardEvent, MouseEventHandler } from "react";
 import { NodeHandlers } from "react-arborist";
 import { NodeRendererProps } from "react-arborist/src/types";
-import { activeTabs } from "../../store/editor";
-import { Directory, File } from "./file-system";
+import { useTypedDispatch } from "src/utils/store/store";
+import { SET_ACTIVE_TAB } from "../../utils/store/slices/editor";
+import { getIcon } from "./file-tree.helpers";
 
 const size = 16;
 const color = "#999";
@@ -24,7 +25,9 @@ function MaybeToggleButton({ toggle, isOpen, isFolder, isSelected }: any) {
   }
 }
 
-function Icon({ isFolder, icon, isOpen }: any) {
+export function FileIcon({ isFolder, name, isOpen }: any) {
+  const icon = getIcon(name, !isFolder);
+
   if (isFolder) {
     return (
       <Image
@@ -62,20 +65,16 @@ export function TreeItem<T extends unknown>({
   handlers,
 }: TreeItemProps<T>) {
   const folder = data.children;
-  const setActive = useSetAtom(activeTabs);
+  const dispatch = useTypedDispatch();
 
   const name = data.name;
 
   const handleSelect: MouseEventHandler = (e) => {
-    if (!folder) {
-      setActive((p) => {
-        Object.keys(p).forEach((v) => (p[v] = false));
-        return { ...p, [data.path]: true };
-      });
+    if (!folder && !state.isSelected) {
+      dispatch(SET_ACTIVE_TAB({ id: data.id, path: data.path }));
     } else {
       handlers.toggle(e);
     }
-
     handlers.select(e, { selectOnClick: true });
   };
 
@@ -83,10 +82,16 @@ export function TreeItem<T extends unknown>({
     <div
       ref={innerRef}
       style={styles.row}
-      className={clsx("row", state.isSelected && !folder && "bg-dark-800")}
+      className={clsx(
+        "row hover:bg-dark-700 !cursor-pointer",
+        state.isSelected && !folder && "bg-dark-800"
+      )}
       onClick={handleSelect}
     >
-      <div className="row-contents leading-none pb-1" style={styles.indent}>
+      <div
+        className="row-contents !mx-1 leading-none pb-1"
+        style={styles.indent}
+      >
         <MaybeToggleButton
           toggle={handlers.toggle}
           isOpen={state.isOpen}
@@ -98,12 +103,19 @@ export function TreeItem<T extends unknown>({
         ) : (
           <div
             className={clsx(
-              "flex justify-between items-center",
+              "flex  items-center justify-evenly",
               state.isSelected && !folder
                 ? "text-cyan-500"
                 : "text-true-gray-500"
             )}
           >
+            <i>
+              <FileIcon
+                isFolder={folder}
+                name={data.name}
+                isOpen={state.isOpen}
+              />
+            </i>
             {name}
           </div>
         )}

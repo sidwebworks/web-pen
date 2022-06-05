@@ -1,17 +1,34 @@
-import { BatteryCharging } from "react-feather";
+import clsx from "clsx";
+import { FC } from "react";
+import { AlertOctagon, BatteryCharging } from "react-feather";
+import { useTypedSelector } from "src/utils/store/store";
 
 const Footer = () => {
+  const { isBundling, isError, isInitialized } = useTypedSelector(
+    (s) => s.bundler
+  );
+
   return (
-    <footer className="relative bottom-0 flex items-center justify-between w-full px-3 py-1 bg-dark-900 ">
+    <footer className="relative bottom-0 flex-grow-0 flex items-center justify-between w-full px-3 py-1 bg-dark-900 ">
       <div className="flex items-center max-w-sm ">
-        {/* {isBundling || !isInitialized ? (
-					<Loader />
-				) : hasError ? (
-					<AlertOctagon className="w-4 h-4 mr-2 text-red-500 " />
-        */}
-        <BatteryCharging className="w-4 h-4 mr-2 text-cyan-500 " />
-        <span className="block py-0.5 text-xs  text-true-gray-600">
+        {isBundling || !isInitialized ? (
+          <Loader />
+        ) : isError ? (
+          <AlertOctagon className="w-4 h-4 mr-2 text-red-500 " />
+        ) : (
+          <BatteryCharging className="w-4 h-4 mr-2 text-cyan-500 " />
+        )}
+        <span className="block py-0.5 text-xs  text-true-gray-500">
           Bundler state:{" "}
+          <span className={clsx(isError ? "text-red-500" : "text-cyan-500")}>
+            {!isError && !isInitialized
+              ? "Initializing..."
+              : isError
+              ? "Bundling Error"
+              : isBundling
+              ? "Bundling..."
+              : "Idle"}
+          </span>
         </span>
       </div>
     </footer>
