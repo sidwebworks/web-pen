@@ -1,6 +1,3 @@
-import { useMonaco } from "@monaco-editor/react";
-import { useAtomValue } from "jotai";
-import { IDisposable } from "monaco-editor";
 import {
   ReactEventHandler,
   useCallback,

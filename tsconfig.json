@@ -6,8 +6,10 @@
       "dom.iterable",
       "esnext"
     ],
+    "incremental": true,
+    "skipLibCheck": true,
     "allowJs": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -22,18 +24,9 @@
       "@hooks/*": ["./src/hooks/*"],
       "@components/*": ["./src/components/*"],
     },
-    "incremental": true,
-    "skipLibCheck": true,
+
     "forceConsistentCasingInFileNames": true
   },
-
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

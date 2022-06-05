@@ -3,7 +3,6 @@ import { useBundler } from "@hooks/use-bundler";
 import { useEventListener } from "@hooks/use-event-listener";
 import { OnMount } from "@monaco-editor/react";
 import { ICodeEditor } from "@typings/types";
-import { AutoTypings, LocalStorageCache } from "monaco-editor-auto-typings";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
