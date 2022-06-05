@@ -13,10 +13,9 @@ const Preview: React.FC = () => {
   const { css, html, js } = useTypedSelector((p) => p.preview.source);
   const iframe = useRef<HTMLIFrameElement>(null);
 
-  const result = useMemo(
-    () => createSnippet({ html, css, js }),
-    [html, css, js]
-  );
+  const result = useMemo(() => {
+    return createSnippet({ html, css, js });
+  }, [html, css, js]);
 
   useEffect(() => {
     if (!iframe.current?.contentWindow) return;
