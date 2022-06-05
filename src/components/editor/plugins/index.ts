@@ -58,6 +58,7 @@ export const onBeforeEditorMount: BeforeMount = async (monaco) => {
     moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
     module: monaco.languages.typescript.ModuleKind.ESNext,
     noEmit: true,
+    baseUrl: ".",
     esModuleInterop: true,
     jsx: monaco.languages.typescript.JsxEmit.React,
     reactNamespace: "React",

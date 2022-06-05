@@ -1,6 +1,7 @@
 import { useEditorModels } from "@hooks/use-editor-models";
 import { Monaco } from "@monaco-editor/react";
 import { ICodeEditor, IDisposable } from "@typings/types";
+import { AutoTypings, LocalStorageCache } from "monaco-editor-auto-typings";
 import { MutableRefObject, useEffect } from "react";
 import { useTypedSelector } from "src/utils/store/store";
 import emmetPlugin from "./plugins/emmet.plugin";

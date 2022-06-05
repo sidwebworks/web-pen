@@ -30,7 +30,7 @@ export const FileSystemProvider: FC<{ children: ReactChild }> = ({
       fs.createFile({
         content: js.app.trim(),
         mimeType: "text/javascript",
-        name: "app.jsx",
+        name: "app.js",
       }),
     ]);
 

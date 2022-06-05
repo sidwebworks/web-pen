@@ -34,7 +34,6 @@ const slice = createSlice({
       // Set all tabs to inactive first
       Object.entries(state.tabs).forEach(([_, tab]) => (tab.isActive = false));
 
-      console.log(payload);
       // Set current tab as active
       state.tabs[payload.id] = {
         id: payload.id,
