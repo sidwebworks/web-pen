@@ -3,6 +3,8 @@ import { useMonaco } from "@monaco-editor/react";
 import { unix as path } from "path-fx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getLanguage } from "src/lib";
+import { SET_ACTIVE_TAB } from "src/lib/store/slices/editor";
+import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
 import TreeModel from "tree-model-improved";
 import { useFileSystem } from "../../hooks/use-filesystem";
 
@@ -15,7 +17,7 @@ export const useFileTree = () => {
   const monaco = useMonaco();
   const models = useEditorModels();
 
-  console.log(models);
+  const dispatch = useTypedDispatch();
 
   const [data, setData] = useState(() => fs.tree.model);
 
@@ -72,6 +74,8 @@ export const useFileTree = () => {
             getLanguage(name),
             new monaco.Uri().with({ path: nextPath })
           );
+
+          dispatch(SET_ACTIVE_TAB({ id: node.model.id, path: nextPath }));
         }
 
         node.model.name = name;
