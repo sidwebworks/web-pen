@@ -1,9 +1,10 @@
 import { useEditorModels } from "@hooks/use-editor-models";
 import { Directory } from "@typings/interfaces";
+import clsx from "clsx";
 import React, { useEffect, useRef } from "react";
 import { Tree, TreeApi } from "react-arborist";
 import AutoSize from "react-virtualized-auto-sizer";
-import { useTypedSelector } from "../../utils/store/store";
+import { useTypedSelector } from "../../lib/store/store";
 import { TreeItem } from "./file-tree-item";
 import { useFileTree } from "./use-file-tree";
 
@@ -12,6 +13,8 @@ interface FileNavigationProps {}
 const FileTree: React.FC<FileNavigationProps> = () => {
   const { data, onToggle, onMove, onEdit } = useFileTree();
   const tabs = useTypedSelector((s) => s.editor.tabs);
+  const isOpen = useTypedSelector((s) => s.editor.isSidebarOpen);
+
   const ref = useRef<TreeApi<Directory> | null>(null);
 
   useEffect(() => {
@@ -27,7 +30,12 @@ const FileTree: React.FC<FileNavigationProps> = () => {
   }, [tabs]);
 
   return (
-    <div className="h-screen w-[180px] z-10 flex flex-col relative py-4 overflow-y-clip bg-dark-900 border-r border-dark-600">
+    <div
+      className={clsx(
+        "h-screen z-10 flex flex-col relative py-4 overflow-y-clip bg-dark-900 border-r border-dark-600",
+        isOpen ? "w-[180px]" : "w-0"
+      )}
+    >
       <AutoSize>
         {(props: any) => (
           <Tree

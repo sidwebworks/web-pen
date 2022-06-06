@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BuildResult } from "esbuild-wasm";
 import { BUNDLE_CODE, INIT_BUNDLER } from "../thunks";
 
@@ -6,7 +6,7 @@ type IBunderState = {
   isInitialized: boolean;
   isError: boolean;
   isBundling: boolean;
-  errors: BuildResult["errors"];
+  error: { frame: string; file: string };
   bundled: string;
 };
 
@@ -14,7 +14,7 @@ const initialState: IBunderState = {
   isBundling: false,
   isError: false,
   isInitialized: false,
-  errors: [],
+  error: { file: "", frame: "" },
   bundled: "",
 };
 
@@ -28,15 +28,23 @@ const slice = createSlice({
     });
     builder.addCase(BUNDLE_CODE.pending, (state) => {
       state.isError = false;
+      state.error = {
+        file: "",
+        frame: "",
+      };
       state.isBundling = true;
     });
     builder.addCase(BUNDLE_CODE.fulfilled, (state, action) => {
       state.isBundling = false;
       state.bundled = action.payload;
     });
-    builder.addCase(BUNDLE_CODE.rejected, (state) => {
+    builder.addCase(BUNDLE_CODE.rejected, (state, action) => {
       state.isBundling = false;
       state.isError = true;
+      state.error = {
+        file: action.error.stack,
+        frame: action.error.message,
+      };
     });
   },
 });

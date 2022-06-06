@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from "react";
-import { UPDATE_SOURCE } from "src/utils/store/slices/preview";
-import { useTypedDispatch } from "../utils/store/store";
-import { BUNDLE_CODE } from "../utils/store/thunks";
+import { UPDATE_SOURCE } from "src/lib/store/slices/preview";
+import { useTypedDispatch } from "../lib/store/store";
+import { BUNDLE_CODE } from "../lib/store/thunks";
 import { useEditorModels } from "./use-editor-models";
 import { useLocalContext } from "./use-local-context";
 

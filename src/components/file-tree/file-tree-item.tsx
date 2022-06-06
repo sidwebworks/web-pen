@@ -5,8 +5,8 @@ import Image from "next/image";
 import { FocusEvent, KeyboardEvent, MouseEventHandler } from "react";
 import { NodeHandlers } from "react-arborist";
 import { NodeRendererProps } from "react-arborist/src/types";
-import { useTypedDispatch } from "src/utils/store/store";
-import { SET_ACTIVE_TAB } from "../../utils/store/slices/editor";
+import { useTypedDispatch } from "src/lib/store/store";
+import { SET_ACTIVE_TAB } from "../../lib/store/slices/editor";
 import { getIcon } from "./file-tree.helpers";
 
 const size = 16;
@@ -86,6 +86,7 @@ export function TreeItem<T extends unknown>({
         "row hover:bg-dark-700 !cursor-pointer",
         state.isSelected && !folder && "bg-dark-800"
       )}
+      onDoubleClick={handlers.edit}
       onClick={handleSelect}
     >
       <div

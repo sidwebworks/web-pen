@@ -2,14 +2,14 @@ import { Loader, OnLoadResult } from "esbuild-wasm";
 import { unix as path } from "path-fx";
 import { BuildInput } from "..";
 
-import { createPlugin } from "./helpers";
+import { createPlugin, getLoaderFromPath } from "./helpers";
 
 const plugin = createPlugin<BuildInput>((options) => ({
   name: "loader-plugin",
   setup(build) {
     build.onLoad({ filter: new RegExp(path.join(options.entry)) }, (args) => {
       return {
-        loader: options.loader,
+        loader: getLoaderFromPath(args.path, options.loader),
         contents: options.tree[`/${path.join(options.entry)}`],
       };
     });
@@ -22,7 +22,7 @@ const plugin = createPlugin<BuildInput>((options) => ({
       const contents = options.tree[args.path.replace(".", "")] || "";
 
       const result: OnLoadResult = {
-        loader: "jsx",
+        loader: getLoaderFromPath(args.path, options.loader),
         contents,
         resolveDir: args.path,
       };

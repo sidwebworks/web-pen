@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/code-frame": "^7.16.7",
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
     "@monaco-editor/react": "4.4.5",
@@ -37,6 +38,7 @@
     "tree-model-improved": "^2.0.1"
   },
   "devDependencies": {
+    "@types/babel__code-frame": "^7.0.3",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "16.11.7",
     "@types/prettier": "^2.6.3",

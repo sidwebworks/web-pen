@@ -10,8 +10,8 @@ import { useEffect, useRef } from "react";
 import FileTree from "../components/file-tree";
 import Footer from "../components/footer";
 import { SplitLayout } from "../components/split-layout";
-import { useTypedDispatch } from "../utils/store/store";
-import { INIT_BUNDLER } from "../utils/store/thunks";
+import { useTypedDispatch } from "../lib/store/store";
+import { INIT_BUNDLER } from "../lib/store/thunks";
 
 const Editor = dynamic(() => import("../components/editor"), {
   ssr: false,

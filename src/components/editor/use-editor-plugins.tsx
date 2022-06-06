@@ -2,7 +2,7 @@ import { useEditorModels } from "@hooks/use-editor-models";
 import { Monaco } from "@monaco-editor/react";
 import { ICodeEditor, IDisposable } from "@typings/types";
 import { MutableRefObject, useEffect } from "react";
-import { useTypedSelector } from "src/utils/store/store";
+import { useTypedSelector } from "src/lib/store/store";
 import emmetPlugin from "./plugins/emmet.plugin";
 import prettierPlugin from "./plugins/prettier.plugin";
 

@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import "windi.css";
 import { EditorModelsProvider } from "../hooks/use-editor-models";
 import { FileSystemProvider } from "../hooks/use-filesystem";
-import store from "../utils/store/store";
+import store from "../lib/store/store";
 import "../styles/global.css";
 
 function App({ Component, pageProps }: AppProps) {

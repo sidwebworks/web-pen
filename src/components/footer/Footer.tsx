@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { FC } from "react";
 import { AlertOctagon, BatteryCharging } from "react-feather";
-import { useTypedSelector } from "src/utils/store/store";
+import { useTypedSelector } from "src/lib/store/store";
 
 const Footer = () => {
   const { isBundling, isError, isInitialized } = useTypedSelector(

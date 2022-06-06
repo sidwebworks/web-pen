@@ -1,1 +1,1 @@
-export { default } from "./Preview.component";
+export { default } from "./Preview";

@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Bundler, { BuildInput } from "../../bundler";
-import { RootState } from "./store";
 
 const bundler = new Bundler();
 

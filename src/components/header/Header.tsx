@@ -1,10 +1,13 @@
 import { CogIcon } from "@heroicons/react/outline";
 import {
+  ChevronDoubleRightIcon,
   LightningBoltIcon,
   MenuAlt2Icon as FormatIcon,
 } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { ComponentPropsWithoutRef } from "react";
+import { TOGGLE_SIDEBAR } from "src/lib/store/slices/editor";
+import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
 import { Tabs } from "./HeaderTabs";
 
 type HeaderButtonProps = Pick<
@@ -19,8 +22,25 @@ function Header({
   onFormat: () => void;
   onBundle: () => void;
 }) {
+  const isSidebarOpen = useTypedSelector((s) => s.editor.isSidebarOpen);
+
+  const dispatch = useTypedDispatch();
+
   return (
     <header className="w-full relative py-2.5 bg-dark-900 flex gap-x-3 px-5 border-b  border-dark-600 items-center">
+      <HeaderButton
+        onClick={() => dispatch(TOGGLE_SIDEBAR())}
+        aria-label="Format code"
+        title="Format"
+        className="rounded-full btn btn-xs"
+      >
+        <ChevronDoubleRightIcon
+          className={clsx(
+            "w-5 h-5 text-cyan-400 fill-current transition-transform duration-250  transform",
+            isSidebarOpen ? "rotate-[180deg]" : "rotate-[0deg]"
+          )}
+        />
+      </HeaderButton>
       <Tabs />
       <div className="flex items-center max-w-sm gap-4 ml-auto">
         <HeaderButton

@@ -6,8 +6,8 @@ import { useDispatch } from "react-redux";
 import {
   CLOSE_ACTIVE_TAB,
   SET_ACTIVE_TAB,
-} from "../../utils/store/slices/editor";
-import { useTypedSelector } from "../../utils/store/store";
+} from "../../lib/store/slices/editor";
+import { useTypedSelector } from "../../lib/store/store";
 
 type TabFile = {
   name: string;

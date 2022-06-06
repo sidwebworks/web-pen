@@ -4,16 +4,21 @@ import type { editor } from "monaco-editor";
 type IEditorState = {
   tabs: Record<string, { isActive: boolean; path: string; id: string }>;
   options: editor.IStandaloneDiffEditorConstructionOptions;
+  isSidebarOpen: boolean;
 };
 
 const initialState: IEditorState = {
+  isSidebarOpen: true,
   tabs: {},
   options: {
     scrollbar: { verticalScrollbarSize: 10 },
     minimap: { enabled: false },
     fontSize: 15,
     lineNumbers: "off",
+    fixedOverflowWidgets: true,
+    renderLineHighlight: "none",
     cursorStyle: "block-outline",
+    autoIndent: "advanced",
     guides: { bracketPairs: true, indentation: true },
     wordWrap: "off",
     cursorSmoothCaretAnimation: true,
@@ -27,6 +32,9 @@ const slice = createSlice({
   name: "editor",
   initialState,
   reducers: {
+    TOGGLE_SIDEBAR(state) {
+      state.isSidebarOpen = !state.isSidebarOpen;
+    },
     SET_ACTIVE_TAB(
       state,
       { payload }: PayloadAction<{ path: string; id: string }>
@@ -59,6 +67,7 @@ const slice = createSlice({
   },
 });
 
-export const { SET_ACTIVE_TAB, CLOSE_ACTIVE_TAB } = slice.actions;
+export const { SET_ACTIVE_TAB, CLOSE_ACTIVE_TAB, TOGGLE_SIDEBAR } =
+  slice.actions;
 
 export default slice;

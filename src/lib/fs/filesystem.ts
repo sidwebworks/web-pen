@@ -2,17 +2,19 @@ import { Directory, File } from "@typings/interfaces";
 import { DirectoryTypes } from "@typings/types";
 import { nanoid } from "nanoid";
 import { unix as path } from "path-fx";
-import Model from "tree-model-improved";
+import TreeModel from "tree-model-improved";
+import { Model, Node } from "tree-model-improved/types";
 
 export class FileSystem {
-  private model = new Model();
-  private _tree: Model.Node<Directory | File>;
+  private model = new TreeModel();
+  private _tree: Node<Directory | File>;
 
   constructor() {
     const dir = this.createDirectory({
       children: [],
       isOpen: true,
       name: "/",
+      parent: "/",
       type: DirectoryTypes.DEFAULT,
     });
 
@@ -26,7 +28,7 @@ export class FileSystem {
     }
   }
 
-  parse(data: Model.Node<any>) {
+  parse(data: Model<File | Directory>) {
     return this.model.parse(data);
   }
 

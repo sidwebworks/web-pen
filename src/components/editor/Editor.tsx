@@ -5,9 +5,9 @@ import MonacoEditor, { Monaco, OnMount } from "@monaco-editor/react";
 import { ICodeEditor } from "@typings/types";
 import { debounce } from "lodash-es";
 import React, { useCallback, useEffect, useRef } from "react";
-import { getLanguage } from "src/utils";
-import { SET_ACTIVE_TAB } from "src/utils/store/slices/editor";
-import { useTypedDispatch, useTypedSelector } from "../../utils/store/store";
+import { getLanguage } from "src/lib";
+import { SET_ACTIVE_TAB } from "src/lib/store/slices/editor";
+import { useTypedDispatch, useTypedSelector } from "../../lib/store/store";
 import { onBeforeEditorMount } from "./plugins";
 import textmate from "./plugins/texmate.plugin";
 import theme from "./themes/night_owl.json";
@@ -72,7 +72,10 @@ const Editor: React.FC<{ onMount: OnMount }> = ({ onMount }) => {
 
     const active = files.at(0)!;
 
-    dispatch(SET_ACTIVE_TAB({ id: active.id, path: active.path }));
+    if (active) {
+      dispatch(SET_ACTIVE_TAB({ id: active.id, path: active.path }));
+    }
+
 
     onMount(editor, monaco);
 

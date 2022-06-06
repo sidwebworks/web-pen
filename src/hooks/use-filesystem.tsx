@@ -1,7 +1,6 @@
-import { DirectoryTypes } from "@typings/types";
 import { createContext, FC, ReactChild, useContext, useMemo } from "react";
-import { css, html, js } from "src/utils/fs/templates";
-import { FileSystem } from "../utils/fs/filesystem";
+import { css, html, js } from "src/lib/fs/templates";
+import { FileSystem } from "../lib/fs/filesystem";
 
 const FileSystemContext = createContext(new FileSystem());
 
