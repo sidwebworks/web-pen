@@ -1,21 +1,13 @@
-import { useBundler } from "@hooks/use-bundler";
 import { useEditor } from "@hooks/use-editor";
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import { debounce } from "lodash-es";
-import { useRouter } from "next/router";
-import { pid } from "process";
-import React, { useEffect } from "react";
-import { fileStore, SAVE_FILES } from "src/lib/store/thunks";
-import { useTypedDispatch, useTypedSelector } from "../../lib/store/store";
+import React from "react";
+import { useTypedSelector } from "../../lib/store/store";
 import { onBeforeEditorMount } from "./plugins";
 import theme from "./themes/night_owl.json";
 
 const Editor: React.FC = () => {
   const options = useTypedSelector((s) => s.editor.options);
-  const dispatch = useTypedDispatch();
-  const router = useRouter();
   const { update } = useEditor();
-  const { build } = useBundler();
 
   const handleMount: OnMount = (editor, monaco) => {
     editor.onDidChangeModel(() => {

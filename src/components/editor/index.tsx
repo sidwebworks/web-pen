@@ -25,16 +25,16 @@ interface EditorLayoutProps {}
 const EditorLayout: React.FC<EditorLayoutProps> = () => {
   const files = useTypedSelector((s) => s.editor.dir);
   const { build } = useBundler();
-  const { query } = useRouter();
+  const router = useRouter();
   const dispatch = useTypedDispatch();
 
   useEffect(() => {
-    dispatch(LOAD_INITIAL_FILES(query?.pid as string)).then(() => {
+    dispatch(LOAD_INITIAL_FILES(router.query?.pid as string)).then(() => {
       build();
     });
 
     dispatch(INIT_BUNDLER());
-  }, [dispatch, build, query]);
+  }, [dispatch, build, router]);
 
   useEditorDisposables();
 

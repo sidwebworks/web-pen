@@ -1,8 +1,9 @@
 import { useBundler } from "@hooks/use-bundler";
 import { useEditor } from "@hooks/use-editor";
+import { nanoid } from "@reduxjs/toolkit";
 import { IDisposable, TextModel } from "@typings/editor";
 import { debounce } from "lodash-es";
-import router from "next/router";
+import router, { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
 import { CLOSE_ACTIVE_TAB } from "src/lib/store/slices/editor";
 import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
@@ -14,6 +15,7 @@ import textmatePlugin from "../components/editor/plugins/texmate.plugin";
 export const useEditorDisposables = () => {
   const { editor, monaco } = useEditor();
   const tabs = useTypedSelector((s) => s.editor.tabs);
+  const router = useRouter();
   const dispatch = useTypedDispatch();
 
   const { build } = useBundler();
@@ -32,19 +34,23 @@ export const useEditorDisposables = () => {
   useEffect(() => {
     if (!editor || !monaco) return;
 
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-      if (router.query?.pid) {
-        const models = monaco.editor.getModels().reduce((acc, curr) => {
-          acc[curr.uri.path] = curr;
-          return acc;
-        }, {});
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, async () => {
+      if (!router.query?.pid) {
+        const url = `/editor?pid=${nanoid()}`;
 
-        dispatch(SAVE_FILES({ models, key: router.query.pid as string }));
+        await router.push(url, url, { shallow: true });
       }
 
-      build();
+      const models = monaco.editor.getModels().reduce((acc, curr) => {
+        acc[curr.uri.path] = curr;
+        return acc;
+      }, {});
+
+      await dispatch(SAVE_FILES({ models, key: router.query.pid as string }));
+
+      build(true);
     });
-  }, [editor, monaco, dispatch, build]);
+  }, [editor, monaco, dispatch, router, build]);
 
   useEffect(() => {
     if (monaco && editor) {

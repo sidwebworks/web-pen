@@ -43,7 +43,7 @@ const FileTree: React.FC<FileNavigationProps> = ({ files }) => {
   return (
     <div
       className={clsx(
-        "h-screen z-10 flex flex-col relative py-4 overflow-y-clip bg-dark-900 border-r border-dark-600",
+        "h-screen z-10 flex transition-[width] duration-250 will-change flex-col relative py-4 overflow-y-clip bg-dark-900 border-r border-dark-600",
         isOpen ? "w-[180px]" : "w-0"
       )}
     >
