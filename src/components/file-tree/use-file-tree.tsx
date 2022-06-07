@@ -1,37 +1,41 @@
-import { useEditorModels } from "@hooks/use-editor-models";
+import { useEditor } from "@hooks/use-editor";
 import { useMonaco } from "@monaco-editor/react";
+import { Directory } from "@typings/editor";
+import { isFile } from "@typings/guards";
+import { cloneDeep } from "lodash-es";
 import { unix as path } from "path-fx";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { getLanguage } from "src/lib";
-import { SET_ACTIVE_TAB } from "src/lib/store/slices/editor";
-import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
+import { useCallback, useMemo, useRef } from "react";
+import { getLanguage, isEntryName } from "src/lib";
+import { SET_ACTIVE_TAB, UPDATE_ROOT_DIR } from "src/lib/store/slices/editor";
+import { useTypedDispatch } from "src/lib/store/store";
 import TreeModel from "tree-model-improved";
-import { useFileSystem } from "../../hooks/use-filesystem";
 
 function findById(node: any, id: string): TreeModel.Node<any> | null {
   return node.first((n: any) => n.model.id === id);
 }
 
-export const useFileTree = () => {
-  const fs = useFileSystem();
-  const monaco = useMonaco();
-  const models = useEditorModels();
-
+export const useFileTree = (data: Directory) => {
   const dispatch = useTypedDispatch();
+  const model = useRef(null);
+  const { editor, monaco } = useEditor();
 
-  const [data, setData] = useState(() => fs.tree.model);
+  if (!model.current) {
+    model.current = new TreeModel();
+  }
 
-  const root = useMemo(() => fs.parse(data), [data, fs]);
+  const root = useMemo(() => {
+    return model.current.parse(cloneDeep(data));
+  }, [data]);
 
   const find = useCallback((id) => findById(root, id), [root]);
 
-  const update = () => setData({ ...root.model });
+  const update = () => dispatch(UPDATE_ROOT_DIR({ ...root.model }));
 
   return {
     data,
     onToggle: (id: string, isOpen: boolean) => {
       const node = find(id);
-      if (node) {
+      if (node && !node.model?.content) {
         node.model.isOpen = isOpen;
         update();
       }
@@ -44,38 +48,45 @@ export const useFileTree = () => {
       for (const srcId of srcIds) {
         const src = find(srcId);
         const dstParent = dstParentId ? find(dstParentId) : root;
+
         if (!src || !dstParent) return;
-        const newItem = fs.parse(src.model);
+
+        const newItem = model.current.parse(src.model);
+
         dstParent.addChildAtIndex(newItem, dstIndex);
+
         src.drop();
       }
       update();
     },
     onEdit: (id: string, name: string) => {
-      console.log(name);
       const node = find(id);
 
       if (node) {
-        const isFile = node.model?.content;
         const nextPath = path.join(node.model.parent, name);
 
-        if (isFile) {
-          node.model.mimeType = `text/${getLanguage(name)}`;
+        if (isFile(node.model)) {
+          const file = node.model;
 
-          const model = models[node.model.path];
-          const content = model.getValue();
+          if (isEntryName(file.name) && !isEntryName(name)) return;
 
-          monaco.editor.setModelLanguage(model, getLanguage(name));
+          const models = monaco.editor.getModels();
 
-          model.dispose();
+          const model = models.find((m) => m.uri.path === file.path);
 
-          monaco.editor.createModel(
-            content,
-            getLanguage(name),
-            new monaco.Uri().with({ path: nextPath })
-          );
+          if (model) {
+            const content = model.getValue();
 
-          dispatch(SET_ACTIVE_TAB({ id: node.model.id, path: nextPath }));
+            model.dispose();
+
+            monaco.editor.createModel(
+              content,
+              getLanguage(name),
+              monaco.Uri.parse(nextPath)
+            );
+
+            dispatch(SET_ACTIVE_TAB({ id: file.id, path: nextPath }));
+          }
         }
 
         node.model.name = name;

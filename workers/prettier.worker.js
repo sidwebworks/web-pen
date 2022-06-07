@@ -13,13 +13,11 @@ const options = {
     printWidth: 100000,
     tabWidth: 1,
   }),
-
   css: async () => ({
     parser: "css",
     plugins: [await import("prettier/parser-postcss")],
     printWidth: 100,
   }),
-
   javascript: async () => ({
     parser: "babel",
     plugins: [await import("prettier/parser-babel")],
@@ -28,8 +26,8 @@ const options = {
     singleQuote: true,
   }),
   typescript: async () => ({
-    parser: "babel",
-    plugins: [await import("prettier/parser-babel")],
+    parser: "typescript",
+    plugins: [await import("prettier/parser-typescript")],
     printWidth: 100,
     semi: true,
     singleQuote: true,
@@ -57,6 +55,8 @@ addEventListener("message", async (event) => {
     respond({
       pretty: prettier.format(event.data.text, {
         ...opts,
+        endOfLine: "auto",
+        trailingComma: "es5",
       }),
     });
   } catch (error) {

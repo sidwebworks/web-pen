@@ -1,44 +1,26 @@
 import { useBundler } from "@hooks/use-bundler";
-import { useEditorModels } from "@hooks/use-editor-models";
-import { useFileSystem } from "@hooks/use-filesystem";
-import MonacoEditor, { Monaco, OnMount } from "@monaco-editor/react";
-import { ICodeEditor } from "@typings/types";
+import { useEditor } from "@hooks/use-editor";
+import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { debounce } from "lodash-es";
-import React, { useCallback, useEffect, useRef } from "react";
-import { getLanguage } from "src/lib";
-import { SET_ACTIVE_TAB } from "src/lib/store/slices/editor";
+import { useRouter } from "next/router";
+import { pid } from "process";
+import React, { useEffect } from "react";
+import { fileStore, SAVE_FILES } from "src/lib/store/thunks";
 import { useTypedDispatch, useTypedSelector } from "../../lib/store/store";
 import { onBeforeEditorMount } from "./plugins";
-import textmate from "./plugins/texmate.plugin";
 import theme from "./themes/night_owl.json";
-import { useEditorPlugins } from "./use-editor-plugins";
 
-const Editor: React.FC<{ onMount: OnMount }> = ({ onMount }) => {
+const Editor: React.FC = () => {
   const options = useTypedSelector((s) => s.editor.options);
-  const fs = useFileSystem();
   const dispatch = useTypedDispatch();
-  const models = useEditorModels();
-  const tabs = useTypedSelector((s) => s.editor.tabs);
-  const initial = useRef(true);
-  const monacoRef = useRef<Monaco | null>(null);
-  const editorRef = useRef<ICodeEditor | null>(null);
+  const router = useRouter();
+  const { update } = useEditor();
   const { build } = useBundler();
 
-  useEditorPlugins(editorRef, monacoRef);
-
-  useEffect(() => {
-    if (!editorRef.current) return;
-
-    const active = Object.values(tabs).find((el) => el.isActive);
-
-    if (active && models[active.path]) {
-      editorRef.current.setModel(models[active.path]);
-    }
-  }, [tabs, models]);
-
-  const handleMount: OnMount = useCallback(async (editor, monaco) => {
-    editorRef.current = editor;
-    monacoRef.current = monaco;
+  const handleMount: OnMount = (editor, monaco) => {
+    editor.onDidChangeModel(() => {
+      editor.getAction("editor.action.formatDocument").run();
+    });
 
     editor.setModel(null);
 
@@ -46,42 +28,8 @@ const Editor: React.FC<{ onMount: OnMount }> = ({ onMount }) => {
 
     monaco.editor.setTheme("dark");
 
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-      editor.getAction("editor.action.formatDocument").run();
-      build();
-    });
-
-    monaco.editor.onDidCreateModel(
-      debounce(() => {
-        if (!initial.current) return;
-        initial.current = false;
-        build();
-      }, 220)
-    );
-
-    const files = fs.getFiles();
-
-    for (let file of files) {
-      if (file.path in models) return;
-      monaco.editor.createModel(
-        file.content,
-        getLanguage(file.name),
-        monaco.Uri.parse(file.path)
-      );
-    }
-
-    const active = files.at(0)!;
-
-    if (active) {
-      dispatch(SET_ACTIVE_TAB({ id: active.id, path: active.path }));
-    }
-
-
-    onMount(editor, monaco);
-
-    textmate(editor, monaco);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    update({ monaco, editor });
+  };
 
   return (
     <MonacoEditor

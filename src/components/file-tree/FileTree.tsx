@@ -1,33 +1,44 @@
-import { useEditorModels } from "@hooks/use-editor-models";
-import { Directory } from "@typings/interfaces";
+import { useEditor } from "@hooks/use-editor";
+import { Directory } from "@typings/editor";
 import clsx from "clsx";
 import React, { useEffect, useRef } from "react";
 import { Tree, TreeApi } from "react-arborist";
 import AutoSize from "react-virtualized-auto-sizer";
 import { useTypedSelector } from "../../lib/store/store";
-import { TreeItem } from "./file-tree-item";
+import FileTreeItem from "./FileTreeItem";
 import { useFileTree } from "./use-file-tree";
 
-interface FileNavigationProps {}
+interface FileNavigationProps {
+  files: Directory;
+}
 
-const FileTree: React.FC<FileNavigationProps> = () => {
-  const { data, onToggle, onMove, onEdit } = useFileTree();
+const FileTree: React.FC<FileNavigationProps> = ({ files }) => {
+  const { data, onToggle, onMove, onEdit } = useFileTree(files);
+  const { monaco, editor } = useEditor();
+
   const tabs = useTypedSelector((s) => s.editor.tabs);
+
   const isOpen = useTypedSelector((s) => s.editor.isSidebarOpen);
 
-  const ref = useRef<TreeApi<Directory> | null>(null);
+  const ref = useRef<TreeApi<Directory>>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current || !monaco || !editor) return;
 
     const active = Object.keys(tabs).find((el) => tabs[el].isActive);
 
-    if (active && tabs[active]) {
+    const models = monaco.editor.getModels();
+
+    const model = models.find((m) => m.uri.path === tabs[active]?.path);
+
+    if (active && tabs[active] && model) {
       ref.current.selectById(tabs[active].id);
+      editor.setModel(model);
     } else {
       ref.current.selectById("");
+      editor.setModel(null);
     }
-  }, [tabs]);
+  }, [tabs, monaco, editor]);
 
   return (
     <div
@@ -37,7 +48,7 @@ const FileTree: React.FC<FileNavigationProps> = () => {
       )}
     >
       <AutoSize>
-        {(props: any) => (
+        {(props) => (
           <Tree
             openByDefault={true}
             className="react-aborist"
@@ -53,10 +64,9 @@ const FileTree: React.FC<FileNavigationProps> = () => {
             onMove={onMove}
             width={props.width}
             height={props.height}
-            onContextMenu={() => console.log("context menu the tree")}
           >
             {/* @ts-ignore */}
-            {TreeItem}
+            {FileTreeItem}
           </Tree>
         )}
       </AutoSize>

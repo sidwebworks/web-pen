@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Directory, DirectoryTypes, File } from "@typings/editor";
 import type { editor } from "monaco-editor";
+import { createDirectory } from "src/lib/fs/filesystem";
 
 type IEditorState = {
   tabs: Record<string, { isActive: boolean; path: string; id: string }>;
+  dir: Directory;
   options: editor.IStandaloneDiffEditorConstructionOptions;
   isSidebarOpen: boolean;
 };
@@ -10,16 +13,25 @@ type IEditorState = {
 const initialState: IEditorState = {
   isSidebarOpen: true,
   tabs: {},
+  dir: createDirectory({
+    children: [],
+    isOpen: true,
+    name: "/",
+    parent: "/",
+    type: DirectoryTypes.DEFAULT,
+  }),
   options: {
     scrollbar: { verticalScrollbarSize: 10 },
     minimap: { enabled: false },
     fontSize: 15,
-    lineNumbers: "off",
+    lineNumbers: "on",
+    bracketPairColorization: { enabled: true },
     fixedOverflowWidgets: true,
-    renderLineHighlight: "none",
-    cursorStyle: "block-outline",
-    autoIndent: "advanced",
-    guides: { bracketPairs: true, indentation: true },
+    renderLineHighlight: "all",
+    cursorStyle: "block",
+    cursorBlinking: "phase",
+    autoIndent: "full",
+    guides: { bracketPairs: false, indentation: true },
     wordWrap: "off",
     cursorSmoothCaretAnimation: true,
     scrollBeyondLastLine: false,
@@ -34,6 +46,9 @@ const slice = createSlice({
   reducers: {
     TOGGLE_SIDEBAR(state) {
       state.isSidebarOpen = !state.isSidebarOpen;
+    },
+    UPDATE_ROOT_DIR(state, action) {
+      state.dir = action.payload;
     },
     SET_ACTIVE_TAB(
       state,
@@ -67,7 +82,11 @@ const slice = createSlice({
   },
 });
 
-export const { SET_ACTIVE_TAB, CLOSE_ACTIVE_TAB, TOGGLE_SIDEBAR } =
-  slice.actions;
+export const {
+  SET_ACTIVE_TAB,
+  CLOSE_ACTIVE_TAB,
+  TOGGLE_SIDEBAR,
+  UPDATE_ROOT_DIR,
+} = slice.actions;
 
 export default slice;

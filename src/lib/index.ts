@@ -1,5 +1,5 @@
+import { EditorLanguages } from "@typings/editor";
 import { createInstance } from "localforage";
-import { EditorLanguages } from "../typings/types";
 
 export const createStorage = (key: string) => {
   const instance = createInstance({ name: key });
@@ -42,4 +42,10 @@ export function getLanguage(filename: string): EditorLanguages {
     default:
       return "text";
   }
+}
+
+export const isMac = () => navigator.userAgent.match("Mac");
+
+export function isEntryName(name: string) {
+  return name === "main.js" || name === "main.ts";
 }

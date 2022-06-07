@@ -1,4 +1,4 @@
-import { MonacoPlugin } from "@typings/types";
+import { MonacoPlugin } from "@typings/editor";
 import { Dispose, emmetCSS, emmetHTML } from "emmet-monaco-es";
 
 const plugin: MonacoPlugin = (_, monaco) => {

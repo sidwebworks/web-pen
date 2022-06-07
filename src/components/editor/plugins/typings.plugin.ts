@@ -1,6 +1,5 @@
 import { Monaco } from "@monaco-editor/react";
-import { IDisposable } from "@typings/types";
-import { Dispose, emmetCSS, emmetHTML } from "emmet-monaco-es";
+import { IDisposable } from "@typings/editor";
 
 const plugin = (monaco: Monaco) => {
   const disposables: IDisposable[] = [];
@@ -57,3 +56,5 @@ const plugin = (monaco: Monaco) => {
 };
 
 export default plugin;
+
+

@@ -1,4 +1,5 @@
-import { IDisposable, MonacoPlugin } from "@typings/types";
+import { IDisposable, MonacoPlugin } from "@typings/editor";
+import type { editor } from "monaco-editor";
 import { createWorkerQueue } from ".";
 
 const plugin: MonacoPlugin = (editor, monaco) => {
@@ -7,7 +8,11 @@ const plugin: MonacoPlugin = (editor, monaco) => {
   let worker;
 
   const formattingEditProvider = {
-    async provideDocumentFormattingEdits(model, _options, _token) {
+    async provideDocumentFormattingEdits(
+      model: editor.ITextModel,
+      _options,
+      _token
+    ) {
       if (!worker) {
         worker = createWorkerQueue(
           new Worker(

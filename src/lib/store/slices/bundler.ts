@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BuildResult } from "esbuild-wasm";
+import { createSlice } from "@reduxjs/toolkit";
 import { BUNDLE_CODE, INIT_BUNDLER } from "../thunks";
 
 type IBunderState = {

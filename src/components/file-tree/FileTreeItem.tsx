@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
-import { Directory } from "@typings/interfaces";
+import { Directory } from "@typings/editor";
 import clsx from "clsx";
 import Image from "next/image";
 import { FocusEvent, KeyboardEvent, MouseEventHandler } from "react";
@@ -57,7 +57,7 @@ type TreeItemProps<T> = T extends File
   ? NodeRendererProps<File>
   : NodeRendererProps<Directory>;
 
-export function TreeItem<T extends unknown>({
+function FileTreeItem<T extends unknown>({
   innerRef,
   data,
   styles,
@@ -148,3 +148,5 @@ function RenameForm({ defaultValue, submit, reset }: FormProps) {
 
   return <input type="text" {...inputProps} />;
 }
+
+export default FileTreeItem;

@@ -10,16 +10,28 @@ const plugin = createPlugin<BuildInput>((options) => ({
     build.onLoad({ filter: new RegExp(path.join(options.entry)) }, (args) => {
       return {
         loader: getLoaderFromPath(args.path, options.loader),
-        contents: options.tree[`/${path.join(options.entry)}`],
+        contents: options.tree[path.join(options.entry)],
+      };
+    });
+
+    /**
+     * Resolve relative modules imports
+     */
+    build.onLoad({ filter: /^\.+\// }, (args) => {
+      const contents = options.tree[path.join("/", args.path)];
+
+      return {
+        loader: getLoaderFromPath(args.path, options.loader),
+        contents,
       };
     });
 
     build.onLoad({ filter: /.*/ }, async (args) => {
-      return null;
-    });
+      let contents = options.tree[args.path];
 
-    build.onLoad({ filter: /.*/ }, async (args) => {
-      const contents = options.tree[args.path.replace(".", "")] || "";
+      if (!contents) {
+        contents = options.tree["/" + args.path];
+      }
 
       const result: OnLoadResult = {
         loader: getLoaderFromPath(args.path, options.loader),

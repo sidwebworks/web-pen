@@ -1,5 +1,6 @@
-import { FileIcon } from "@components/file-tree/file-tree-item";
+import { FileIcon } from "@components/file-tree/FileTreeItem";
 import { XIcon } from "@heroicons/react/solid";
+import { useEditor } from "@hooks/use-editor";
 import clsx from "clsx";
 import { memo, MouseEventHandler, useMemo } from "react";
 import { useDispatch } from "react-redux";

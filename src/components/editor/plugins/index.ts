@@ -1,4 +1,5 @@
-import { BeforeMount } from "@monaco-editor/react";
+import { BeforeMount, Monaco } from "@monaco-editor/react";
+import type { editor, languages } from "monaco-editor";
 import PQueue from "p-queue";
 
 export function createWorkerQueue(worker) {
@@ -42,17 +43,12 @@ export function requestResponse(worker, data) {
 }
 
 export const onBeforeEditorMount: BeforeMount = async (monaco) => {
-  monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
-  monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
-
-  monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
-  monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
-  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+  const diagOpts: languages.typescript.DiagnosticsOptions = {
     noSemanticValidation: true,
     noSyntaxValidation: false,
-  });
+  };
 
-  monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+  const compilerOpts: languages.typescript.CompilerOptions = {
     target: monaco.languages.typescript.ScriptTarget.Latest,
     allowNonTsExtensions: true,
     moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
@@ -64,10 +60,27 @@ export const onBeforeEditorMount: BeforeMount = async (monaco) => {
     reactNamespace: "React",
     allowJs: true,
     typeRoots: ["node_modules/@types"],
-  });
+  };
 
-  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: false,
-    noSyntaxValidation: false,
-  });
+  monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
+    compilerOpts
+  );
+
+  monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+    compilerOpts
+  );
+
+  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions(
+    diagOpts
+  );
+
+  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions(
+    diagOpts
+  );
+
+  monaco.languages.typescript.typescriptDefaults.setMaximumWorkerIdleTime(-1);
+  monaco.languages.typescript.javascriptDefaults.setMaximumWorkerIdleTime(-1);
+
+  monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+  monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
 };

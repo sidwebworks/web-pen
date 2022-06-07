@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useIsomorphicEffect } from "./use-isomorphic-effect";
+import { useIsomorphicEffect } from "./common";
 
 type Dimensions = { width: number; height: number };
 

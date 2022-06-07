@@ -1,43 +1,33 @@
-import { useCallback, useMemo, useRef } from "react";
-import { UPDATE_SOURCE } from "src/lib/store/slices/preview";
+import { useCallback } from "react";
 import { useTypedDispatch } from "../lib/store/store";
 import { BUNDLE_CODE } from "../lib/store/thunks";
-import { useEditorModels } from "./use-editor-models";
-import { useLocalContext } from "./use-local-context";
+import { useEditor } from "./use-editor";
 
 export const useBundler = () => {
-  const models = useEditorModels();
+  const { monaco, editor } = useEditor();
   const dispatch = useTypedDispatch();
-  const ctx = useLocalContext(models);
 
-  const getTree = useCallback(() => {
-    const result = Object.entries(ctx.current).reduce((acc, [path, model]) => {
-      acc[path] = model.getValue().trim();
+  const build = useCallback(
+    async (format: boolean = false) => {
+      if (!monaco) return;
 
-      return acc;
-    }, {});
+      if (format) {
+        editor.getAction("editor.action.formatDocument").run();
+      }
 
-    return result;
-  }, [ctx]);
+      const models = monaco.editor.getModels();
 
-  const build = async () => {
-    const entry = "main.js";
+      const tree = models.reduce<Record<string, string>>((acc, curr) => {
+        acc[curr.uri.path] = curr.getValue().trim();
+        return acc;
+      }, {});
 
-    const tree = getTree();
+      const result = await dispatch(BUNDLE_CODE(tree));
 
-    const result = await dispatch(BUNDLE_CODE({ entry, tree }));
-
-    dispatch(
-      UPDATE_SOURCE({
-        js: String(result.payload),
-        css: tree["/styles.css"],
-        html: tree["/index.html"],
-      })
-    );
-
-    return result;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
+      return result;
+    },
+    [monaco, dispatch, editor]
+  );
 
   return { build };
 };

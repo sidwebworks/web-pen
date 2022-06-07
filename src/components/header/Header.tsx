@@ -4,6 +4,8 @@ import {
   LightningBoltIcon,
   MenuAlt2Icon as FormatIcon,
 } from "@heroicons/react/solid";
+import { useBundler } from "@hooks/use-bundler";
+import { useEditor } from "@hooks/use-editor";
 import clsx from "clsx";
 import { ComponentPropsWithoutRef } from "react";
 import { TOGGLE_SIDEBAR } from "src/lib/store/slices/editor";
@@ -15,16 +17,15 @@ type HeaderButtonProps = Pick<
   "onClick" | "children" | "className" | "aria-label" | "title"
 >;
 
-function Header({
-  onFormat,
-  onBundle,
-}: {
-  onFormat: () => void;
-  onBundle: () => void;
-}) {
+function Header() {
   const isSidebarOpen = useTypedSelector((s) => s.editor.isSidebarOpen);
-
+  const { editor } = useEditor();
+  const { build } = useBundler();
   const dispatch = useTypedDispatch();
+
+  const onFormat = () => {
+    editor.getAction("editor.action.formatDocument").run();
+  };
 
   return (
     <header className="w-full relative py-2.5 bg-dark-900 flex gap-x-3 px-5 border-b  border-dark-600 items-center">
@@ -53,7 +54,7 @@ function Header({
         </HeaderButton>
         <HeaderButton
           aria-label="Bundle code"
-          onClick={onBundle}
+          onClick={() => build(true)}
           title="Bundle"
           className="rounded-full btn btn-xs"
         >

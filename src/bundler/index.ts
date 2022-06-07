@@ -50,9 +50,7 @@ class Bundler {
           wasmURL: this.wasmUrl,
           worker: true,
         });
-      } catch (error: any) {
-        console.error(error);
-      }
+      } catch (error: any) {}
     }
 
     return Bundler.initialized;
@@ -75,6 +73,10 @@ class Bundler {
     }).catch((err) => {
       const meta = getErrorLineMeta(err.message);
 
+      if (typeof meta === "string") {
+        throw new BundlingError({ file: "", message: meta });
+      }
+
       const code = tree[unix.join("/", meta.filename)];
 
       const frame = codeFrameColumns(code, meta, {
@@ -93,6 +95,10 @@ class Bundler {
 }
 
 const getErrorLineMeta = (message: string) => {
+  if (message.includes(`Do not know how to load`)) {
+    return message.replace("a:/", "/");
+  }
+
   const parts = message
     .match(/:.?\/?\w+\.\w+[^:]+:[\d]:\d+:/g)[0]
     .split(":")

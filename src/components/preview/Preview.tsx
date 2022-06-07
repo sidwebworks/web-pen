@@ -1,4 +1,5 @@
-import { useIsomorphicEffect } from "@hooks/use-isomorphic-effect";
+import { useIsomorphicEffect } from "@hooks/common";
+
 import { unix } from "path-fx";
 import { ReactEventHandler, useCallback, useMemo, useRef } from "react";
 
@@ -7,13 +8,13 @@ import { createSnippet } from "./preview.helpers";
 
 const Preview: React.FC = () => {
   const { css, html, js } = useTypedSelector((p) => p.preview.source);
+
   const error = useTypedSelector((s) => s.bundler.error);
-  console.log(error);
+
   const iframe = useRef<HTMLIFrameElement>(null);
 
   const result = useMemo(
     () => createSnippet({ html, css, js }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [html, js, css]
   );
 
@@ -22,15 +23,11 @@ const Preview: React.FC = () => {
     iframe.current.srcdoc = result;
   }, [result]);
 
-  const onLoad: ReactEventHandler<HTMLIFrameElement> = useCallback((ev) => {},
-  []);
-
   return (
     <div className={"preview-wrapper relative h-full"}>
       <ErrorLens file={error.file} frame={error.frame} />
       <iframe
         ref={iframe}
-        onLoad={onLoad}
         title="preview"
         srcDoc={result}
         className="h-full"
