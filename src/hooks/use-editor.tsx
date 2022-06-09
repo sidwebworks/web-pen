@@ -4,6 +4,7 @@ import {
   createContext,
   Dispatch,
   FC,
+  PropsWithChildren,
   useContext,
   useMemo,
   useState,
@@ -17,7 +18,7 @@ type IEditorState = {
 
 const EditorContext = createContext<IEditorState>(null);
 
-export const EditorProvider: FC = ({ children }) => {
+export const EditorProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, setState] = useState({
     editor: null,
     monaco: null,

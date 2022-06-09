@@ -1,5 +1,6 @@
 import { useEventListener } from "@hooks/common";
 import { EditorProvider } from "@hooks/use-editor";
+import NextProgress from "next-progress";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { Fragment } from "react";
@@ -24,6 +25,7 @@ function App({ Component, pageProps }: AppProps) {
         <title>Web Pen</title>
       </Head>
       <Provider store={store}>
+        <NextProgress color="#27D3CF" options={{ showSpinner: true }} />
         <EditorProvider>
           <Component {...pageProps} />
         </EditorProvider>

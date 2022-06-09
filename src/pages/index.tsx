@@ -105,12 +105,15 @@ const Home: NextPage = () => {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
             <h1 className="sr-only">Page title</h1>
             {/* Main 3 column grid */}
-            <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3  min-h-80 lg:gap-8">
+            <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3  min-h-[30rem] h-full lg:gap-8">
               {/* Left column */}
               <div className="grid grid-cols-1 gap-4 lg:col-span-2 h-full bg-dark-700 rounded-lg overflow-hidden shadow-xl">
                 <section aria-labelledby="section-1-title">
-                  <h2 className="sr-only" id="section-1-title">
-                    All Projects
+                  <h2
+                    className="text-xl pt-3 px-3 text-true-gray-400"
+                    id="section-2-title"
+                  >
+                    Your previous projects
                   </h2>
                   <div className="rounded-lg overflow-hidden">
                     <div className="gap-y-3 p-2 grid">
@@ -131,7 +134,10 @@ const Home: NextPage = () => {
               {/* Right column */}
               <div className="grid grid-cols-1 gap-4 h-full bg-dark-700 rounded-lg overflow-hidden shadow-xl">
                 <section aria-labelledby="section-2-title">
-                  <h2 className="sr-only" id="section-2-title">
+                  <h2
+                    className="text-lg pt-3 px-3 text-true-gray-400"
+                    id="section-2-title"
+                  >
                     Select a project template
                   </h2>
                   <div className="rounded-lg overflow-hidden shadow">
@@ -204,7 +210,7 @@ const ProjectCard = ({ project }: { project: Directory }) => {
       <div className="grid grid-cols-2 gap-2 mr-auto">
         <p className="text-xl -mt-1 text-cyan-400">{project.name}</p>
         <p className=" text-true-gray-500 text-sm mt-1 mr-auto">
-          {format(new Date(project.createdAt), "EEEE dd MMMM yyyy tttt")}
+          {format(new Date(project.createdAt), "EEEE dd MMMM yyyy")}
         </p>
 
         <div className="flex mt-1 items-center gap-2">
