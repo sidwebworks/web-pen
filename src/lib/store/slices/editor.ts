@@ -101,7 +101,6 @@ const slice = createSlice({
       state,
       action: PayloadAction<editor.IStandaloneEditorConstructionOptions>
     ) {
-      console.log(action.payload);
       state.options = Object.assign({}, state.options, action.payload);
     },
   },

@@ -135,14 +135,14 @@ const CursorPicker: React.FC = () => {
     { label: "Underline thin", value: "underline-thin" },
   ];
 
-  const options = useTypedSelector((s) => s.editor.options);
+  const cursorStyle = useTypedSelector((s) => s.editor.options.cursorStyle);
   const dispatch = useTypedDispatch();
 
   const handleChange = async (val: { label: string; value: string }) => {
-    dispatch(UPDATE_OPTIONS({ cursorStyle: val }));
+    dispatch(UPDATE_OPTIONS({ cursorStyle: val.value }));
   };
 
-  const value = cursors.find((c) => c.value === options.cursorStyle);
+  const value = cursors.find((c) => c.value === cursorStyle);
 
   return <Select data={cursors} onChange={handleChange} active={value} />;
 };

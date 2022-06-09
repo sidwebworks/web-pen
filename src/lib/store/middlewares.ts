@@ -2,7 +2,7 @@ import { loader, Monaco } from "@monaco-editor/react";
 import { Middleware, PayloadAction } from "@reduxjs/toolkit";
 import { isFile } from "@typings/guards";
 import { getLanguage } from "../fs/filesystem";
-import { AppDispatch, RootState } from "./store";
+import { AppDispatch } from "./store";
 import { FETCH_THEMES, LOAD_INITIAL_FILES } from "./thunks";
 
 export const editorMiddleware: Middleware = (store) => (next) => {
@@ -19,7 +19,7 @@ export const editorMiddleware: Middleware = (store) => (next) => {
 
       monaco = await loader.init();
 
-      const files = (store.getState() as RootState).editor.dir.children;
+      const files = store.getState().editor.dir.children;
 
       for (let file of files) {
         if (!isFile(file)) return;
