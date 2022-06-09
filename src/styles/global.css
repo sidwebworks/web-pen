@@ -7,8 +7,9 @@
 .body,
 html,
 #__next {
-	@apply h-full
+	@apply h-full bg-dark-800;
 }
+
 .preview-wrapper {
 	position: relative;
 	min-height: 100%;

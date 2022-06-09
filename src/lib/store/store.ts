@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import editor from "./slices/editor";
-import bundler from "./slices/bundler";
-import preview from "./slices/preview";
 import { editorMiddleware } from "./middlewares";
+import bundler from "./slices/bundler";
+import editor from "./slices/editor";
+import preview from "./slices/preview";
+import project from "./slices/projects";
 
 const store = configureStore({
   reducer: {
     [editor.name]: editor.reducer,
+    [project.name]: project.reducer,
     [preview.name]: preview.reducer,
     [bundler.name]: bundler.reducer,
   },

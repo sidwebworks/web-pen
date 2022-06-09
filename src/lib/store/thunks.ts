@@ -1,20 +1,18 @@
+import { isSSR } from "@hooks/common";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  Directory,
-  DirectoryTypes,
-  Selectable,
-  TextModel,
-} from "@typings/editor";
+import { Directory, Selectable, TextModel } from "@typings/editor";
 import { isFile } from "@typings/guards";
+import { ProjectTypes } from "@typings/projects";
+import { BuildResult } from "esbuild-wasm";
 import { editor } from "monaco-editor";
-import { createStorage, toGitRaw } from "..";
+import { nanoid } from "nanoid";
+import { createProjectName, createStorage, toGitRaw } from "..";
 import Bundler, { BuildInput } from "../../bundler";
-import { createDirectory, getFilesTemplate } from "../fs/filesystem";
-import { UPDATE_ROOT_DIR } from "./slices/editor";
+import nightOwl from "../monaco/themes/night_owl.json";
+import { VANILLA_JS, VANILLA_TS } from "../templates";
+import { CLOSE_ALL_TABS, UPDATE_ROOT_DIR } from "./slices/editor";
 import { UPDATE_SOURCE } from "./slices/preview";
 import { RootState } from "./store";
-import nightOwl from "../../components/editor/themes/night_owl.json";
-import { isSSR } from "@hooks/common";
 
 const bundler = new Bundler();
 
@@ -39,10 +37,12 @@ export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
 
     if (!entry) return;
 
-    const result = await bundler.build({ tree, entry: entry });
+    const result = (await bundler.build({ tree, entry: entry })) as BuildResult;
+
+    const decoder = new TextDecoder();
 
     const source = {
-      js: String(result.outputFiles[0].text),
+      js: decoder.decode(result.outputFiles[0].contents),
       css: tree["/styles.css"],
       html: tree["/index.html"],
     };
@@ -67,21 +67,13 @@ export const LOAD_INITIAL_FILES = createAsyncThunk(
   async (arg: string = "", { dispatch }) => {
     const found = await fileStore.getItem(arg);
 
+    dispatch(CLOSE_ALL_TABS());
+
     if (found) {
       return dispatch(UPDATE_ROOT_DIR(found as Directory));
     }
 
-    const dir = createDirectory({
-      children: [],
-      isOpen: true,
-      name: "root",
-      parent: "/",
-      type: DirectoryTypes.DEFAULT,
-    });
-
-    const files = getFilesTemplate();
-
-    dir.children = files;
+    const dir = VANILLA_JS(arg || `vanilla_${nanoid()}`);
 
     dispatch(UPDATE_ROOT_DIR(dir));
   }
@@ -114,7 +106,7 @@ export const FETCH_THEMES = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState() as RootState;
 
-    if (state.editor.themes.length > 0) return;
+    if (state.editor.themes.length > 0) return state.editor.themes;
 
     try {
       const res = await fetch(
@@ -163,3 +155,45 @@ export const LOAD_THEME = createAsyncThunk<
   return theme as editor.IStandaloneThemeData;
 });
 
+export const LOAD_PROJECTS = createAsyncThunk(
+  "projects/LOAD_PROJECTS",
+  async () => {
+    try {
+      const items = await fileStore.read();
+      return items;
+    } catch (error) {
+      return [];
+    }
+  }
+);
+
+export const CREATE_PROJECT = createAsyncThunk<string, ProjectTypes>(
+  "projects/CREATE_PROJECT",
+  async (template) => {
+    let temp: Directory;
+
+    switch (template) {
+      case ProjectTypes.VanillaJavascript:
+        temp = VANILLA_JS(createProjectName());
+        break;
+      case ProjectTypes.VanillaTypescript:
+        temp = VANILLA_TS(createProjectName());
+        break;
+      default:
+        throw new Error(`Unknown template ${template}`);
+    }
+
+    await fileStore.setItem(temp.id, temp);
+
+    return temp.id;
+  }
+);
+
+export const DELETE_PROJECT = createAsyncThunk<void, string>(
+  "projects/DELETE_PROJECT",
+  async (id, { dispatch }) => {
+    await fileStore.removeItem(id);
+
+    await dispatch(LOAD_PROJECTS());
+  }
+);

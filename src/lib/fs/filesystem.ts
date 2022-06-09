@@ -1,7 +1,6 @@
 import { Directory, EditorLanguages, File } from "@typings/editor";
 import { nanoid } from "nanoid";
 import { unix as path } from "path-fx";
-import { css, html, js } from "./templates";
 
 export function createFile(
   file: Omit<File, "id" | "createdAt" | "path">
@@ -32,30 +31,7 @@ export function createDirectory(
   };
 }
 
-export function getFilesTemplate(): (Directory | File)[] {
-  return [
-    createFile({
-      content: html.trim(),
-      mimeType: "text/html",
-      name: "index.html",
-    }),
-    createFile({
-      content: css.trim(),
-      mimeType: "text/css",
-      name: "styles.css",
-    }),
-    createFile({
-      content: js.main.trim(),
-      mimeType: "text/javascript",
-      name: "main.js",
-    }),
-    createFile({
-      content: js.app.trim(),
-      mimeType: "text/javascript",
-      name: "app.js",
-    }),
-  ];
-}
+
 
 export function getLanguage(filename: string): EditorLanguages {
   const ext = filename.split(".").slice(-1)[0] || "document";

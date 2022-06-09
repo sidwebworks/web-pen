@@ -1,0 +1,96 @@
+{
+  "3z4IczzrVwijxVm8xahAz": {
+    "children": [
+      {
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  <!--STYLES INJECTED BY WEBPEN-->\n  <link rel=\"stylesheet\" href=\"style.css\" />\n  <!--STYLES INJECTED BY WEBPEN-->\n\n  <title>Document</title>\n</head>\n\n<body>\n  <h1> Hello world </h1>\n\n  <!--SCRIPT INJECTED BY WEBPEN-->\n  <script type=\"module\" src=\"main.js\"></script>\n  <!--SCRIPT INJECTED BY WEBPEN-->\n</body>\n\n</html>",
+        "mimeType": "text/html",
+        "createdAt": "2022-06-09T13:59:07.739Z",
+        "id": "NvwuhySjqJBvbUPKsnihk",
+        "name": "index.html",
+        "parent": "/",
+        "path": "/index.html"
+      },
+      {
+        "content": "\n         * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n          }\n          \n          body {\n            height: 100vh;\n            background-color: teal;\n          }\n          \n          ",
+        "mimeType": "text/css",
+        "createdAt": "2022-06-09T13:59:07.739Z",
+        "id": "nk-8rZdTgCxPXRcRUqLh4",
+        "name": "styles.css",
+        "parent": "/",
+        "path": "/styles.css"
+      },
+      {
+        "content": "import { secret, greet } from './utils.js';\n\nconst elem = document.querySelector('h1');\n\nelem.addEventListener('click', () => alert(greet(secret)));\n",
+        "mimeType": "text/javascript",
+        "createdAt": "2022-06-09T13:59:07.740Z",
+        "id": "xcyqdMzJlw1tAy_7jsPC0",
+        "name": "main.js",
+        "parent": "/",
+        "path": "/main.js"
+      },
+      {
+        "content": "\nconst secret = \"Sidharth\";\n\nexport const greet = (name) => {\n  return \"Hello there \" + name;\n};\n\nexport { secret };\n",
+        "mimeType": "text/javascript",
+        "createdAt": "2022-06-09T13:59:07.740Z",
+        "id": "45Wwtlen26X07zTm3cVcQ",
+        "name": "utils.js",
+        "parent": "/",
+        "path": "/utils.js"
+      }
+    ],
+    "createdAt": "2022-06-09T13:59:07.740Z",
+    "id": "3z4IczzrVwijxVm8xahAz",
+    "isOpen": true,
+    "parent": "/",
+    "name": "quick_violet_tern",
+    "path": "/quick_violet_tern",
+    "type": 1
+  },
+  "wgzamUzdfvfjxTcWqhney": {
+    "children": [
+      {
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  <!--STYLES INJECTED BY WEBPEN-->\n  <link rel=\"stylesheet\" href=\"style.css\" />\n  <!--STYLES INJECTED BY WEBPEN-->\n\n  <title>Document</title>\n</head>\n\n<body>\n  <h1> Hello Gattuuuuuuu  </h1>\n\n  <!--SCRIPT INJECTED BY WEBPEN-->\n  <script type=\"module\" src=\"main.js\"></script>\n  <!--SCRIPT INJECTED BY WEBPEN-->\n</body>\n\n</html>",
+        "mimeType": "text/html",
+        "createdAt": "2022-06-09T14:00:33.871Z",
+        "id": "Fu76mQglHZdcKG_sZHVgE",
+        "name": "index.html",
+        "parent": "/",
+        "path": "/index.html"
+      },
+      {
+        "content": "\n         * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n          }\n          \n          body {\n            height: 100vh;\n            background-color: teal;\n          }\n          \n          ",
+        "mimeType": "text/css",
+        "createdAt": "2022-06-09T14:00:33.871Z",
+        "id": "vgH9rOT778ppEuySrWV3M",
+        "name": "styles.css",
+        "parent": "/",
+        "path": "/styles.css"
+      },
+      {
+        "content": "\n        import { secret, greet } from \"./app.js\";\n\n        const elem = document.querySelector(\".app > img\");\n        \n        elem.addEventListener(\"click\", () => alert(greet(secret)));  \n          ",
+        "mimeType": "text/javascript",
+        "createdAt": "2022-06-09T14:00:33.871Z",
+        "id": "H7whxg3f0p4DY9IeHUS65",
+        "name": "main.js",
+        "parent": "/",
+        "path": "/main.js"
+      },
+      {
+        "content": "\n        const secret = \"Sidharth\";\n\n        export const greet = (name) => {\n          return \"Hello there \" + name;\n        };\n        \n        export { secret };      \n          ",
+        "mimeType": "text/javascript",
+        "createdAt": "2022-06-09T14:00:33.871Z",
+        "id": "CVkJC899Mz14VCSFdrevF",
+        "name": "app.js",
+        "parent": "/",
+        "path": "/app.js"
+      }
+    ],
+    "createdAt": "2022-06-09T14:00:33.871Z",
+    "id": "wgzamUzdfvfjxTcWqhney",
+    "isOpen": true,
+    "parent": "/",
+    "name": "basic_bronze_aardvark",
+    "path": "/basic_bronze_aardvark",
+    "type": 1
+  }
+}

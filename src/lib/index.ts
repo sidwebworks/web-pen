@@ -1,9 +1,22 @@
-import { EditorLanguages } from "@typings/editor";
 import { createInstance } from "localforage";
+import {
+  uniqueNamesGenerator,
+  colors,
+  animals,
+  adjectives,
+} from "unique-names-generator";
 
 export const createStorage = (key: string) => {
   const instance = createInstance({ name: key });
   return {
+    _instance: instance,
+    async read() {
+      const obj = {};
+      await instance.iterate((value, key) => {
+        obj[key] = value;
+      });
+      return obj;
+    },
     async getItem<T>(key: string) {
       const found = await instance.getItem<T>(key);
       return found;
@@ -23,7 +36,6 @@ export const createStorage = (key: string) => {
     },
   };
 };
-
 
 export const isMac = () => navigator.userAgent.match("Mac");
 
@@ -53,3 +65,7 @@ export function normalizeThemeName(str: string) {
     .replace(/[^A-Za-z']/g, "")
     .replace(/\s+/g, "-");
 }
+
+export const createProjectName = () => {
+  return uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] });
+};

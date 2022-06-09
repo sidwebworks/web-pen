@@ -2,8 +2,8 @@ import { useEditor } from "@hooks/use-editor";
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import React, { Fragment, useMemo } from "react";
 import { useTypedSelector } from "../../lib/store/store";
-import { onBeforeEditorMount } from "./plugins";
-import theme from "./themes/night_owl.json";
+import { onBeforeEditorMount } from "../../lib/monaco/plugins";
+import theme from "../../lib/monaco/themes/night_owl.json";
 import WelcomeScreen from "./WelcomeScreen";
 
 const Editor: React.FC = () => {

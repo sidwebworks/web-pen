@@ -97,6 +97,9 @@ const slice = createSlice({
         next[1].isActive = true;
       }
     },
+    CLOSE_ALL_TABS(state) {
+      state.tabs = {};
+    },
     UPDATE_OPTIONS(
       state,
       action: PayloadAction<editor.IStandaloneEditorConstructionOptions>
@@ -118,6 +121,7 @@ export const {
   SET_ACTIVE_TAB,
   CLOSE_ACTIVE_TAB,
   TOGGLE_SIDEBAR,
+  CLOSE_ALL_TABS,
   UPDATE_ROOT_DIR,
   TOGGLE_SETTINGS,
   UPDATE_OPTIONS,

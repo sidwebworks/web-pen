@@ -10,7 +10,11 @@ interface SelectProps<T> {
   data: Selectable<T>[];
 }
 
-function Select<T extends any>({ active, data, onChange }: SelectProps<T>) {
+function Select<T extends any>({
+  active,
+  data = [],
+  onChange,
+}: SelectProps<T>) {
   const handleChange = (item: Selectable<T>) => {
     onChange(item);
   };

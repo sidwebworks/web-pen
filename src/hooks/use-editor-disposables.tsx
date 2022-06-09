@@ -8,9 +8,9 @@ import { useCallback, useEffect } from "react";
 import { CLOSE_ACTIVE_TAB } from "src/lib/store/slices/editor";
 import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
 import { SAVE_FILES } from "src/lib/store/thunks";
-import emmetPlugin from "../components/editor/plugins/emmet.plugin";
-import prettierPlugin from "../components/editor/plugins/prettier.plugin";
-import textmatePlugin from "../components/editor/plugins/texmate.plugin";
+import emmetPlugin from "../lib/monaco/plugins/emmet.plugin";
+import prettierPlugin from "../lib/monaco/plugins/prettier.plugin";
+import textmatePlugin from "../lib/monaco/plugins/texmate.plugin";
 
 export const useEditorDisposables = () => {
   const { editor, monaco } = useEditor();

@@ -10,14 +10,17 @@ specifiers:
   '@types/lodash-es': ^4.17.6
   '@types/node': 16.11.7
   '@types/prettier': ^2.6.3
-  '@types/react': 17.0.35
+  '@types/react': ^18.0.12
+  '@types/react-dom': ^18.0.5
   '@types/react-virtualized-auto-sizer': ^1.0.1
   '@windicss/plugin-animations': ^1.0.9
   axios: ^0.27.2
   clsx: ^1.1.1
+  date-fns: ^2.28.0
   emmet-monaco-es: ^5.1.0
   esbuild-wasm: ^0.14.42
   eslint-config-next: 12.1.5
+  fuse.js: ^6.6.2
   localforage: ^1.10.0
   lodash-es: ^4.17.21
   monaco-editor: ^0.33.0
@@ -39,6 +42,7 @@ specifiers:
   react-virtualized-auto-sizer: ^1.0.6
   tree-model-improved: ^2.0.1
   typescript: 4.6.3
+  unique-names-generator: ^4.7.1
   windicss: ^3.5.4
   windicss-webpack-plugin: ^1.7.3
 
@@ -50,8 +54,10 @@ dependencies:
   '@reduxjs/toolkit': 1.8.2_ctm756ikdwcjcvyfxxwskzbr6q
   axios: 0.27.2
   clsx: 1.1.1
+  date-fns: 2.28.0
   emmet-monaco-es: 5.1.0_monaco-editor@0.33.0
   esbuild-wasm: 0.14.42
+  fuse.js: 6.6.2
   localforage: 1.10.0
   lodash-es: 4.17.21
   monaco-editor: 0.33.0
@@ -64,20 +70,22 @@ dependencies:
   path-fx: 2.1.2
   prettier: 2.6.2
   react: 18.1.0
-  react-arborist: 1.0.3_asdxhwnz5hxz63oottagtk5r7i
+  react-arborist: 1.0.3_xudgkbfgugxf4kzkh5p7s525re
   react-dom: 18.1.0_react@18.1.0
   react-feather: 2.0.10_react@18.1.0
-  react-redux: 8.0.2_meoedhckp3lc6ufvi55wgphdje
+  react-redux: 8.0.2_zlkrlo2xsersbascmmsr65fm34
   react-split-pane: 0.1.92_ef5jwxihqo6n7gxfmzogljlgcm
   react-virtualized-auto-sizer: 1.0.6_ef5jwxihqo6n7gxfmzogljlgcm
   tree-model-improved: 2.0.1
+  unique-names-generator: 4.7.1
 
 devDependencies:
   '@types/babel__code-frame': 7.0.3
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.7
   '@types/prettier': 2.6.3
-  '@types/react': 17.0.35
+  '@types/react': 18.0.12
+  '@types/react-dom': 18.0.5
   '@types/react-virtualized-auto-sizer': 1.0.1
   '@windicss/plugin-animations': 1.0.9
   eslint-config-next: 12.1.5_7gwklep6qnxozgqaetqbwvd7fe
@@ -368,7 +376,7 @@ packages:
     dependencies:
       immer: 9.0.14
       react: 18.1.0
-      react-redux: 8.0.2_meoedhckp3lc6ufvi55wgphdje
+      react-redux: 8.0.2_zlkrlo2xsersbascmmsr65fm34
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
       reselect: 4.1.5
@@ -385,7 +393,7 @@ packages:
   /@types/hoist-non-react-statics/3.3.1:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     dependencies:
-      '@types/react': 17.0.35
+      '@types/react': 18.0.12
       hoist-non-react-statics: 3.3.2
     dev: false
 
@@ -413,14 +421,19 @@ packages:
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
 
+  /@types/react-dom/18.0.5:
+    resolution: {integrity: sha512-OWPWTUrY/NIrjsAPkAk1wW9LZeIjSvkXRhclsFO8CZcZGCOg2G0YZy4ft+rOyYxy8B7ui5iZzi9OkDebZ7/QSA==}
+    dependencies:
+      '@types/react': 18.0.12
+
   /@types/react-virtualized-auto-sizer/1.0.1:
     resolution: {integrity: sha512-GH8sAnBEM5GV9LTeiz56r4ZhMOUSrP43tAQNSRVxNexDjcNKLCEtnxusAItg1owFUFE6k0NslV26gqVClVvong==}
     dependencies:
-      '@types/react': 17.0.35
+      '@types/react': 18.0.12
     dev: true
 
-  /@types/react/17.0.35:
-    resolution: {integrity: sha512-r3C8/TJuri/SLZiiwwxQoLAoavaczARfT9up9b4Jr65+ErAUX3MIkU0oMOQnrpfgHme8zIqZLX7O5nnjm5Wayw==}
+  /@types/react/18.0.12:
+    resolution: {integrity: sha512-duF1OTASSBQtcigUvhuiTB1Ya3OvSy+xORCiEf20H0P0lzx+/KeVsA99U5UjLXSbyo1DRJDlLKqTeM1ngosqtg==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
@@ -750,6 +763,11 @@ packages:
   /damerau-levenshtein/1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
     dev: true
+
+  /date-fns/2.28.0:
+    resolution: {integrity: sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==}
+    engines: {node: '>=0.11'}
+    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -1325,6 +1343,11 @@ packages:
   /functions-have-names/1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: true
+
+  /fuse.js/6.6.2:
+    resolution: {integrity: sha512-cJaJkxCCxC8qIIcPBF9yGxY0W/tVZS3uEISDxhYIdtk8OL93pe+6Zj7LjCqVV4dzbqcriOZ+kQ/NE4RXZHsIGA==}
+    engines: {node: '>=10'}
+    dev: false
 
   /get-intrinsic/1.1.1:
     resolution: {integrity: sha512-kWZrnVM42QCiEA2Ig1bG8zjoIMOgxWwYCEeNdwY6Tv/cOSeGpcoX4pXHfKUxNKVoArnrEr2e9srnAxxGIraS9Q==}
@@ -2075,7 +2098,7 @@ packages:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
 
-  /react-arborist/1.0.3_asdxhwnz5hxz63oottagtk5r7i:
+  /react-arborist/1.0.3_xudgkbfgugxf4kzkh5p7s525re:
     resolution: {integrity: sha512-G7yeKx4ZbzD1x4BPTJoHIT+iowqA1Wq3q7e9PPn00U874qC14cDXnuzo6fSKdoTRBeE6ehnj7WIPN6IoNUzLyg==}
     peerDependencies:
       react: '>= 16.14'
@@ -2083,7 +2106,7 @@ packages:
     dependencies:
       memoize-one: 6.0.0
       react: 18.1.0
-      react-dnd: 14.0.5_27lidzbzlfgka7zldbtbdob6xu
+      react-dnd: 14.0.5_b4klweawgc2y3glslpfoag5r4q
       react-dnd-html5-backend: 14.1.0
       react-dom: 18.1.0_react@18.1.0
       react-window: 1.8.7_ef5jwxihqo6n7gxfmzogljlgcm
@@ -2099,7 +2122,7 @@ packages:
       dnd-core: 14.0.1
     dev: false
 
-  /react-dnd/14.0.5_27lidzbzlfgka7zldbtbdob6xu:
+  /react-dnd/14.0.5_b4klweawgc2y3glslpfoag5r4q:
     resolution: {integrity: sha512-9i1jSgbyVw0ELlEVt/NkCUkxy1hmhJOkePoCH713u75vzHGyXhPDm28oLfc2NMSBjZRM1Y+wRjHXJT3sPrTy+A==}
     peerDependencies:
       '@types/hoist-non-react-statics': '>= 3.3.1'
@@ -2117,7 +2140,7 @@ packages:
       '@react-dnd/invariant': 2.0.0
       '@react-dnd/shallowequal': 2.0.0
       '@types/node': 16.11.7
-      '@types/react': 17.0.35
+      '@types/react': 18.0.12
       dnd-core: 14.0.1
       fast-deep-equal: 3.1.3
       hoist-non-react-statics: 3.3.2
@@ -2153,7 +2176,7 @@ packages:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
     dev: false
 
-  /react-redux/8.0.2_meoedhckp3lc6ufvi55wgphdje:
+  /react-redux/8.0.2_zlkrlo2xsersbascmmsr65fm34:
     resolution: {integrity: sha512-nBwiscMw3NoP59NFCXFf02f8xdo+vSHT/uZ1ldDwF7XaTpzm+Phk97VT4urYBl5TYAPNVaFm12UHAEyzkpNzRA==}
     peerDependencies:
       '@types/react': ^16.8 || ^17.0 || ^18.0
@@ -2176,7 +2199,8 @@ packages:
     dependencies:
       '@babel/runtime': 7.18.3
       '@types/hoist-non-react-statics': 3.3.1
-      '@types/react': 17.0.35
+      '@types/react': 18.0.12
+      '@types/react-dom': 18.0.5
       '@types/use-sync-external-store': 0.0.3
       hoist-non-react-statics: 3.3.2
       react: 18.1.0
@@ -2519,6 +2543,11 @@ packages:
   /unc-path-regex/0.1.2:
     resolution: {integrity: sha1-5z3T17DXxe2G+6xrCufYxqadUPo=}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /unique-names-generator/4.7.1:
+    resolution: {integrity: sha512-lMx9dX+KRmG8sq6gulYYpKWZc9RlGsgBR6aoO8Qsm3qvkSJ+3rAymr+TnV8EDMrIrwuFJ4kruzMWM/OpYzPoow==}
+    engines: {node: '>=8'}
     dev: false
 
   /uri-js/4.4.1:
