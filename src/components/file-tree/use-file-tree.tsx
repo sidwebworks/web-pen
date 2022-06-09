@@ -1,11 +1,10 @@
 import { useEditor } from "@hooks/use-editor";
-import { useMonaco } from "@monaco-editor/react";
 import { Directory } from "@typings/editor";
 import { isFile } from "@typings/guards";
 import { cloneDeep } from "lodash-es";
 import { unix as path } from "path-fx";
 import { useCallback, useMemo, useRef } from "react";
-import { getLanguage, isEntryName } from "src/lib";
+import { getLanguage, isEntryName } from "src/lib/fs/filesystem";
 import {
   CLOSE_ACTIVE_TAB,
   SET_ACTIVE_TAB,
