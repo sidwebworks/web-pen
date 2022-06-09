@@ -49,6 +49,7 @@ export const Root: React.FC<SplitLayoutProps> = ({
         className
       )}
     >
+      {/* @ts-expect-error */}
       <SplitPane
         split="vertical"
         defaultSize={defaultSize}

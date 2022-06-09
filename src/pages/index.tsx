@@ -35,7 +35,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     dispatch(LOAD_PROJECTS());
-  }, []);
+  }, [dispatch]);
 
   const onSearch: ChangeEventHandler<HTMLInputElement> = debounce((ev) => {
     query.current = ev.target.value;
@@ -176,7 +176,7 @@ const Home: NextPage = () => {
                 &copy; 2022 Sidwebworks -{" "}
               </span>{" "}
               <span className="block sm:inline">
-                Don't worry I don't want your data :)
+                Don&apos;t worry I don&apos;t want your data :)
               </span>
             </div>
           </div>
@@ -216,6 +216,7 @@ const ProjectCard = ({ project }: { project: Directory }) => {
         <div className="flex mt-1 items-center gap-2">
           {Object.keys(composition).map((lang) => (
             <Image
+              key={`__${lang}__`}
               layout="fixed"
               width={25}
               height={25}
