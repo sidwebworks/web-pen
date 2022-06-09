@@ -14,6 +14,7 @@ import { UPDATE_ROOT_DIR } from "./slices/editor";
 import { UPDATE_SOURCE } from "./slices/preview";
 import { RootState } from "./store";
 import nightOwl from "../../components/editor/themes/night_owl.json";
+import { isSSR } from "@hooks/common";
 
 const bundler = new Bundler();
 
@@ -21,7 +22,9 @@ export const fileStore = createStorage("__FILES__");
 
 export const themeStore = createStorage("__THEMES__");
 
-themeStore.setItem("Night Owl", nightOwl);
+if (!isSSR) {
+  themeStore.setItem("Night Owl", nightOwl);
+}
 
 export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
   "bundler/BUNDLE_CODE",
