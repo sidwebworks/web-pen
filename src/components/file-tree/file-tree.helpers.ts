@@ -1,4 +1,4 @@
-import { getLanguage } from "src/lib";
+import { getLanguage } from "src/lib/fs/filesystem";
 
 export enum FileIcons {
   javascript = "javascript",

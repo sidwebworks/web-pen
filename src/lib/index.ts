@@ -24,28 +24,32 @@ export const createStorage = (key: string) => {
   };
 };
 
-export function getLanguage(filename: string): EditorLanguages {
-  const ext = filename.split(".").slice(-1)[0] || "document";
-  switch (ext) {
-    case "jsx":
-    case "js":
-      return "javascript";
-    case "tsx":
-    case "ts":
-      return "typescript";
-    case "md":
-      return "markdown";
-    case "html":
-      return "html";
-    case "css":
-      return "css";
-    default:
-      return "text";
-  }
-}
 
 export const isMac = () => navigator.userAgent.match("Mac");
 
-export function isEntryName(name: string) {
-  return name === "main.js" || name === "main.ts";
+export function sanitizeHash(str: string) {
+  return str.toLowerCase().replace(/\s+/g, "-").replace("?", "");
+}
+
+export function toGitRaw(url: string) {
+  const BASE = "https://raw.githubusercontent.com";
+
+  const _url = new URL(url);
+  const parts = _url.pathname.split("/");
+  const [user, repo, _, branch] = parts.slice(1, 5);
+  const filename = parts.slice(parts.length - 2).join("/");
+
+  const result = new URL(`${user}/${repo}/${branch}/${filename}`, BASE).href;
+  return result; //?
+}
+
+export function normalizeThemeName(str: string) {
+  if (typeof str !== "string") return "";
+
+  if (str === "vs-dark") return str;
+
+  return str
+    .toLowerCase()
+    .replace(/[^A-Za-z']/g, "")
+    .replace(/\s+/g, "-");
 }

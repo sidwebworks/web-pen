@@ -8,7 +8,7 @@ import { useBundler } from "@hooks/use-bundler";
 import { useEditor } from "@hooks/use-editor";
 import clsx from "clsx";
 import { ComponentPropsWithoutRef } from "react";
-import { TOGGLE_SIDEBAR } from "src/lib/store/slices/editor";
+import { TOGGLE_SETTINGS, TOGGLE_SIDEBAR } from "src/lib/store/slices/editor";
 import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
 import { Tabs } from "./HeaderTabs";
 
@@ -25,6 +25,10 @@ function Header() {
 
   const onFormat = () => {
     editor.getAction("editor.action.formatDocument").run();
+  };
+
+  const onOpenSettings = () => {
+    dispatch(TOGGLE_SETTINGS(true));
   };
 
   return (
@@ -60,7 +64,11 @@ function Header() {
         >
           <LightningBoltIcon className="w-4 h-4 fill-current text-cyan-400" />
         </HeaderButton>
-        <HeaderButton aria-label="Open settings" title="Settings">
+        <HeaderButton
+          onClick={onOpenSettings}
+          aria-label="Open settings"
+          title="Settings"
+        >
           <CogIcon className="w-5 h-5  text-true-gray-500  stroke-current" />
         </HeaderButton>
       </div>

@@ -25,6 +25,7 @@ const Preview: React.FC = () => {
 
   return (
     <div className={"preview-wrapper relative h-full"}>
+      <LoadingView isLoading={!js.trim()} />
       <ErrorLens file={error.file} frame={error.frame} />
       <iframe
         ref={iframe}
@@ -56,3 +57,20 @@ const ErrorLens: React.FC<{ frame: string; file: string }> = ({
     </div>
   );
 };
+
+const LoadingView: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+  if (!isLoading) return null;
+
+  return (
+    <div className="w-full h-full grid place-content-center absolute z-10 p-2 inset-0 bg-[#011322]">
+      <div className="preview-loader loader">
+        <div></div>
+        <div></div>
+      </div>
+      <span className="font-medium  mt-4 text-lg text-cyan-400 text-center ">
+        Initializing...
+      </span>
+    </div>
+  );
+};
+

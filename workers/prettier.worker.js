@@ -11,7 +11,7 @@ const options = {
     htmlWhitespaceSensitivity: "strict",
     plugins: [await import("prettier/parser-html")],
     printWidth: 100000,
-    tabWidth: 1,
+    tabWidth: 2,
   }),
   css: async () => ({
     parser: "css",
@@ -56,6 +56,7 @@ addEventListener("message", async (event) => {
       pretty: prettier.format(event.data.text, {
         ...opts,
         endOfLine: "auto",
+        useTabs: false,
         trailingComma: "es5",
       }),
     });

@@ -12,7 +12,7 @@ export const useBundler = () => {
       if (!monaco) return;
 
       if (format) {
-        editor.getAction("editor.action.formatDocument").run();
+        editor.getAction("editor.action.formatDocument")?.run();
       }
 
       const models = monaco.editor.getModels();

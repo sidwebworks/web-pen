@@ -3,7 +3,7 @@ import { useEditor } from "@hooks/use-editor";
 import { nanoid } from "@reduxjs/toolkit";
 import { IDisposable, TextModel } from "@typings/editor";
 import { debounce } from "lodash-es";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
 import { CLOSE_ACTIVE_TAB } from "src/lib/store/slices/editor";
 import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
@@ -17,7 +17,6 @@ export const useEditorDisposables = () => {
   const tabs = useTypedSelector((s) => s.editor.tabs);
   const router = useRouter();
   const dispatch = useTypedDispatch();
-
   const { build } = useBundler();
 
   const onDisposeModel = useCallback(
@@ -31,26 +30,30 @@ export const useEditorDisposables = () => {
     [tabs, dispatch]
   );
 
+  const command = useCallback(async () => {
+    let id = router.query?.pid as string;
+
+    if (!id) {
+      id = nanoid();
+      const url = `/editor/${id}`;
+      await router.push(url, url);
+    }
+
+    const models = monaco.editor.getModels().reduce((acc, curr) => {
+      acc[curr.uri.path] = curr;
+      return acc;
+    }, {});
+
+    await dispatch(SAVE_FILES({ models, key: id }));
+
+    build(true);
+  }, [router, monaco, build]);
+
   useEffect(() => {
     if (!editor || !monaco) return;
 
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, async () => {
-      if (!router.query?.pid) {
-        const url = `/editor?pid=${nanoid()}`;
-
-        await router.push(url, url, { shallow: true });
-      }
-
-      const models = monaco.editor.getModels().reduce((acc, curr) => {
-        acc[curr.uri.path] = curr;
-        return acc;
-      }, {});
-
-      await dispatch(SAVE_FILES({ models, key: router.query.pid as string }));
-
-      build(true);
-    });
-  }, [editor, monaco, dispatch, router, build]);
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, command);
+  }, [editor, monaco]);
 
   useEffect(() => {
     if (monaco && editor) {

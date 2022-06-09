@@ -1,22 +1,32 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Directory, DirectoryTypes, File } from "@typings/editor";
+import { Directory, DirectoryTypes, Selectable } from "@typings/editor";
 import type { editor } from "monaco-editor";
 import { createDirectory } from "src/lib/fs/filesystem";
+import { FETCH_THEMES, LOAD_THEME } from "../thunks";
 
 type IEditorState = {
   tabs: Record<string, { isActive: boolean; path: string; id: string }>;
   dir: Directory;
-  options: editor.IStandaloneDiffEditorConstructionOptions;
+  themes: { label: string; value: string }[];
+  options: editor.IStandaloneEditorConstructionOptions;
   isSidebarOpen: boolean;
+  isSettingsOpen: boolean;
+  currentTheme: Selectable<string>;
 };
 
 const initialState: IEditorState = {
   isSidebarOpen: true,
+  isSettingsOpen: false,
+  themes: [],
+  currentTheme: {
+    value: "night-owl",
+    label: "Night owl",
+  },
   tabs: {},
   dir: createDirectory({
     children: [],
     isOpen: true,
-    name: "/",
+    name: "root",
     parent: "/",
     type: DirectoryTypes.DEFAULT,
   }),
@@ -31,12 +41,17 @@ const initialState: IEditorState = {
     cursorStyle: "block",
     cursorBlinking: "phase",
     autoIndent: "full",
-    guides: { bracketPairs: false, indentation: true },
+    guides: {
+      bracketPairs: false,
+      indentation: true,
+      highlightActiveIndentation: true,
+      highlightActiveBracketPair: true,
+    },
     wordWrap: "off",
     cursorSmoothCaretAnimation: true,
     scrollBeyondLastLine: false,
     padding: { top: 10, bottom: 10 },
-    theme: "dark",
+    theme: "night-owl",
   },
 };
 
@@ -47,7 +62,10 @@ const slice = createSlice({
     TOGGLE_SIDEBAR(state) {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
-    UPDATE_ROOT_DIR(state, action) {
+    TOGGLE_SETTINGS(state, action: PayloadAction<boolean | undefined>) {
+      state.isSettingsOpen = action.payload ?? !state.isSettingsOpen;
+    },
+    UPDATE_ROOT_DIR(state, action: PayloadAction<Directory>) {
       state.dir = action.payload;
     },
     SET_ACTIVE_TAB(
@@ -79,6 +97,21 @@ const slice = createSlice({
         next[1].isActive = true;
       }
     },
+    UPDATE_OPTIONS(
+      state,
+      action: PayloadAction<editor.IStandaloneEditorConstructionOptions>
+    ) {
+      console.log(action.payload);
+      state.options = Object.assign({}, state.options, action.payload);
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(FETCH_THEMES.fulfilled, (state, { payload }) => {
+      state.themes = payload;
+    });
+    builder.addCase(LOAD_THEME.fulfilled, (state, { meta }) => {
+      state.currentTheme = meta.arg;
+    });
   },
 });
 
@@ -87,6 +120,8 @@ export const {
   CLOSE_ACTIVE_TAB,
   TOGGLE_SIDEBAR,
   UPDATE_ROOT_DIR,
+  TOGGLE_SETTINGS,
+  UPDATE_OPTIONS,
 } = slice.actions;
 
 export default slice;

@@ -1,8 +1,6 @@
-import { Directory, File } from "@typings/editor";
+import { Directory, EditorLanguages, File } from "@typings/editor";
 import { nanoid } from "nanoid";
 import { unix as path } from "path-fx";
-import { Node } from "tree-model-improved/types";
-import { createStorage } from "..";
 import { css, html, js } from "./templates";
 
 export function createFile(
@@ -59,9 +57,26 @@ export function getFilesTemplate(): (Directory | File)[] {
   ];
 }
 
-export class FileSystem {
-  private _tree: Node<File>;
-  private key: string;
-  isInitialized: boolean = false;
-  private _cache: ReturnType<typeof createStorage>;
+export function getLanguage(filename: string): EditorLanguages {
+  const ext = filename.split(".").slice(-1)[0] || "document";
+  switch (ext) {
+    case "jsx":
+    case "js":
+      return "javascript";
+    case "tsx":
+    case "ts":
+      return "typescript";
+    case "md":
+      return "markdown";
+    case "html":
+      return "html";
+    case "css":
+      return "css";
+    default:
+      return "text";
+  }
+}
+
+export function isEntryName(name: string) {
+  return name === "main.js" || name === "main.ts";
 }

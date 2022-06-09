@@ -11,7 +11,9 @@ import "../styles/global.css";
 
 function App({ Component, pageProps }: AppProps) {
   useEventListener("keydown", (ev: KeyboardEvent) => {
-    if (ev.key === "s" && (isMac() ? ev.metaKey : ev.ctrlKey)) {
+    const isPrint = ev.key === "p";
+    const isSave = ev.key === "s";
+    if ((isSave || isPrint) && (isMac() ? ev.metaKey : ev.ctrlKey)) {
       ev.preventDefault();
     }
   });

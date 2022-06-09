@@ -8,6 +8,12 @@ export type IEditorSettings =
 
 export type IDisposable = monaco.IDisposable;
 
+export type Selectable<T> = {
+  label: string;
+  value: T;
+};
+
+
 export enum DirectoryTypes {
   DEFAULT = 1,
   HIDDEN = 0,

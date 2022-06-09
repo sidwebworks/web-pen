@@ -146,7 +146,13 @@ function RenameForm({ defaultValue, submit, reset }: FormProps) {
     },
   };
 
-  return <input type="text" {...inputProps} />;
+  return (
+    <input
+      type="text"
+      {...inputProps}
+      className="bg-transparent text-cyan-500"
+    />
+  );
 }
 
 export default FileTreeItem;
