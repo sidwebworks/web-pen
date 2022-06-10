@@ -39,7 +39,7 @@ export const Root: React.FC<SplitLayoutProps> = ({
 
   const handleDragEnd = debounce(() => {
     document.body.classList.remove("react-draggable-transparent-selection");
-  }, 180);
+  }, 150);
 
   return (
     <div

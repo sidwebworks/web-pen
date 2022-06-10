@@ -96,7 +96,7 @@ html,
 	position: relative;
 	height: 100%;
 	width: 100%;
-	background: white;
+	background: transparent;
 }
 
 .editor-wrapper {
@@ -117,6 +117,9 @@ html,
 	opacity: 0;
 }
 
+.react-draggable-transparent-selection .preview-wrapper iframe {
+	pointer-events: none;
+}
 .Resizer {
 	background: rgba(31, 31, 31, var(--tw-border-opacity));
 	--tw-border-opacity: 1;
@@ -131,12 +134,12 @@ html,
 }
 
 .Resizer:hover {
-	-webkit-transition: all 2s ease;
-	transition: all 2s ease;
+	-webkit-transition: border 1s ease;
+		transition: border 1s ease;
 }
 
 .Resizer.horizontal {
-	height: 11px;
+	height: 11;
 	margin: -5px 0;
 	border-top: 5px solid #23D3ED;
 	border-bottom: 5px solid rgba(255, 255, 255, 0);
