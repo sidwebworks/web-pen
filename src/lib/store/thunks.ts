@@ -30,7 +30,9 @@ export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
   async (tree, { dispatch, getState }) => {
     const isInitialized = (getState() as RootState).bundler.isInitialized;
 
-    if (!Object.keys(tree).length || !isInitialized) return;
+    if (!isInitialized) return;
+
+    if (!Object.keys(tree).length) return;
 
     const entry = Object.keys(tree).find((e) =>
       isEntryName(e.replace("/", ""))
