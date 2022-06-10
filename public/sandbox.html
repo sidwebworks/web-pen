@@ -1,9 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head> </head>
-	<body>
-		<div id="root"></div>
+  <head>
+    <script type="module">
+      const handleError = (err) => {
+        console.error(JSON.stringify(err))
+      }
 
+      window.addEventListener("error", (ev) => {
+        ev.preventDefault()
+        handleError(ev.error)
+      })
+
+      window.addEventListener("message", (ev) => {
+        if (!ev.data?.code) return
+        try {
+          eval(e.data.code)
+        } catch (error) {
+          handleError(error)
+        }
+      })
+    </script>
+  </head>
+	<body>
+    <div id="root"></div>
 		<script>
 			window.addEventListener(
 				"message",
@@ -13,5 +32,6 @@
 				false
 			);
 		</script>
+
 	</body>
 </html>

@@ -6,6 +6,7 @@ type IPreviewState = {
     css: string;
     js: string;
   };
+  error: string;
 };
 
 const initialState: IPreviewState = {
@@ -14,6 +15,7 @@ const initialState: IPreviewState = {
     css: "",
     js: "",
   },
+  error: "",
 };
 
 const slice = createSlice({
@@ -23,9 +25,12 @@ const slice = createSlice({
     UPDATE_SOURCE(state, action: PayloadAction<IPreviewState["source"]>) {
       state.source = action.payload;
     },
+    UPDATE_ERROR(state, action: PayloadAction<IPreviewState["error"]>) {
+      state.error = action.payload;
+    },
   },
 });
 
-export const { UPDATE_SOURCE } = slice.actions;
+export const { UPDATE_SOURCE, UPDATE_ERROR } = slice.actions;
 
 export default slice;

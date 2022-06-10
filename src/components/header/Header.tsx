@@ -23,8 +23,9 @@ function Header() {
   const { build } = useBundler();
   const dispatch = useTypedDispatch();
 
-  const onFormat = () => {
-    editor.getAction("editor.action.formatDocument").run();
+  const onFormat = async () => {
+    await editor.getAction("editor.action.formatDocument").run();
+    editor.saveViewState();
   };
 
   const onOpenSettings = () => {

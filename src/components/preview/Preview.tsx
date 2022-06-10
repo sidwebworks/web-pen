@@ -1,40 +1,48 @@
-import { Transition } from "@headlessui/react";
-import { useIsomorphicEffect } from "@hooks/common";
+import { useEffect, useMemo, useRef } from "react";
+import { UPDATE_ERROR } from "src/lib/store/slices/preview";
 
-import { unix } from "path-fx";
-import {
-  Fragment,
-  ReactEventHandler,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
-
-import { useTypedSelector } from "src/lib/store/store";
+import { useTypedDispatch, useTypedSelector } from "src/lib/store/store";
 import { createSnippet } from "./preview.helpers";
 
 const Preview: React.FC = () => {
-  const { css, html, js } = useTypedSelector((p) => p.preview.source);
+  const { css, html, js } = useTypedSelector((s) => s.preview.source);
+
+  const dispatch = useTypedDispatch();
+
+  const runTimeError = useTypedSelector((s) => s.preview.error);
 
   const { isInitialized, error } = useTypedSelector((s) => s.bundler);
 
   const iframe = useRef<HTMLIFrameElement>(null);
 
-  const result = useMemo(
-    () => createSnippet({ html, css, js }),
-    [html, js, css]
-  );
+  const result = useMemo(() => createSnippet({ html, css }), [html, css]);
 
-  useIsomorphicEffect(() => {
+  useEffect(() => {
     if (!iframe.current) return;
     iframe.current.srcdoc = result;
   }, [result]);
+
+  useEffect(() => {
+    if (!iframe.current) return;
+
+    iframe.current.contentWindow.postMessage({ code: js }, "*");
+
+    const handler = (ev: MessageEvent<{ error: Error }>) => {
+      if (typeof ev.data?.error !== "string") return;
+
+      dispatch(UPDATE_ERROR(ev.data.error));
+    };
+
+    window.addEventListener("message", (ev) => handler(ev));
+
+    return () => window.removeEventListener("message", (ev) => handler(ev));
+  }, [js, result]);
 
   return (
     <div className={"preview-wrapper relative h-full"}>
       {!isInitialized && <LoadingView />}
 
-      <ErrorLens file={error.file} frame={error.frame} />
+      <ErrorLens file={error.file} frame={error.frame} runtime={runTimeError} />
 
       <iframe
         ref={iframe}
@@ -49,19 +57,20 @@ const Preview: React.FC = () => {
 
 export default Preview;
 
-const ErrorLens: React.FC<{ frame: string; file: string }> = ({
+const ErrorLens: React.FC<{ frame: string; file: string; runtime: string }> = ({
   frame = "",
+  runtime,
   file,
 }) => {
-  if (!frame.trim().length) return null;
+  if (!frame.trim().length && !runtime.trim().length) return null;
 
   return (
     <div className="w-full h-full absolute z-10 p-2 inset-0 bg-black">
       <p className="text-red-400 text-xl font-medium">
-        Error in <span>{file.replace("/", "")}</span>
+        {file.trim() ? `Error in ${file.replace("/", "")}` : ""}
       </p>
-      <pre className=" mt-2 text-red-400 w-full whitespace-pre-wrap text-sm">
-        {frame}
+      <pre className="mt-2 text-red-400 w-full whitespace-pre-wrap text-base">
+        {frame || runtime}
       </pre>
     </div>
   );

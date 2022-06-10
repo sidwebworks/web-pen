@@ -1,7 +1,28 @@
 import { template } from "lodash-es";
 
 const templates = {
-  js: template('<script type="module"> ${ code } </script>'),
+  js: template(`
+<script type="module">
+  const handleError = (err) => {
+    console.error(err)
+    parent.postMessage({ error: err.toString() }, "*")
+  }
+
+  window.addEventListener("error", (ev) => {
+    ev.preventDefault()
+    handleError(ev.error)
+  })
+
+  window.addEventListener("message", (ev) => {
+    if (!ev.data?.code) return
+    try {
+      eval(ev.data.code)
+      parent.postMessage({ error: "" }, "*")
+    } catch (error) {
+      handleError(error)
+    }
+  }, false)
+</script>`),
   css: template(`<style> <%- code %> </style>`),
 };
 
@@ -16,14 +37,12 @@ const JS_REGEX = new RegExp(
 export const createSnippet = ({
   html = "",
   css = "",
-  js = "",
 }: {
   html: string;
   css: string;
-  js: string;
 }) => {
   const output = html
-    .replace(JS_REGEX, templates.js({ code: js }))
+    .replace(JS_REGEX, templates.js())
     .replace(CSS_REGEX, templates.css({ code: css }));
 
   return output;

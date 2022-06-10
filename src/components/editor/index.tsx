@@ -31,8 +31,6 @@ const EditorLayout: React.FC<EditorLayoutProps> = () => {
 
   const id = router.query?.pid as string;
 
-  console.log(id);
-
   useEffect(() => {
     dispatch(LOAD_INITIAL_FILES(id))
       .then(() => dispatch(INIT_BUNDLER()))

@@ -31,7 +31,7 @@ const plugin: MonacoPlugin = (editor, monaco) => {
       return [
         {
           range: model.getFullModelRange(),
-          text: pretty,
+          text: model.normalizeIndentation(pretty),
         },
       ];
     },

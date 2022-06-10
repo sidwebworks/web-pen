@@ -40,7 +40,9 @@ const initialState: IEditorState = {
     renderLineHighlight: "all",
     cursorStyle: "block",
     cursorBlinking: "phase",
-    autoIndent: "full",
+    formatOnPaste: true,
+    detectIndentation: true,
+    insertSpaces: false,
     guides: {
       bracketPairs: false,
       indentation: true,

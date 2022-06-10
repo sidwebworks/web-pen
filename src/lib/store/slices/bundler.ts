@@ -6,7 +6,6 @@ type IBunderState = {
   isError: boolean;
   isBundling: boolean;
   error: { frame: string; file: string };
-  bundled: string;
 };
 
 const initialState: IBunderState = {
@@ -14,7 +13,6 @@ const initialState: IBunderState = {
   isError: false,
   isInitialized: false,
   error: { file: "", frame: "" },
-  bundled: "",
 };
 
 const slice = createSlice({
@@ -33,9 +31,8 @@ const slice = createSlice({
       };
       state.isBundling = true;
     });
-    builder.addCase(BUNDLE_CODE.fulfilled, (state, action) => {
+    builder.addCase(BUNDLE_CODE.fulfilled, (state) => {
       state.isBundling = false;
-      state.bundled = action.payload;
     });
     builder.addCase(BUNDLE_CODE.rejected, (state, action) => {
       state.isBundling = false;
