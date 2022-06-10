@@ -48,13 +48,15 @@ class Bundler {
 
   async initialize() {
     if (!Bundler.initialized) {
-      Bundler.initialized = true;
       try {
         await initializeEsbuild({
           wasmURL: this.wasmUrl,
           worker: true,
         });
-      } catch (error: any) {}
+        Bundler.initialized = true;
+      } catch (error: any) {
+        Bundler.initialized = false;
+      }
     }
 
     return Bundler.initialized;
