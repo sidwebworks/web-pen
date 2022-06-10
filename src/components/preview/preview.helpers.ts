@@ -2,27 +2,42 @@ import { template } from "lodash-es";
 
 const templates = {
   js: template(`
-<script type="module">
-  const handleError = (err) => {
-    console.error(err)
-    parent.postMessage({ error: err.toString() }, "*")
-  }
-
-  window.addEventListener("error", (ev) => {
-    ev.preventDefault()
-    handleError(ev.error)
-  })
-
-  window.addEventListener("message", (ev) => {
-    if (!ev.data?.code) return
-    try {
-      eval(ev.data.code)
-      parent.postMessage({ error: "" }, "*")
-    } catch (error) {
-      handleError(error)
+  <script type="module" async>
+    function createUri(raw) {
+      const blob = new Blob([String.raw({raw})], {type: 'text/javascript'})
+      const uri = URL.createObjectURL(blob);
+      return uri;
     }
-  }, false)
-</script>`),
+  
+    const handleError = (err) => {
+      console.error(err);
+      parent.postMessage({ error: err.toString() }, "*");
+    };
+  
+    window.addEventListener("error", (ev) => {
+      ev.preventDefault()
+      handleError(ev.error);
+    });
+  
+    const run = (code) => {
+      if (!code) return    
+      (async () => {
+        document.body.innerHTML = document.body.innerHTML
+        const uri = createUri(code)
+        await import(uri)
+      })().then(() => {
+       parent.postMessage({ error: '' }, "*");
+      }).catch(handleError)
+    }
+  
+    window.addEventListener(
+      "message",
+      (e) => run(e.data.code),
+      false
+    );
+</script>
+
+`),
   css: template(`<style> <%- code %> </style>`),
 };
 
@@ -47,6 +62,3 @@ export const createSnippet = ({
 
   return output;
 };
-
-
-

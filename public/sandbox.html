@@ -1,37 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <script type="module">
-      const handleError = (err) => {
-        console.error(JSON.stringify(err))
-      }
+<script type="module">
 
-      window.addEventListener("error", (ev) => {
-        ev.preventDefault()
-        handleError(ev.error)
-      })
+  function createUri(raw) {
+    const blob = new Blob([String.raw({raw})], {type: 'text/javascript'})
+    const uri = URL.createObjectURL(blob);
+    return uri;
+  }
 
-      window.addEventListener("message", (ev) => {
-        if (!ev.data?.code) return
-        try {
-          eval(e.data.code)
-        } catch (error) {
-          handleError(error)
-        }
-      })
-    </script>
-  </head>
-	<body>
-    <div id="root"></div>
-		<script>
-			window.addEventListener(
-				"message",
-				(event) => {
-					console.log(event);
-				},
-				false
-			);
-		</script>
+  const handleError = (err) => {
+    console.error(err, "CAUGHT");
+    parent.postMessage({ error: err.toString() }, "*");
+  };
 
-	</body>
-</html>
+  window.addEventListener("error", (ev) => {
+    console.log(ev);
+    handleError(ev.error);
+  });
+
+  window.onerror = (e) => {
+    console.log(e)
+  }
+
+  const run = (code) => {
+    console.log("Ran")
+    if (!code) return
+    
+    (async () => {
+      await import(createUri(code))
+    })().catch((e) => {
+      console.log(e)
+      handleError(e)
+    });
+  }
+
+  window.addEventListener(
+    "message",
+    (e) => {
+       run(e.data.code)
+    },
+    false
+  );
+
+</script>

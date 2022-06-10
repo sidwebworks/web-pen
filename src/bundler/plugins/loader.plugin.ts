@@ -1,24 +1,36 @@
 import { Loader, OnLoadResult } from "esbuild-wasm";
 import { unix as path } from "path-fx";
 import { BuildInput } from "..";
+import { BundlingError } from "../errors";
 
 import { createPlugin, getLoaderFromPath } from "./helpers";
 
 const plugin = createPlugin<BuildInput>((options) => ({
   name: "loader-plugin",
   setup(build) {
-    build.onLoad({ filter: new RegExp(path.join(options.entry)) }, (args) => {
-      return {
-        loader: getLoaderFromPath(args.path, options.loader),
-        contents: options.tree[path.join(options.entry)],
-      };
-    });
+    build.onLoad(
+      { filter: new RegExp(path.join(options.entry)), namespace: "entry" },
+      (args) => {
+        const contents = options.tree[path.join(options.entry)];
+
+        if (!contents) {
+          return null;
+        }
+
+        return {
+          loader: getLoaderFromPath(args.path, options.loader),
+          contents,
+        };
+      }
+    );
 
     /**
      * Resolve relative modules imports
      */
-    build.onLoad({ filter: /^\.+\// }, (args) => {
+    build.onLoad({ filter: /^\.+\//, namespace: "relative" }, (args) => {
       const contents = options.tree[path.join("/", args.path)];
+
+      if (!contents) return null;
 
       return {
         loader: getLoaderFromPath(args.path, options.loader),
@@ -26,11 +38,11 @@ const plugin = createPlugin<BuildInput>((options) => ({
       };
     });
 
-    build.onLoad({ filter: /.*/ }, async (args) => {
-      let contents = options.tree[args.path];
+    build.onLoad({ filter: /.*/, namespace: "main" }, async (args) => {
+      const contents = options.tree[args.path] || options.tree["/" + args.path];
 
       if (!contents) {
-        contents = options.tree["/" + args.path];
+        return null;
       }
 
       const result: OnLoadResult = {
@@ -41,32 +53,6 @@ const plugin = createPlugin<BuildInput>((options) => ({
 
       return result;
     });
-
-    // build.onLoad({ filter: /.css$/ }, async (args: any) => {
-    //   const { data, request } = await axios.get(args.path);
-
-    //   const contents = normalizeCss(data);
-
-    //   const result: OnLoadResult = {
-    //     loader: "jsx",
-    //     contents,
-    //     resolveDir: new URL("./", request.responseURL).pathname,
-    //   };
-
-    //   await fileCache.setItem(args.path, result);
-
-    //   return result;
-    // });
-
-    // build.onLoad({ filter: /.*/ }, async (args) => {
-    //   const result: OnLoadResult = {
-    //     loader: "jsx",
-    //     contents: "",
-    //     resolveDir: new URL("./", args.path).pathname,
-    //   };
-
-    //   return result;
-    // });
   },
 }));
 

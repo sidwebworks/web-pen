@@ -31,6 +31,8 @@ class Bundler {
   config: BuildOptions = {
     bundle: true,
     write: false,
+    platform: "browser",
+    format: "esm",
     define: {
       "process.env.NODE_ENV": `"production"`,
       global: "window",

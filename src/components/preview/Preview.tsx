@@ -17,26 +17,29 @@ const Preview: React.FC = () => {
 
   const result = useMemo(() => createSnippet({ html, css }), [html, css]);
 
+  const postCode = (target: HTMLIFrameElement) => {
+    target.contentWindow.postMessage({ code: js }, "*");
+  };
+
   useEffect(() => {
     if (!iframe.current) return;
     iframe.current.srcdoc = result;
   }, [result]);
 
   useEffect(() => {
-    if (!iframe.current) return;
+    postCode(iframe.current);
+  }, [js, result]);
 
-    iframe.current.contentWindow.postMessage({ code: js }, "*");
-
+  useEffect(() => {
     const handler = (ev: MessageEvent<{ error: Error }>) => {
       if (typeof ev.data?.error !== "string") return;
-
       dispatch(UPDATE_ERROR(ev.data.error));
     };
 
     window.addEventListener("message", (ev) => handler(ev));
 
     return () => window.removeEventListener("message", (ev) => handler(ev));
-  }, [js, result]);
+  }, []);
 
   return (
     <div className={"preview-wrapper relative h-full"}>
@@ -46,6 +49,7 @@ const Preview: React.FC = () => {
 
       <iframe
         ref={iframe}
+        onLoad={(e) => postCode(e.target as HTMLIFrameElement)}
         title="preview"
         srcDoc={result}
         className="h-full"

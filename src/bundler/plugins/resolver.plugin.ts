@@ -1,4 +1,4 @@
-import { unix as path } from "path-fx";
+import { unix } from "path-fx";
 import { BuildInput } from "..";
 import { createPlugin } from "./helpers";
 
@@ -11,9 +11,9 @@ const plugin = createPlugin<BuildInput>((options) => ({
      * Resolve the entry file eg. `index.js`
      */
     build.onResolve(
-      { filter: new RegExp(path.join("/", options.entry)) },
-      (args: any) => {
-        return { path: args.path, namespace: "a" };
+      { filter: new RegExp(unix.join("/", options.entry)) },
+      (args) => {
+        return { path: args.path, namespace: "entry" };
       }
     );
 
@@ -22,7 +22,7 @@ const plugin = createPlugin<BuildInput>((options) => ({
      */
     build.onResolve({ filter: /^\.+\// }, (args) => {
       return {
-        namespace: "a",
+        namespace: "relative",
         path: args.path,
       };
     });
@@ -30,10 +30,22 @@ const plugin = createPlugin<BuildInput>((options) => ({
     /**
      * Resolve main module files
      */
-    build.onResolve({ filter: /.*/ }, async (args: any) => {
+    build.onResolve({ filter: /.*/ }, async (args) => {
+      let path = unix.join("/", args.path);
+
+      if (path in options.tree) {
+        return {
+          namespace: "main",
+          path,
+        };
+      }
+
+      path = new URL(args.path, "https://cdn.skypack.dev").href;
+
       return {
-        namespace: "a",
-        path: args.path,
+        namespace: "skypack",
+        path: path,
+        external: true,
       };
     });
   },
