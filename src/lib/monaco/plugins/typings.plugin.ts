@@ -15,10 +15,16 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
 
   let count = 0;
 
+  const stop = () => {
+    store.dispatch(STOP_TYPE_FETCH());
+  };
+
+  let timeout: void | NodeJS.Timeout = setTimeout(stop, 2500);
+
+  store.dispatch(START_TYPE_FETCH());
+
   Object.keys(deps).forEach((name) => {
     count++;
-    store.dispatch(START_TYPE_FETCH());
-
     worker.postMessage({
       name,
       version: deps[name],
@@ -44,8 +50,11 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
 
     count--;
     if (count < 1) {
-      store.dispatch(STOP_TYPE_FETCH());
+      stop();
+    } else {
+      timeout = setTimeout(stop, 2500);
     }
+
     // When resolving definitions and references, the editor will try to use created models.
     // Creating a model for the library allows "peek definition/references" commands to work with the library.
   });
@@ -55,9 +64,14 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
       disposables.forEach((disposable) => {
         disposable.dispose();
       });
+
+      if (timeout) {
+        timeout = clearTimeout(timeout);
+      }
+
       if (worker) {
         count = 0;
-        store.dispatch(STOP_TYPE_FETCH());
+        stop();
         worker.terminate();
       }
     },

@@ -38,6 +38,34 @@ const plugin = createPlugin<BuildInput>((options) => ({
       };
     });
 
+    build.onLoad(
+      { filter: /^https?:\/\//, namespace: "skypack" },
+      async (args) => {
+        try {
+          const contents = await (await fetch(args.path)).text();
+
+          if (!contents) {
+            return null;
+          }
+
+          const result: OnLoadResult = {
+            loader: "js",
+            contents,
+            resolveDir: args.path,
+          };
+
+          return result;
+        } catch (error) {
+          console.error(error);
+
+          throw new BundlingError({
+            file: args.path,
+            message: `Unable to load module ${args.path.split("/").at(-1)}`,
+          });
+        }
+      }
+    );
+
     build.onLoad({ filter: /.*/, namespace: "main" }, async (args) => {
       const contents = options.tree[args.path] || options.tree["/" + args.path];
 

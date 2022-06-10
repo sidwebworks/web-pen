@@ -42,12 +42,16 @@ const plugin = createPlugin<BuildInput>((options) => ({
 
       path = new URL(args.path, "https://cdn.skypack.dev").href;
 
-      store.dispatch(ADD_TYPE(args.path));
+      console.log(args.path);
+
+      // Skip sub modules
+      if (!args.path.startsWith("/-/")) {
+        store.dispatch(ADD_TYPE(args.path));
+      }
 
       return {
         namespace: "skypack",
         path: path,
-        external: true,
       };
     });
   },
