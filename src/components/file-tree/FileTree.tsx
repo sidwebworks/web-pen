@@ -37,7 +37,7 @@ const FileTree: React.FC<FileNavigationProps> = ({ files }) => {
       ref.current.selectById("");
       editor.setModel(null);
     }
-  }, [tabs, monaco, editor]);
+  }, [tabs, monaco, editor, files]);
 
   return (
     <div

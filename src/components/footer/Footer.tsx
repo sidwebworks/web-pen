@@ -3,13 +3,13 @@ import { Fragment } from "react";
 import { AlertOctagon, BatteryCharging } from "react-feather";
 import { useTypedSelector } from "src/lib/store/store";
 
+
 const Footer = () => {
   const { isBundling, isError, isInitialized } = useTypedSelector(
     (s) => s.bundler
   );
 
   const isFetchingTypes = useTypedSelector((s) => s.editor.isFetchingTypes);
-  console.log("isFetchingTypes: ", isFetchingTypes);
 
   return (
     <footer className="relative bottom-0 flex-grow-0 flex items-center justify-between w-full px-3 py-1 bg-dark-900">

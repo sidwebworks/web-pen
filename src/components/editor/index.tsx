@@ -33,8 +33,8 @@ const EditorLayout: React.FC<EditorLayoutProps> = () => {
 
   useEffect(() => {
     dispatch(LOAD_INITIAL_FILES(id))
-      .then(() => dispatch(INIT_BUNDLER()))
-      .then(() => build());
+      .then(() => build())
+      .catch(() => build());
   }, [dispatch, build, id, isInitialized]);
 
   useEditorDisposables();

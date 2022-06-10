@@ -25,7 +25,7 @@ function App({ Component, pageProps }: AppProps) {
         <title>Web Pen</title>
       </Head>
       <Provider store={store}>
-        <NextProgress color="#27D3CF" options={{ showSpinner: true }} />
+        <NextProgress color="#27D3CF" options={{ showSpinner: false }} />
         <EditorProvider>
           <Component {...pageProps} />
         </EditorProvider>

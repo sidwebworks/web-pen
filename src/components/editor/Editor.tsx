@@ -8,13 +8,7 @@ import WelcomeScreen from "./WelcomeScreen";
 
 const Editor: React.FC = () => {
   const options = useTypedSelector((s) => s.editor.options);
-  const tabs = useTypedSelector((s) => s.editor.tabs);
   const { update } = useEditor();
-
-  const isOpen = useMemo(
-    () => (Object.keys(tabs).length ? true : false),
-    [tabs]
-  );
 
   const handleMount: OnMount = (editor, monaco) => {
     editor.onDidChangeModel(() => {
@@ -32,7 +26,6 @@ const Editor: React.FC = () => {
 
   return (
     <Fragment>
-      {!isOpen && <WelcomeScreen />}
       <MonacoEditor
         beforeMount={onBeforeEditorMount}
         onMount={handleMount}

@@ -11,7 +11,7 @@ const Preview: React.FC = () => {
 
   const runTimeError = useTypedSelector((s) => s.preview.error);
 
-  const { isInitialized, error } = useTypedSelector((s) => s.bundler);
+  const { error } = useTypedSelector((s) => s.bundler);
 
   const iframe = useRef<HTMLIFrameElement>(null);
 
@@ -41,35 +41,41 @@ const Preview: React.FC = () => {
     return () => window.removeEventListener("message", (ev) => handler(ev));
   }, []);
 
+  const isError = (error.frame.trim().length || runTimeError.trim().length) > 0;
+
   return (
     <div className={"preview-wrapper relative h-full"}>
-      {!isInitialized && <LoadingView />}
-
-      <ErrorLens file={error.file} frame={error.frame} runtime={runTimeError} />
-
+      <ErrorLens
+        isError={isError}
+        file={error.file}
+        frame={error.frame}
+        runtime={runTimeError}
+      />
       <iframe
         ref={iframe}
         onLoad={(e) => postCode(e.target as HTMLIFrameElement)}
         title="preview"
         srcDoc={result}
-        className="h-full"
+        className="h-full z-10"
         sandbox="allow-scripts allow-forms allow-same-origin allow-modals"
       />
+      <LoadingView isError={isError} />
     </div>
   );
 };
 
 export default Preview;
 
-const ErrorLens: React.FC<{ frame: string; file: string; runtime: string }> = ({
-  frame = "",
-  runtime,
-  file,
-}) => {
-  if (!frame.trim().length && !runtime.trim().length) return null;
+const ErrorLens: React.FC<{
+  frame: string;
+  file: string;
+  runtime: string;
+  isError: boolean;
+}> = ({ frame = "", isError, runtime, file }) => {
+  if (!isError) return null;
 
   return (
-    <div className="w-full h-full absolute z-10 p-2 inset-0 bg-black">
+    <div className="w-full h-full absolute z-20 p-2 inset-0 bg-black bg-opacity-60">
       <p className="text-red-400 text-xl font-medium">
         {file.trim() ? `Error in ${file.replace("/", "")}` : ""}
       </p>
@@ -80,9 +86,11 @@ const ErrorLens: React.FC<{ frame: string; file: string; runtime: string }> = ({
   );
 };
 
-const LoadingView: React.FC = () => {
+const LoadingView: React.FC<{ isError: boolean }> = ({ isError }) => {
+  if (isError) return null;
+
   return (
-    <div className="w-full h-full grid place-content-center absolute z-20 p-2 inset-0 bg-[#011322]">
+    <div className="w-full h-full grid place-content-center absolute z-[-1] p-2 inset-0 bg-[#011322]">
       <div className="preview-loader loader">
         <div></div>
         <div></div>

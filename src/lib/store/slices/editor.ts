@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Directory, DirectoryTypes, Selectable } from "@typings/editor";
 import type { editor } from "monaco-editor";
 import { createDirectory } from "src/lib/fs/filesystem";
-import { FETCH_THEMES, LOAD_THEME } from "../thunks";
+import { FETCH_THEMES, LOAD_INITIAL_FILES, LOAD_THEME } from "../thunks";
 
 type IEditorState = {
   tabs: Record<string, { isActive: boolean; path: string; id: string }>;

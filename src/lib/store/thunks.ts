@@ -30,7 +30,9 @@ export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
   async (tree, { dispatch, getState }) => {
     const isInitialized = (getState() as RootState).bundler.isInitialized;
 
-    if (!isInitialized) return;
+    if (!isInitialized) {
+      await dispatch(INIT_BUNDLER());
+    }
 
     if (!Object.keys(tree).length) return;
 
