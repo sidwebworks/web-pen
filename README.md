@@ -21,5 +21,5 @@ An open-source codepen on Steroids.
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/gpl-3.0/)
+[GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)
 
