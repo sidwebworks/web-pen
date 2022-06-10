@@ -12,8 +12,8 @@ An open-source codepen on Steroids.
 - Next JS (React)
 - Typescript
 - Monaco Editor
-- TailwindCSS
-- ESBUILD (Bundler)
+- Windicss
+- ESBUILD
 
 ## Authors
 
@@ -21,5 +21,5 @@ An open-source codepen on Steroids.
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://choosealicense.com/licenses/gpl-3.0/)
 
