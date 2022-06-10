@@ -54,5 +54,10 @@ export function getLanguage(filename: string): EditorLanguages {
 }
 
 export function isEntryName(name: string) {
-  return name === "main.js" || name === "main.ts";
+  return (
+    name === "main.js" ||
+    name === "main.ts" ||
+    name === "main.tsx" ||
+    name === "main.jsx"
+  );
 }

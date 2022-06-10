@@ -32,6 +32,8 @@ class Bundler {
     bundle: true,
     write: false,
     platform: "browser",
+    jsx: "transform",
+    jsxFactory: "React.createElement",
     format: "esm",
     define: {
       "process.env.NODE_ENV": `"production"`,

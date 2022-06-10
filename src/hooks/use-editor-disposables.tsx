@@ -11,10 +11,12 @@ import { SAVE_FILES } from "src/lib/store/thunks";
 import emmetPlugin from "../lib/monaco/plugins/emmet.plugin";
 import prettierPlugin from "../lib/monaco/plugins/prettier.plugin";
 import textmatePlugin from "../lib/monaco/plugins/texmate.plugin";
+import typesPlugin from "../lib/monaco/plugins/typings.plugin";
 
 export const useEditorDisposables = () => {
   const { editor, monaco } = useEditor();
   const tabs = useTypedSelector((s) => s.editor.tabs);
+  const deps = useTypedSelector((s) => s.editor.typings);
   const router = useRouter();
   const dispatch = useTypedDispatch();
   const { build } = useBundler();
@@ -50,16 +52,23 @@ export const useEditorDisposables = () => {
   }, [router, monaco, build]);
 
   useEffect(() => {
-    if (!editor || !monaco) return;
-
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, command);
-  }, [editor, monaco]);
-
-  useEffect(() => {
     if (monaco && editor) {
       textmatePlugin(editor, monaco);
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, command);
     }
   }, [monaco, editor]);
+
+  useEffect(() => {
+    if (!editor || !monaco) return;
+
+    const disposables: IDisposable[] = [];
+
+    disposables.push(typesPlugin(monaco, deps));
+
+    return () => {
+      disposables.forEach((d) => d.dispose());
+    };
+  }, [deps, monaco]);
 
   useEffect(() => {
     if (!editor || !monaco) return;

@@ -1,5 +1,5 @@
-import { BeforeMount, Monaco } from "@monaco-editor/react";
-import type { editor, languages } from "monaco-editor";
+import { BeforeMount } from "@monaco-editor/react";
+import type { languages } from "monaco-editor";
 import PQueue from "p-queue";
 
 export function createWorkerQueue(worker) {

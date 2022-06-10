@@ -12,12 +12,16 @@ type IEditorState = {
   isSidebarOpen: boolean;
   isSettingsOpen: boolean;
   currentTheme: Selectable<string>;
+  typings: Record<string, string>;
+  isFetchingTypes: boolean;
 };
 
 const initialState: IEditorState = {
+  isFetchingTypes: false,
   isSidebarOpen: true,
   isSettingsOpen: false,
   themes: [],
+  typings: {},
   currentTheme: {
     value: "night-owl",
     label: "Night owl",
@@ -108,6 +112,16 @@ const slice = createSlice({
     ) {
       state.options = Object.assign({}, state.options, action.payload);
     },
+    START_TYPE_FETCH(state) {
+      state.isFetchingTypes = true;
+    },
+    STOP_TYPE_FETCH(state) {
+      state.isFetchingTypes = false;
+    },
+    ADD_TYPE(state, action: PayloadAction<string>) {
+      const name = action.payload.split("@")[0] || action.payload;
+      state.typings[name] = action.payload.split("@")[1] || action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(FETCH_THEMES.fulfilled, (state, { payload }) => {
@@ -127,6 +141,9 @@ export const {
   UPDATE_ROOT_DIR,
   TOGGLE_SETTINGS,
   UPDATE_OPTIONS,
+  START_TYPE_FETCH,
+  STOP_TYPE_FETCH,
+  ADD_TYPE,
 } = slice.actions;
 
 export default slice;

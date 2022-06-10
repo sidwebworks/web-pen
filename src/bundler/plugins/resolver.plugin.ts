@@ -1,8 +1,8 @@
 import { unix } from "path-fx";
+import { ADD_TYPE } from "src/lib/store/slices/editor";
+import store from "src/lib/store/store";
 import { BuildInput } from "..";
 import { createPlugin } from "./helpers";
-
-const UNPKG_PATH = "https://unpkg.com";
 
 const plugin = createPlugin<BuildInput>((options) => ({
   name: "resolve-plugin",
@@ -41,6 +41,8 @@ const plugin = createPlugin<BuildInput>((options) => ({
       }
 
       path = new URL(args.path, "https://cdn.skypack.dev").href;
+
+      store.dispatch(ADD_TYPE(args.path));
 
       return {
         namespace: "skypack",

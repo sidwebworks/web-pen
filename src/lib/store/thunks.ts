@@ -8,8 +8,9 @@ import { editor } from "monaco-editor";
 import { nanoid } from "nanoid";
 import { createProjectName, createStorage, toGitRaw } from "..";
 import Bundler, { BuildInput } from "../../bundler";
+import { isEntryName } from "../fs/filesystem";
 import nightOwl from "../monaco/themes/night_owl.json";
-import { VANILLA_JS, VANILLA_TS } from "../templates";
+import { REACT_JS, REACT_TS, VANILLA_JS, VANILLA_TS } from "../templates";
 import { CLOSE_ALL_TABS, UPDATE_ROOT_DIR } from "./slices/editor";
 import { UPDATE_SOURCE } from "./slices/preview";
 import { RootState } from "./store";
@@ -31,8 +32,8 @@ export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
 
     if (!Object.keys(tree).length || !isInitialized) return;
 
-    const entry = Object.keys(tree).find(
-      (e) => e.startsWith("/main") && (e.endsWith(".js") || e.endsWith(".ts"))
+    const entry = Object.keys(tree).find((e) =>
+      isEntryName(e.replace("/", ""))
     );
 
     if (!entry) return;
@@ -179,6 +180,12 @@ export const CREATE_PROJECT = createAsyncThunk<string, ProjectTypes>(
       case ProjectTypes.VanillaTypescript:
         temp = VANILLA_TS(createProjectName());
         break;
+      case ProjectTypes.ReactTypescript:
+        temp = REACT_TS(createProjectName());
+        break;
+      case ProjectTypes.ReactJavascript:
+        temp = REACT_JS(createProjectName());
+        break;
       default:
         throw new Error(`Unknown template ${template}`);
     }
@@ -197,3 +204,6 @@ export const DELETE_PROJECT = createAsyncThunk<void, string>(
     await dispatch(LOAD_PROJECTS());
   }
 );
+
+
+

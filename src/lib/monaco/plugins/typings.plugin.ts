@@ -1,24 +1,27 @@
 import { Monaco } from "@monaco-editor/react";
 import { IDisposable } from "@typings/editor";
+import { START_TYPE_FETCH, STOP_TYPE_FETCH } from "src/lib/store/slices/editor";
+import store from "src/lib/store/store";
 
-const plugin = (monaco: Monaco) => {
+const plugin = (monaco: Monaco, deps: Record<string, string>) => {
   const disposables: IDisposable[] = [];
-  let worker;
-
-  const dependencies = {
-    react: "@latest",
-    "react-dom": "@latest",
-    axios: "@latest",
-  };
+  let worker: Worker;
 
   if (!worker) {
-    worker = new Worker(new URL("/workers/fetch-types.worker.js"));
+    worker = new Worker(
+      new URL("../../../../workers/fetch-types.worker.js", import.meta.url)
+    );
   }
 
-  Object.keys(dependencies).forEach((name) => {
+  let count = 0;
+
+  Object.keys(deps).forEach((name) => {
+    count++;
+    store.dispatch(START_TYPE_FETCH());
+
     worker.postMessage({
       name,
-      version: dependencies[name],
+      version: deps[name],
     });
   });
 
@@ -39,6 +42,10 @@ const plugin = (monaco: Monaco) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(source, libUri)
     );
 
+    count--;
+    if (count < 1) {
+      store.dispatch(STOP_TYPE_FETCH());
+    }
     // When resolving definitions and references, the editor will try to use created models.
     // Creating a model for the library allows "peek definition/references" commands to work with the library.
   });
@@ -49,6 +56,8 @@ const plugin = (monaco: Monaco) => {
         disposable.dispose();
       });
       if (worker) {
+        count = 0;
+        store.dispatch(STOP_TYPE_FETCH());
         worker.terminate();
       }
     },
