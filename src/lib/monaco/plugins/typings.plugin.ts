@@ -21,13 +21,10 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
 
   let timeout: void | NodeJS.Timeout = setTimeout(stop, 2500);
 
-
-  console.log(deps);
-
   Object.keys(deps).forEach((name) => {
     count++;
     store.dispatch(START_TYPE_FETCH());
-    console.log(name);
+
     worker.postMessage({
       name,
       version: deps[name],
@@ -40,7 +37,6 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
     // typings: result,
 
     const entries = Object.keys(event.data.typings);
-    console.log(entries);
 
     const types = entries.reduce((acc, curr) => {
       const libUri = `file:///${curr}`;
@@ -65,8 +61,6 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
 
       return acc;
     }, {});
-
-    console.log(types);
 
     count--;
     if (count < 1) {
@@ -99,5 +93,3 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
 };
 
 export default plugin;
-
-

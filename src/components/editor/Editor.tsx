@@ -1,10 +1,10 @@
 import { useEditor } from "@hooks/use-editor";
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import React, { Fragment, useMemo } from "react";
-import { useTypedSelector } from "../../lib/store/store";
+import React, { Fragment } from "react";
 import { onBeforeEditorMount } from "../../lib/monaco/plugins";
-import theme from "../../lib/monaco/themes/night_owl.json";
-import WelcomeScreen from "./WelcomeScreen";
+import theme from "../../lib/monaco/themes/night-owl.json";
+import { useTypedSelector } from "../../lib/store/store";
+
 
 const Editor: React.FC = () => {
   const options = useTypedSelector((s) => s.editor.options);

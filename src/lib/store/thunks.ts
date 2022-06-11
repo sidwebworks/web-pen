@@ -9,7 +9,7 @@ import { nanoid } from "nanoid";
 import { createProjectName, createStorage, toGitRaw } from "..";
 import Bundler, { BuildInput } from "../../bundler";
 import { isEntryName } from "../fs/filesystem";
-import nightOwl from "../monaco/themes/night_owl.json";
+import nightOwl from "../monaco/themes/night-owl.json";
 import { REACT_JS, REACT_TS, VANILLA_JS, VANILLA_TS } from "../templates";
 import { CLOSE_ALL_TABS, UPDATE_ROOT_DIR } from "./slices/editor";
 import { UPDATE_SOURCE } from "./slices/preview";

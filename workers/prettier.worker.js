@@ -10,8 +10,8 @@ const options = {
     parser: "html",
     htmlWhitespaceSensitivity: "strict",
     plugins: [await import("prettier/parser-html")],
-    printWidth: 100000,
-    tabWidth: 2,
+    printWidth: 100,
+    tabWidth: 1,
   }),
   css: async () => ({
     parser: "css",
