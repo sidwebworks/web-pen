@@ -44,7 +44,7 @@ export function requestResponse(worker, data) {
 
 export const onBeforeEditorMount: BeforeMount = async (monaco) => {
   const diagOpts: languages.typescript.DiagnosticsOptions = {
-    noSemanticValidation: true,
+    noSemanticValidation: false,
     noSyntaxValidation: false,
   };
 
