@@ -27,10 +27,8 @@ if (!isSSR) {
 
 export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
   "bundler/BUNDLE_CODE",
-  async (tree, { dispatch, getState }) => {
-    const isInitialized = (getState() as RootState).bundler.isInitialized;
-
-    if (!isInitialized) {
+  async (tree, { dispatch }) => {
+    if (!Bundler.initialized) {
       await dispatch(INIT_BUNDLER());
     }
 
@@ -61,9 +59,10 @@ export const BUNDLE_CODE = createAsyncThunk<string, BuildInput["tree"]>(
 export const INIT_BUNDLER = createAsyncThunk(
   "bundler/INIT_BUNDLER",
   async () => {
-    if (Bundler.initialized) return;
-
-    await bundler.initialize();
+    if (!Bundler.initialized) {
+      await bundler.initialize();
+    }
+    return Bundler.initialized;
   }
 );
 

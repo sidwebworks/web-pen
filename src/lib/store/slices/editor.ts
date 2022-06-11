@@ -119,8 +119,8 @@ const slice = createSlice({
       state.isFetchingTypes = false;
     },
     ADD_TYPE(state, action: PayloadAction<string>) {
-      const name = action.payload.split("@")[0] || action.payload;
-      state.typings[name] = action.payload.split("@")[1] || action.payload;
+      const name = action.payload.split("@v")[0] || action.payload;
+      state.typings[name] = action.payload.split("@v")[1] || action.payload;
     },
   },
   extraReducers: (builder) => {

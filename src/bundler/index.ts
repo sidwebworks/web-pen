@@ -63,6 +63,9 @@ class Bundler {
   }
 
   async build({ entry, tree }: Omit<BuildInput, "loader">) {
+    if (!Bundler.initialized) {
+      await this.initialize();
+    }
     const loader = getLoaderFromPath(entry, "js");
 
     const result = await build({
@@ -91,7 +94,7 @@ class Bundler {
         linesAbove: 2,
       });
 
-      // console.clear();
+      console.clear();
 
       throw new BundlingError({ file: meta.filename, message: frame });
     });

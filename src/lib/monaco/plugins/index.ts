@@ -49,17 +49,28 @@ export const onBeforeEditorMount: BeforeMount = async (monaco) => {
   };
 
   const compilerOpts: languages.typescript.CompilerOptions = {
-    target: monaco.languages.typescript.ScriptTarget.Latest,
+    noImplicitAny: false,
+    strictNullChecks: false,
+    strictFunctionTypes: false,
+    strictPropertyInitialization: false,
+    noImplicitReturns: false,
+    noImplicitThis: false,
+    removeComments: false,
+    experimentalDecorators: false,
+    emitDecoratorMetadata: false,
     allowNonTsExtensions: true,
+    target: monaco.languages.typescript.ScriptTarget.ES2020,
     moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
     module: monaco.languages.typescript.ModuleKind.ESNext,
-    noEmit: true,
+    noLib: false,
     baseUrl: ".",
+    strict: true,
+    alwaysStrict: true,
     esModuleInterop: true,
     jsx: monaco.languages.typescript.JsxEmit.React,
     reactNamespace: "React",
     allowJs: true,
-    typeRoots: ["node_modules/@types"],
+    typeRoots: ["node_modules"],
   };
 
   monaco.languages.typescript.javascriptDefaults.setCompilerOptions(

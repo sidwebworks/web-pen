@@ -28,7 +28,7 @@ const plugin = createPlugin<BuildInput>((options) => ({
      * Resolve relative modules imports
      */
     build.onLoad({ filter: /^\.+\//, namespace: "relative" }, (args) => {
-      const contents = options.tree[path.join("/", args.path)];
+      const contents = options.tree[args.path];
 
       if (!contents) return null;
 

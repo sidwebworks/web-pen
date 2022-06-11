@@ -243,7 +243,7 @@ function fetchDefinitions(name, version) {
   const fetchedPaths = {};
 
   return fetchFromTypings(name, version, fetchedPaths)
-    .catch(() =>
+    .catch((err) =>
       // not available in package.json, try checking meta for inline .d.ts files
       fetchFromMeta(name, version, fetchedPaths)
     )

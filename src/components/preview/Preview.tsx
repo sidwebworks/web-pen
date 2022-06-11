@@ -57,7 +57,7 @@ const Preview: React.FC = () => {
         title="preview"
         srcDoc={result}
         className="h-full z-10"
-        sandbox="allow-scripts allow-forms allow-same-origin allow-modals"
+        sandbox="allow-scripts allow-popups allow-forms allow-same-origin allow-modals"
       />
       <LoadingView isError={isError} />
     </div>

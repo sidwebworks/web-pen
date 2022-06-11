@@ -21,10 +21,13 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
 
   let timeout: void | NodeJS.Timeout = setTimeout(stop, 2500);
 
-  store.dispatch(START_TYPE_FETCH());
+
+  console.log(deps);
 
   Object.keys(deps).forEach((name) => {
     count++;
+    store.dispatch(START_TYPE_FETCH());
+    console.log(name);
     worker.postMessage({
       name,
       version: deps[name],
@@ -35,18 +38,35 @@ const plugin = (monaco: Monaco, deps: Record<string, string>) => {
     // name,
     // version,
     // typings: result,
-    const key = `node_modules/${event.data.name}/index.d.ts`;
-    const source = event.data.typings[key];
 
-    // const path = `${MONACO_LIB_PREFIX}${event.data.name}`;
-    const libUri = `file:///node_modules/@types/${event.data.name}/index.d.ts`;
+    const entries = Object.keys(event.data.typings);
+    console.log(entries);
 
-    disposables.push(
-      monaco.languages.typescript.javascriptDefaults.addExtraLib(source, libUri)
-    );
-    disposables.push(
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(source, libUri)
-    );
+    const types = entries.reduce((acc, curr) => {
+      const libUri = `file:///${curr}`;
+
+      const source = event.data.typings[curr];
+
+      acc[curr] = libUri;
+
+      disposables.push(
+        monaco.languages.typescript.javascriptDefaults.addExtraLib(
+          source,
+          libUri
+        )
+      );
+
+      disposables.push(
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+          source,
+          libUri
+        )
+      );
+
+      return acc;
+    }, {});
+
+    console.log(types);
 
     count--;
     if (count < 1) {
